@@ -551,12 +551,12 @@ function initDashboard() {
 }
 
 window.addEventListener('load', () => {
-    initDashboard();
+   return initDashboard();
 });
 
 // Também ouvir o evento de dados prontos (caso o Firebase termine depois do load)
 window.addEventListener('dadosEscalaProntos', () => {
-    initDashboard();
+   return initDashboard();
 });
 </script>
 </body>
