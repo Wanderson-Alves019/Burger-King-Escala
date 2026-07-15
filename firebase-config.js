@@ -41,28 +41,28 @@ const lojas = [
     {
         id: 1,
         nome: "Águas Claras Shopping",
-        senha: "1",
+        senha: "1ahgd",
         icone: "assets/lojas/aguasclarasshopping.png",
         cidade: "Brasília - DF"
     },
     {
         id: 2,
         nome: "Águas Lindas Shopping",
-        senha: "2",
+        senha: "2ahshd",
         icone: "assets/lojas/aguaslindasshopping.png",
         cidade: "Águas Lindas - GO"
     },
     {
         id: 3,
         nome: "FS Águas Claras - Castanheiras",
-        senha: "3",
+        senha: "3alakd",
         icone: "assets/lojas/fs_df_aguasclaras_castanheiras.png",
         cidade: "Brasília - DF"
     },
     {
         id: 4,
         nome: "FS Taguatinga - Setor A Sul",
-        senha: "4",
+        senha: "4ajahdhd",
         icone: "assets/lojas/fs_taguatinga_setor_a_sul.png",
         cidade: "Brasília - DF"
     },
@@ -76,21 +76,21 @@ const lojas = [
     {
         id: 6,
         nome: "Metrópole Shopping",
-        senha: "6",
+        senha: "6ahahd",
         icone: "assets/lojas/metropoleshopping.png",
         cidade: "Brasília - DF"
     },
     {
         id: 7,
         nome: "Shopping Conjunto Nacional",
-        senha: "7",
+        senha: "7qoaoais",
         icone: "assets/lojas/shoppingconjuntonacional.png",
         cidade: "Brasília - DF"
     },
     {
         id: 8,
         nome: "Taguatinga Shopping",
-        senha: "8",
+        senha: "8apqosuz",
         icone: "assets/lojas/taguatingashopping.png",
         cidade: "Brasília - DF"
     }
