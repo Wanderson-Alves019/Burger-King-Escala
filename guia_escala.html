@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Guia Manual - Burger King</title>
+    <link href="Imagens/LOGO BK.png" rel="stylesheet">
+    <style>
+        :root {
+            --bk-red: #D62300;
+            --bk-beige: #F5EBDC;
+            --bk-orange: #FF8732;
+            --bk-brown: #502314;
+            --bk-yellow: #FFAA00;
+            --bk-white: #FFFFFF;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Open Sans', sans-serif;
+            background-color: var(--bk-beige);
+            color: var(--bk-brown);
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        /* Header */
+        header {
+            background-color: var(--bk-brown);
+            color: var(--bk-white);
+            padding: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 4px 15px rgba(80, 35, 20, 0.2);
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .logo-header {
+            height: 50px;
+            filter: drop-shadow(0 2px 5px rgba(0, 0, 0, 0.2));
+        }
+
+        .header-title {
+            font-family: 'Luckiest Guy', cursive;
+            font-size: 1.8rem;
+            color: var(--bk-orange);
+            text-transform: uppercase;
+        }
+
+        .btn-voltar {
+            background-color: var(--bk-orange);
+            color: var(--bk-white);
+            text-decoration: none;
+            padding: 10px 20px;
+            border-radius: 25px;
+            font-weight: 700;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-voltar:hover {
+            background-color: var(--bk-red);
+            transform: scale(1.05);
+        }
+
+        /* Main Content */
+        main {
+            flex: 1;
+            padding: 40px 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .guia-container {
+            background-color: var(--bk-white);
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(80, 35, 20, 0.1);
+            max-width: 1200px;
+            width: 100%;
+        }
+
+        .guia-title {
+            font-family: 'Luckiest Guy', cursive;
+            font-size: 2rem;
+            color: var(--bk-brown);
+            text-align: center;
+            margin-bottom: 30px;
+            text-transform: uppercase;
+        }
+
+        .guia-image {
+            width: 100%;
+            height: auto;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(80, 35, 20, 0.15);
+            display: block;
+        }
+
+        .guia-info {
+            margin-top: 20px;
+            padding: 20px;
+            background-color: #f9f9f9;
+            border-left: 4px solid var(--bk-orange);
+            border-radius: 5px;
+        }
+
+        .guia-info p {
+            font-size: 0.95rem;
+            line-height: 1.6;
+            color: var(--bk-brown);
+        }
+
+        /* Footer */
+        footer {
+            background-color: var(--bk-brown);
+            color: var(--bk-beige);
+            padding: 30px 20px;
+            text-align: center;
+            border-top: 4px solid var(--bk-orange);
+            margin-top: auto;
+        }
+
+        .footer-text {
+            font-size: 0.9rem;
+            opacity: 0.9;
+        }
+
+        /* Responsivo */
+        @media (max-width: 768px) {
+            header {
+                flex-direction: column;
+                gap: 15px;
+            }
+
+            .header-title {
+                font-size: 1.3rem;
+            }
+
+            .guia-title {
+                font-size: 1.5rem;
+            }
+
+            .guia-container {
+                padding: 20px;
+            }
+
+            main {
+                padding: 20px 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="header-left">
+            <img src="Imagens/LOGO BK.png" alt="BK Logo" class="logo-header" onerror="this.src='https://upload.wikimedia.org/wikipedia/commons/thumb/c/cc/Burger_King_2020.svg/1200px-Burger_King_2020.svg.png'">
+            <h1 class="header-title">Guia de Utilização (Sem o Editor)</h1>
+        </div>
+        <a href="gestao_escala.html" class="btn-voltar">← Voltar ao Portal</a>
+    </header>
+
+    <main>
+        <div class="guia-container">
+            <h2 class="guia-title">Como Utilizar a Escala</h2>
+            <img src="Imagens/Guia escala.png" alt="Guia de Como Utilizar" class="guia-image">
+            <div class="guia-info">
+                <p>
+                    <strong>Esta é a guia de utilização do sistema de escala de trabalho do Burger King.</strong><br><br>
+                    A imagem acima contém todas as instruções necessárias para utilizar corretamente o sistema de gestão de escalas, 
+                    incluindo como adicionar colaboradores, definir turnos, configurar folgas e gerar relatórios.
+                </p>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        <p class="footer-text">&copy; 2026 Burger King Corporation. Todos os direitos reservados.</p>
+    </footer>
+
+</body>
+</html>

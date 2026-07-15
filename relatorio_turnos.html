@@ -1,0 +1,492 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard de Turnos - Burger King</title>
+    <link rel="icon" href="assets/images/LOGO BK.png" type="image/png">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <style>
+        :root {
+            --bk-red: #D62300;
+            --bk-orange: #F37021;
+            --bk-green: #007A33;
+            --bk-brown: #502D16;
+            --bk-purple: #A62687;
+            --bk-cream: #F5EBD7;
+            --bk-white: #FFFFFF;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        body {
+            background-color: var(--bk-brown);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        #report-content {
+            background-color: var(--bk-cream);
+            width: 100%;
+            max-width: 1200px;
+            min-height: 800px;
+            padding: 40px;
+            border-radius: 8px;
+            border-top: 20px solid var(--bk-red);
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            box-shadow: 0 30px 60px rgba(0,0,0,0.5);
+        }
+
+        /* Removido fundo para evitar erro de Tainted Canvas ao exportar */
+        #report-content::after {
+            display: none;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            z-index: 1;
+        }
+
+        .logo-container {
+            display: flex;
+            align-items: center;
+            gap: 25px;
+        }
+
+        .logo-img { height: 120px; }
+
+        .header-text h1 {
+            color: var(--bk-brown);
+            font-size: 40px;
+            text-transform: uppercase;
+        }
+
+        .header-text p {
+            color: var(--bk-red);
+            font-weight: 900;
+            font-size: 22px;
+        }
+
+        .period-info {
+            text-align: right;
+            color: var(--bk-brown);
+        }
+
+        .main-layout {
+            flex: 1;
+            display: grid;
+            grid-template-columns: 1fr 400px;
+            gap: 40px;
+            z-index: 1;
+        }
+
+        .chart-container {
+            background: white;
+            border-radius: 12px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 400px;
+        }
+
+        .stats-grid {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            gap: 20px;
+        }
+
+        .stat-card {
+            padding: 25px;
+            border-radius: 10px;
+            color: white;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-weight: 800;
+            box-shadow: 0 8px 15px rgba(0,0,0,0.2);
+        }
+
+        .stat-card.tarde { background: var(--bk-red); }
+        .stat-card.manha { background: var(--bk-orange); }
+        .stat-card.intermediario { background: var(--bk-green); }
+        .stat-card.noite { background: var(--bk-brown); }
+        .stat-card.jovem { background: var(--bk-purple); }
+
+        .stat-name { font-size: 16px; text-transform: uppercase; }
+        .stat-num { font-size: 32px; background: rgba(255,255,255,0.2); padding: 5px 15px; border-radius: 8px; }
+
+        .actions-bar {
+            margin-top: 30px;
+            display: flex;
+            gap: 20px;
+        }
+
+        .btn {
+            padding: 15px 30px;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            font-weight: 900;
+            text-transform: uppercase;
+            transition: 0.3s;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        }
+
+        .btn-pdf { background: var(--bk-red); color: white; }
+        .btn-png { background: var(--bk-orange); color: white; }
+        .btn-print { background: var(--bk-green); color: white; }
+
+        @media print {
+            @page {
+                size: landscape;
+                margin: 5mm;
+            }
+            * {
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
+                color-adjust: exact !important;
+            }
+            body { 
+                background-color: white !important; 
+                padding: 0 !important; 
+                margin: 0 !important;
+                display: block !important;
+            }
+            .actions-bar, .btn-voltar-portal { display: none !important; }
+            #report-content { 
+                box-shadow: none !important; 
+                border-radius: 0 !important;
+                border-top: 10px solid var(--bk-red) !important;
+                width: 100% !important;
+                height: auto !important;
+                padding: 20px !important;
+                margin: 0 !important;
+                background-color: var(--bk-cream) !important;
+            }
+            .header { margin-bottom: 20px !important; }
+            .logo-img { height: 60px !important; }
+            .header-text h1 { font-size: 24pt !important; }
+            .header-text p { font-size: 14pt !important; }
+            
+            .main-layout {
+                display: grid !important;
+                grid-template-columns: 1fr 1fr !important;
+                gap: 30px !important;
+            }
+            .chart-container {
+                height: 450px !important;
+                width: 100% !important;
+                border: none !important;
+                display: block !important;
+            }
+            #bkChart {
+                width: 100% !important;
+                height: 100% !important;
+            }
+            .stat-card {
+                padding: 15px !important;
+                box-shadow: none !important;
+                border: 1px solid rgba(0,0,0,0.1) !important;
+            }
+            .stat-name { font-size: 12pt !important; }
+            .stat-num { font-size: 24pt !important; }
+        }
+    
+    
+
+    /* Estilo do Botão Voltar ao Portal Atualizado */
+    .btn-voltar-portal {
+        position: fixed;
+        top: 10px;
+        left: 10px;
+        background-color: #502314;
+        color: #F5EBDC;
+        padding: 5px 12px;
+        border-radius: 30px;
+        text-decoration: none;
+        font-weight: 700;
+        font-size: 11px;
+        z-index: 10000;
+        box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        border: 1.5px solid #FF8732;
+        font-family: 'Open Sans', sans-serif;
+        opacity: 0.8;
+    }
+
+    .btn-voltar-portal:hover {
+        opacity: 1;
+        background-color: #D62300;
+        transform: scale(1.02);
+    }
+
+    .btn-voltar-portal img {
+        width: 18px;
+        height: 18px;
+    }
+
+    @media print {
+        .btn-voltar-portal {
+            display: none !important;
+        }
+    }
+
+
+    /* Responsividade para Dispositivos Móveis */
+    @media screen and (max-width: 768px) {
+        body { padding: 10px; }
+        #report-content { padding: 20px; border-top-width: 10px; min-height: auto; }
+        .header { flex-direction: column; text-align: center; gap: 20px; }
+        .logo-container { flex-direction: column; gap: 10px; }
+        .logo-img { height: 80px; }
+        .header-text h1 { font-size: 24px; }
+        .header-text p { font-size: 16px; }
+        .period-info { text-align: center; }
+        .main-layout { grid-template-columns: 1fr; gap: 20px; }
+        .chart-container { min-height: 300px; padding: 15px; }
+        .stat-card { padding: 15px; }
+        .stat-num { font-size: 24px; }
+        .actions-bar { flex-direction: column; }
+        .btn { width: 100%; }
+    }
+    
+    </style>
+</head>
+<body>
+
+    <!-- Botão Voltar ao Portal Atualizado -->
+    <a href="gestao_escala.html" class="btn-voltar-portal">
+        <img src="assets/images/LOGO BK.png" alt="BK">
+        <span>PORTAL</span>
+    </a>
+
+    <div id="report-content">
+        <div class="header">
+            <div class="logo-container">
+                <img id="bk-logo" class="logo-img" alt="BK Logo">
+                <div class="header-text">
+                    <h1>Escala de Trabalho</h1>
+                    <p>BURGER KING</p>
+                </div>
+            </div>
+            <div class="period-info">
+                <small style="font-weight: bold; opacity: 0.6;">PERÍODO DE REFERÊNCIA</small><br>
+                <strong id="periodo-display" style="font-size: 24px;">--</strong>
+            </div>
+        </div>
+
+        <div class="main-layout">
+            <div class="chart-container">
+                <canvas id="bkChart"></canvas>
+            </div>
+            
+            <div class="stats-grid" id="stats-panel">
+                <div style="color: var(--bk-brown); text-align: center; width: 100%;">Carregando dados...</div>
+            </div>
+        </div>
+
+        <div style="margin-top: 20px; color: var(--bk-brown); font-style: italic; font-weight: bold;">
+            Dashboard Oficial de Gestão de Turnos
+        </div>
+    </div>
+
+    <div class="actions-bar">
+        <button onclick="printReport()" class="btn btn-print">IMPRIMIR RELATÓRIO</button>
+    </div>
+
+    <!-- Tentar carregar colaboradores.js -->
+    <script type="module" src="firebase-config.js"></script>
+    <script src="auth-manager.js"></script>
+    <script type="module" src="colaboradores.js" defer></script>
+
+    <script>
+        // ========================================
+        // CARREGAMENTO UNIFICADO COM FALLBACK
+        // ========================================
+        let dados = {};
+        let chartInstance = null;
+
+        function carregarDadosRelatorio() {
+            // Tentar carregar do window.dadosEscala (preenchido pelo colaboradores.js)
+            if (window.dadosEscala && window.dadosEscala.dadosCarregados) {
+                dados = JSON.parse(JSON.stringify(window.dadosEscala));
+                console.log('[Relatório Turnos] Dados carregados de window.dadosEscala:', dados.origemDados);
+                return true;
+            }
+            
+            // Fallback: tentar localStorage
+            const dadosSalvos = localStorage.getItem('escalasData');
+            if (dadosSalvos) {
+                try {
+                    dados = JSON.parse(dadosSalvos);
+                    dados.origemDados = 'localStorage';
+                    console.log('[Relatório Turnos] Dados carregados de localStorage');
+                    return true;
+                } catch (e) {
+                    console.error('[Relatório Turnos] Erro ao parsear localStorage:', e);
+                }
+            }
+            
+            // Fallback final: usar globais do colaboradores.js
+            if (typeof mesConfig !== 'undefined' && typeof colaboradores !== 'undefined') {
+                dados = {
+                    mesConfig: mesConfig,
+                    periodo: periodo,
+                    intermediarios: typeof intermediarios !== 'undefined' ? intermediarios : [],
+                    jovensAprendizes: typeof jovensAprendizes !== 'undefined' ? jovensAprendizes : [],
+                    colaboradores: colaboradores,
+                    origemDados: 'padrao'
+                };
+                console.log('[Relatório Turnos] Usando dados padrão do colaboradores.js');
+                return true;
+            }
+            
+            console.error('[Relatório Turnos] Nenhuma fonte de dados disponível');
+            return false;
+        }
+
+        // Recalcular contadores a partir dos dados
+        function calcularContadores() {
+            const counts = {
+                manha: 0,
+                tarde: 0,
+                noite: 0,
+                intermediario: 0,
+                jovem: 0
+            };
+
+            if (!dados.colaboradores || dados.colaboradores.length === 0) {
+                return counts;
+            }
+
+            dados.colaboradores.forEach(colab => {
+                const isJovem = dados.jovensAprendizes && dados.jovensAprendizes.some(j => colab.nome.includes(j));
+                if (isJovem) {
+                    counts.jovem++;
+                    return;
+                }
+
+                const isIntermediario = dados.intermediarios && dados.intermediarios.some(inter => colab.nome.includes(inter));
+                if (isIntermediario) {
+                    counts.intermediario++;
+                    return;
+                }
+
+                if (colab.turno === '08:00') counts.manha++;
+                else if (colab.turno === '15:00') counts.tarde++;
+                else if (colab.turno === '22:00') counts.noite++;
+            });
+
+            return counts;
+        }
+
+        // Tentar converter a imagem para Base64 para evitar Tainted Canvas em file://
+        const bkLogoImg = document.getElementById('bk-logo');
+        const img = new Image();
+        img.crossOrigin = "anonymous";
+        img.src = "assets/images/LOGO BK.png";
+        img.onload = function() {
+            const canvas = document.createElement('canvas');
+            canvas.width = img.width;
+            canvas.height = img.height;
+            const ctx = canvas.getContext('2d');
+            ctx.drawImage(img, 0, 0);
+            bkLogoImg.src = canvas.toDataURL('image/png');
+        };
+        img.onerror = function() {
+            bkLogoImg.src = "assets/images/LOGO BK.png"; // Fallback
+        };
+
+        function init() {
+            // Carregar dados com fallback
+            if (!carregarDadosRelatorio()) {
+                document.getElementById('stats-panel').innerHTML = '<div style="color: red; text-align: center; width: 100%;">Erro: Não foi possível carregar os dados.</div>';
+                return;
+            }
+
+            // Calcular contadores
+            const counts = calcularContadores();
+            const periodo = dados.periodo || 'N/A';
+
+            document.getElementById('periodo-display').innerText = periodo;
+            
+            // Renderizar Cards
+            document.getElementById('stats-panel').innerHTML = `
+                <div class="stat-card tarde"><span class="stat-name">Tarde (15:00)</span><span class="stat-num">${counts.tarde}</span></div>
+                <div class="stat-card manha"><span class="stat-name">Manhã (08:00)</span><span class="stat-num">${counts.manha}</span></div>
+                <div class="stat-card intermediario"><span class="stat-name">Intermediário</span><span class="stat-num">${counts.intermediario}</span></div>
+                <div class="stat-card noite"><span class="stat-name">Noite (22:00)</span><span class="stat-num">${counts.noite}</span></div>
+                <div class="stat-card jovem"><span class="stat-name">Jovem Aprendiz</span><span class="stat-num">${counts.jovem}</span></div>
+            `;
+
+            // Renderizar Gráfico
+            const ctx = document.getElementById('bkChart').getContext('2d');
+            
+            // Destruir gráfico anterior se existir
+            if (chartInstance) {
+                chartInstance.destroy();
+            }
+
+            chartInstance = new Chart(ctx, {
+                type: 'pie',
+                data: {
+                    labels: ['Tarde', 'Manhã', 'Intermediário', 'Noite', 'Jovem Aprendiz'],
+                    datasets: [{
+                        data: [counts.tarde, counts.manha, counts.intermediario, counts.noite, counts.jovem],
+                        backgroundColor: ['#D62300', '#F37021', '#007A33', '#502D16', '#A62687'],
+                        borderColor: '#F5EBD7',
+                        borderWidth: 2
+                    }]
+                },
+                options: { 
+                    responsive: true, 
+                    maintainAspectRatio: false,
+                    animation: false,
+                    plugins: { 
+                        legend: { 
+                            position: 'bottom', 
+                            labels: { font: { size: 14, weight: 'bold' }, color: '#502D16', padding: 10, usePointStyle: true } 
+                        } 
+                    }
+                }
+            });
+        }
+
+        function printReport() {
+            window.print();
+        }
+
+        // ========================================
+        // INICIALIZAR
+        // ========================================
+        window.addEventListener('load', () => {
+            init();
+        });
+
+        // Também ouvir o evento de dados prontos (caso o Firebase termine depois do load)
+        window.addEventListener('dadosEscalaProntos', () => {
+            init();
+        });
+    </script>
+</body>
+</html>

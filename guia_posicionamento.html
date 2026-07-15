@@ -1,0 +1,523 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Guia de Posicionamento - Burger King</title>
+  <link rel="icon" href="assets/images/LOGO BK.png" type="image/png">
+    <style>
+        :root {
+            --bk-red: #D62300;
+            --bk-beige: #F5EBDC;
+            --bk-orange: #FF8732;
+            --bk-brown: #502314;
+            --bk-yellow: #FFAA00;
+            --bk-white: #FFFFFF;
+            --bk-green: #007A33;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Open Sans', sans-serif;
+            background-color: var(--bk-brown);
+            color: var(--bk-brown);
+            padding: 20px;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .container {
+            background-color: var(--bk-beige);
+            width: 100%;
+            max-width: 1000px;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            border-top: 15px solid var(--bk-red);
+        }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+
+        .logo-group {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .logo-img {
+            height: 70px;
+        }
+
+        .title-group h1 {
+            font-family: 'Luckiest Guy', cursive;
+            font-size: 2.5rem;
+            color: var(--bk-red);
+            line-height: 1;
+        }
+
+        .title-group p {
+            font-weight: 700;
+            text-transform: uppercase;
+            color: var(--bk-brown);
+            font-size: 0.9rem;
+        }
+
+        .selector-section {
+            background: var(--bk-white);
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 25px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            align-items: center;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+        }
+
+        .selector-group {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .selector-group label {
+            font-weight: 800;
+            text-transform: uppercase;
+            font-size: 0.75rem;
+            color: var(--bk-orange);
+        }
+
+        select {
+            padding: 10px 15px;
+            border-radius: 8px;
+            border: 2px solid #ddd;
+            font-family: inherit;
+            font-weight: 600;
+            color: var(--bk-brown);
+            outline: none;
+            min-width: 200px;
+        }
+
+        select:focus {
+            border-color: var(--bk-orange);
+        }
+
+        .btn-print {
+            background-color: var(--bk-green);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 50px;
+            font-weight: 800;
+            text-transform: uppercase;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-left: auto;
+            transition: transform 0.2s;
+        }
+
+        .btn-print:hover {
+            transform: scale(1.05);
+            background-color: #005a26;
+        }
+
+        .results-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+
+        .turn-card {
+            background: var(--bk-white);
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .turn-header {
+            padding: 15px;
+            color: white;
+            font-weight: 800;
+            text-transform: uppercase;
+            text-align: center;
+            font-size: 1.1rem;
+        }
+
+        .turn-manha { background-color: var(--bk-orange); }
+        .turn-tarde { background-color: var(--bk-red); }
+        .turn-noite { background-color: var(--bk-brown); }
+        .turn-indisponivel { background-color: #777; }
+
+        .employee-list {
+            padding: 15px;
+            list-style: none;
+            flex-grow: 1;
+        }
+
+        .employee-item {
+            padding: 8px 0;
+            border-bottom: 1px solid #eee;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.9rem;
+        }
+
+        .employee-item:last-child {
+            border-bottom: none;
+        }
+
+        .employee-name {
+            font-weight: 700;
+        }
+
+        .employee-reason {
+            font-size: 0.75rem;
+            background: #f0f0f0;
+            padding: 2px 8px;
+            border-radius: 4px;
+            color: #666;
+            font-weight: 600;
+        }
+
+        .badge-inter {
+            font-size: 0.65rem;
+            background: var(--bk-green);
+            color: white;
+            padding: 1px 5px;
+            border-radius: 3px;
+            margin-left: 5px;
+        }
+
+        .empty-msg {
+            text-align: center;
+            color: #999;
+            font-style: italic;
+            padding: 20px;
+        }
+
+        .btn-voltar-portal {
+            position: fixed;
+            top: 10px;
+            left: 10px;
+            background-color: var(--bk-brown);
+            color: var(--bk-beige);
+            padding: 8px 15px;
+            border-radius: 30px;
+            text-decoration: none;
+            font-weight: 700;
+            font-size: 12px;
+            z-index: 10000;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            border: 2px solid var(--bk-orange);
+        }
+
+        @media print {
+            body { background: white; padding: 0; }
+            .container { box-shadow: none; border: none; max-width: 100%; width: 100%; padding: 0; }
+            .selector-section, .btn-voltar-portal { display: none !important; }
+            .results-grid { grid-template-columns: repeat(3, 1fr); gap: 10px; }
+            .turn-indisponivel { margin-top: 20px; grid-column: span 3; }
+            .turn-card { border: 1px solid #ddd; }
+        }
+    
+    /* Responsividade para Dispositivos Móveis */
+    @media screen and (max-width: 768px) {
+        body { padding: 10px; }
+        .container { padding: 15px; width: 100%; max-width: 100%; border-radius: 0; }
+        .header h1 { font-size: 22px; }
+        .header-info { flex-direction: column; gap: 10px; align-items: center; }
+        table { display: block; overflow-x: auto; white-space: nowrap; }
+        th, td { padding: 8px; font-size: 13px; }
+        .btn-print { width: 100%; justify-content: center; }
+        .actions-bar { flex-direction: column; gap: 10px; }
+        .legenda-items { flex-direction: column; gap: 10px; }
+        
+        /* Ajustes específicos para menus e grids se existirem */
+        .menu-grid, .grid-container { grid-template-columns: 1fr !important; }
+        .card { margin-bottom: 15px; }
+    }
+    
+    </style>
+</head>
+<body>
+
+    <a href="gestao_escala.html" class="btn-voltar-portal">
+        <img src="assets/images/LOGO BK.png" alt="BK" style="height: 20px;">
+        <span>VOLTAR AO PORTAL</span>
+    </a>
+
+    <div class="container">
+        <header>
+            <div class="logo-group">
+                <img src="assets/images/LOGO BK.png" alt="BK" class="logo-img">
+                <div class="title-group">
+                    <h1>GUIA POSICIONAMENTO</h1>
+                    <h2 id="dia-escolhido-label" style="font-family: 'Luckiest Guy', cursive; color: var(--bk-orange); font-size: 1.8rem; margin-top: 5px;">Selecione um dia</h2>
+                    <p id="periodo-label" style="margin-top: 5px;">Carregando período...</p>
+                </div>
+            </div>
+        </header>
+
+        <section class="selector-section">
+            <div class="selector-group">
+                <label>Selecione o Dia</label>
+                <select id="dia-select" onchange="atualizarPosicionamento()">
+                    <!-- Dias serão carregados via JS -->
+                </select>
+            </div>
+            <button class="btn-print" onclick="window.print()">
+                <span>🖨️</span> IMPRIMIR GUIA
+            </button>
+        </section>
+
+        <div class="results-grid">
+            <!-- MANHÃ -->
+            <div class="turn-card">
+                <div class="turn-header turn-manha">MANHÃ</div>
+                <ul class="employee-list" id="lista-manha"></ul>
+            </div>
+
+            <!-- TARDE -->
+            <div class="turn-card">
+                <div class="turn-header turn-tarde">TARDE</div>
+                <ul class="employee-list" id="lista-tarde"></ul>
+            </div>
+
+            <!-- NOITE -->
+            <div class="turn-card">
+                <div class="turn-header turn-noite">NOITE</div>
+                <ul class="employee-list" id="lista-noite"></ul>
+            </div>
+
+            <!-- INDISPONÍVEIS -->
+            <div class="turn-card turn-indisponivel-container" style="grid-column: 1 / -1; margin-top: 10px;">
+                <div class="turn-header turn-indisponivel">FUNCIONÁRIOS INDISPONÍVEIS (FOLGA, FÉRIAS, ETC)</div>
+                <ul class="employee-list" id="lista-indisponivel" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 10px;"></ul>
+            </div>
+        </div>
+    </div>
+
+    <script type="module" src="firebase-config.js"></script>
+    <script src="auth-manager.js"></script>
+    <script type="module" src="colaboradores.js" defer></script>
+    <script>
+        // ========================================
+        // CARREGAMENTO UNIFICADO COM FALLBACK
+        // ========================================
+        let dados = {};
+
+        function carregarDadosGuia() {
+            // Tentar carregar do window.dadosEscala (preenchido pelo colaboradores.js)
+            if (window.dadosEscala && window.dadosEscala.dadosCarregados) {
+                dados = JSON.parse(JSON.stringify(window.dadosEscala));
+                console.log('[Guia Posicionamento] Dados carregados de window.dadosEscala:', dados.origemDados);
+                return true;
+            }
+            
+            // Fallback: tentar localStorage
+            const dadosSalvos = localStorage.getItem('escalasData');
+            if (dadosSalvos) {
+                try {
+                    dados = JSON.parse(dadosSalvos);
+                    dados.origemDados = 'localStorage';
+                    console.log('[Guia Posicionamento] Dados carregados de localStorage');
+                    return true;
+                } catch (e) {
+                    console.error('[Guia Posicionamento] Erro ao parsear localStorage:', e);
+                }
+            }
+            
+            // Fallback final: usar globais do colaboradores.js
+            if (typeof mesConfig !== 'undefined' && typeof colaboradores !== 'undefined') {
+                dados = {
+                    mesConfig: mesConfig,
+                    periodo: periodo,
+                    intermediarios: typeof intermediarios !== 'undefined' ? intermediarios : [],
+                    colaboradores: colaboradores,
+                    origemDados: 'padrao'
+                };
+                console.log('[Guia Posicionamento] Usando dados padrão do colaboradores.js');
+                return true;
+            }
+            
+            console.error('[Guia Posicionamento] Nenhuma fonte de dados disponível');
+            return false;
+        }
+
+        const diasSemana = ["domingo", "segunda", "terça", "quarta", "quinta", "sexta", "sábado"];
+        const diasSemanaAbbr = ["DOM", "SEG", "TER", "QUA", "QUI", "SEX", "SÁB"];
+
+        function init() {
+            if (!carregarDadosGuia()) {
+                alert("Erro: Não foi possível carregar os dados.");
+                return;
+            }
+
+            const configMes = dados.mesConfig || [1, "segunda", 30];
+            document.getElementById('periodo-label').innerText = dados.periodo || "Escala Mensal";
+
+            const select = document.getElementById('dia-select');
+            const [primeiroDia, diaSemanaInicial, ultimoDia] = configMes;
+            const startIndex = diasSemana.indexOf(diaSemanaInicial.toLowerCase());
+
+            for (let i = 1; i <= ultimoDia; i++) {
+                const currentDayIndex = (startIndex + (i - 1)) % 7;
+                const opt = document.createElement('option');
+                opt.value = i;
+                opt.text = `${i.toString().padStart(2, '0')} - ${diasSemanaAbbr[currentDayIndex]}`;
+                select.appendChild(opt);
+            }
+
+            // Selecionar dia atual se estiver no range, senão dia 1
+            const hoje = new Date().getDate();
+            if (hoje <= ultimoDia) {
+                select.value = hoje;
+            } else {
+                select.value = 1;
+            }
+
+            atualizarPosicionamento();
+        }
+
+        function isIntermediario(nome) {
+            if (!dados.intermediarios) return false;
+            return dados.intermediarios.some(i => nome.toUpperCase().includes(i.toUpperCase()));
+        }
+
+        function atualizarPosicionamento() {
+            const select = document.getElementById('dia-select');
+            const diaSelecionado = parseInt(select.value);
+            const textoDia = select.options[select.selectedIndex].text;
+            document.getElementById('dia-escolhido-label').innerText = "DIA: " + textoDia;
+
+            const configMes = dados.mesConfig || [1, "segunda", 30];
+            const [primeiroDia, diaSemanaInicial, ultimoDia] = configMes;
+            const startIndex = diasSemana.indexOf(diaSemanaInicial.toLowerCase());
+            const currentDayIndex = (startIndex + (diaSelecionado - 1)) % 7;
+            const diaSemanaNome = diasSemana[currentDayIndex];
+            const isDomingo = currentDayIndex === 0;
+
+            const listas = {
+                manha: document.getElementById('lista-manha'),
+                tarde: document.getElementById('lista-tarde'),
+                noite: document.getElementById('lista-noite'),
+                indisponivel: document.getElementById('lista-indisponivel')
+            };
+
+            // Limpar listas
+            Object.values(listas).forEach(l => l.innerHTML = '');
+
+            if (!dados.colaboradores) return;
+
+            dados.colaboradores.forEach(colab => {
+                let motivoIndisponivel = null;
+
+                // Verificar Férias
+                if (colab.ferias && colab.ferias.length === 2) {
+                    if (diaSelecionado >= colab.ferias[0] && diaSelecionado <= colab.ferias[1]) {
+                        motivoIndisponivel = "FÉRIAS";
+                    }
+                }
+
+                // Verificar Descanso Extra
+                if (!motivoIndisponivel && colab.descansoExtra && colab.descansoExtra.includes(diaSelecionado)) {
+                    motivoIndisponivel = "DESCANSO EXTRA";
+                }
+
+                // Verificar Domingo
+                if (!motivoIndisponivel && isDomingo && colab.domingos && colab.domingos.includes(diaSelecionado)) {
+                    motivoIndisponivel = "FOLGA DOMINGO";
+                }
+
+                // Verificar Folga Fixa
+                if (!motivoIndisponivel && colab.folgaFixa) {
+                    const folgaFixaNormalizada = colab.folgaFixa.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
+                    const diaSemanaNormalizado = diaSemanaNome.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
+                    if (folgaFixaNormalizada === diaSemanaNormalizado) {
+                        motivoIndisponivel = "FOLGA FIXA";
+                    }
+                }
+
+                const li = document.createElement('li');
+                li.className = 'employee-item';
+                
+                const nameSpan = document.createElement('span');
+                nameSpan.className = 'employee-name';
+                nameSpan.innerText = colab.nome;
+                
+                if (isIntermediario(colab.nome)) {
+                    const badge = document.createElement('span');
+                    badge.className = 'badge-inter';
+                    badge.innerText = 'INTER';
+                    nameSpan.appendChild(badge);
+                }
+                
+                li.appendChild(nameSpan);
+
+                if (motivoIndisponivel) {
+                    const reasonSpan = document.createElement('span');
+                    reasonSpan.className = 'employee-reason';
+                    reasonSpan.innerText = motivoIndisponivel;
+                    li.appendChild(reasonSpan);
+                    listas.indisponivel.appendChild(li);
+                } else {
+                    const hour = parseInt(colab.turno.split(':')[0]);
+                    const inter = isIntermediario(colab.nome);
+
+                    // Manhã (até 12h ou intermediário)
+                    if (hour <= 12 || inter) {
+                        const liClone = li.cloneNode(true);
+                        listas.manha.appendChild(liClone);
+                    }
+                    
+                    // Tarde (15h ou intermediário)
+                    if (hour === 15 || inter) {
+                        const liClone = li.cloneNode(true);
+                        listas.tarde.appendChild(liClone);
+                    }
+
+                    // Noite (22h)
+                    if (hour >= 22) {
+                        listas.noite.appendChild(li);
+                    }
+                }
+            });
+
+            // Verificar se as listas estão vazias
+            ['manha', 'tarde', 'noite', 'indisponivel'].forEach(key => {
+                if (listas[key].children.length === 0) {
+                    listas[key].innerHTML = '<div class="empty-msg">Nenhum funcionário</div>';
+                }
+            });
+        }
+
+        window.addEventListener('load', () => {
+            init();
+        });
+
+        // Também ouvir o evento de dados prontos (caso o Firebase termine depois do load)
+        window.addEventListener('dadosEscalaProntos', () => {
+            init();
+        });
+    </script>
+</body>
+</html>

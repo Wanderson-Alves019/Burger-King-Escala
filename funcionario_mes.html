@@ -1,0 +1,489 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>Funcionário do Mês - Burger King</title>
+    <link rel="icon" href="assets/images/LOGO BK.png" type="image/png">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Flame:wght@400;700&family=Roboto:wght@400;500;700;900&display=swap');
+
+        :root {
+            --bk-beige: #ffffff;
+            --bk-brown: #502314;
+            --bk-orange: #FF8732;
+            --bk-red: #D62300;
+            --bk-yellow: #FFD700;
+            --bk-green: #007A33;
+            --bk-teal: #00A3A1;
+            --bk-dark-brown: #32140A;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: var(--bk-beige);
+            padding: 10px;
+            color: var(--bk-brown);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .container {
+            background-color: white;
+            border-radius: 15px;
+            padding: 15px;
+            width: 100%;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+        }
+
+        .container::before {
+            content: '';
+            position: absolute;
+            top: 0; right: 0; bottom: 0; left: 0;
+            opacity: 0.03;
+            pointer-events: none;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+            flex-shrink: 0;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .bk-logo { width: 140px; height: 140px; }
+
+        .title-group h1 { font-size: 32px; font-weight: 900; color: var(--bk-brown); text-transform: uppercase; line-height: 1; }
+        .title-group h2 { font-size: 24px; font-weight: 900; color: var(--bk-orange); text-transform: uppercase; margin-top: 2px; }
+
+        .info-boxes { display: flex; gap: 20px; }
+        .info-box { display: flex; align-items: center; gap: 8px; }
+        .info-icon { width: 30px; height: 30px; background: #eee; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 16px; }
+        .info-text .label { font-size: 10px; font-weight: 700; text-transform: uppercase; color: var(--bk-brown); }
+        .info-text .value { font-size: 12px; font-weight: 500; }
+
+        .table-wrapper { margin-top: 10px; border: 1px solid #EEDDC5; border-radius: 10px; overflow: visible; }
+        .table-scroll { overflow-x: auto; width: 100%; }
+        table { width: 100%; border-collapse: collapse; min-width: 100%; }
+        thead { position: sticky; top: 0; z-index: 10; }
+        thead th { background-color: var(--bk-brown); color: white; padding: 12px 8px; font-size: 12px; font-weight: 700; border: 1px solid #633221; text-align: left; }
+        
+        tbody tr:nth-child(even) { background-color: #FDF9F3; }
+        tbody td { border: 1px solid #EEDDC5; padding: 12px 8px; text-align: left; font-size: 12px; font-weight: 500; }
+        tbody td.nome { font-weight: 700; color: var(--bk-brown); }
+
+        .badge-mes { 
+            background-color: var(--bk-orange); 
+            color: white; 
+            padding: 4px 12px; 
+            border-radius: 20px; 
+            font-weight: 700;
+            font-size: 11px;
+            display: inline-block;
+        }
+
+        .badge-count {
+            background-color: var(--bk-red);
+            color: white;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-weight: 700;
+            font-size: 11px;
+            display: inline-block;
+        }
+
+        .actions { position: fixed; bottom: 20px; right: 20px; z-index: 1000; display: flex; gap: 10px; flex-wrap: wrap; justify-content: flex-end; }
+        .btn-save { background-color: var(--bk-orange); color: white; border: none; padding: 12px 24px; border-radius: 50px; font-weight: 700; cursor: pointer; box-shadow: 0 4px 15px rgba(0,0,0,0.2); display: flex; align-items: center; gap: 8px; transition: transform 0.2s, background-color 0.2s; font-family: 'Roboto', sans-serif; text-transform: uppercase; font-size: 14px; }
+        .btn-save:hover { transform: scale(1.05); }
+
+        .btn-print {
+            background-color: var(--bk-green);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 50px;
+            font-weight: 700;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: transform 0.2s, background-color 0.2s;
+            font-family: 'Roboto', sans-serif;
+            text-transform: uppercase;
+            font-size: 14px;
+        }
+
+        .btn-print:hover {
+            transform: scale(1.05);
+            background-color: var(--bk-dark-brown);
+        }
+
+        .btn-voltar-portal {
+            position: fixed;
+            top: 10px;
+            left: 10px;
+            background-color: #502314;
+            color: #F5EBDC;
+            padding: 5px 12px;
+            border-radius: 30px;
+            text-decoration: none;
+            font-weight: 700;
+            font-size: 11px;
+            z-index: 10000;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            border: 1.5px solid #FF8732;
+            font-family: 'Open Sans', sans-serif;
+            opacity: 0.8;
+        }
+
+        .btn-voltar-portal:hover {
+            opacity: 1;
+            background-color: #D62300;
+            transform: scale(1.02);
+        }
+
+        .btn-voltar-portal img {
+            width: 18px;
+            height: 18px;
+        }
+
+        .section-title {
+            font-size: 18px;
+            font-weight: 900;
+            color: var(--bk-brown);
+            text-transform: uppercase;
+            margin-top: 30px;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 3px solid var(--bk-orange);
+        }
+
+        .candidatos-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+            margin-top: 15px;
+        }
+
+        .candidato-card {
+            background: linear-gradient(135deg, #f5e6d3 0%, #e8d4bf 100%);
+            border: 2px solid var(--bk-brown);
+            border-radius: 10px;
+            padding: 15px;
+            text-align: center;
+            box-shadow: 3px 3px 0px rgba(80, 35, 20, 0.2);
+        }
+
+        .candidato-posicao {
+            font-size: 2rem;
+            font-weight: 900;
+            color: var(--bk-red);
+            margin-bottom: 10px;
+        }
+
+        .candidato-nome {
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--bk-brown);
+            margin-bottom: 8px;
+        }
+
+        .candidato-premiacoes {
+            font-size: 1.8rem;
+            font-weight: 900;
+            color: var(--bk-orange);
+            margin-bottom: 5px;
+        }
+
+        .candidato-label {
+            font-size: 11px;
+            color: var(--bk-brown);
+            opacity: 0.8;
+        }
+
+        .prob-bar {
+            background: #EEDDC5;
+            height: 8px;
+            border-radius: 10px;
+            overflow: hidden;
+            margin: 10px 0;
+        }
+
+        .prob-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--bk-orange) 0%, var(--bk-red) 100%);
+            border-radius: 10px;
+            transition: width 0.5s ease;
+        }
+
+        .prob-valor {
+            font-size: 11px;
+            font-weight: 700;
+            color: var(--bk-brown);
+        }
+
+        @media print {
+            .btn-voltar-portal, .actions, .btn-print { display: none !important; }
+            body { padding: 0 !important; margin: 0 !important; background: white !important; }
+            .container { width: 100% !important; height: auto !important; max-width: none !important; border-radius: 0 !important; box-shadow: none !important; padding: 0 !important; }
+        }
+
+        @media (max-width: 768px) {
+            .header { flex-direction: column; }
+            .bk-logo { width: 100px; height: 100px; }
+            .title-group h1 { font-size: 24px; }
+            .title-group h2 { font-size: 18px; }
+            .info-boxes { flex-direction: column; gap: 10px; }
+            .candidatos-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+    <a href="gestao_escala.html" class="btn-voltar-portal">
+        <img src="assets/images/LOGO BK.png" alt="BK">
+        <span>PORTAL</span>
+    </a>
+
+    <div class="actions">
+        <button class="btn-print" onclick="window.print()">
+            <span>🖨️</span>
+            <span>Imprimir</span>
+        </button>
+    </div>
+
+    <div class="container">
+        <div class="header">
+            <div class="header-left">
+                <img src="assets/images/LOGO BK.png" class="bk-logo" alt="BK">
+                <div class="title-group">
+                    <h1>Funcionário do Mês</h1>
+                    <h2>BURGER KING</h2>
+                </div>
+            </div>
+            <div class="info-boxes">
+                <div class="info-box">
+                    <div class="info-icon">🏆</div>
+                    <div class="info-text">
+                        <div class="label">Mês Atual</div>
+                        <div id="mes-atual" class="value">Junho</div>
+                    </div>
+                </div>
+                <div class="info-box">
+                    <div class="info-icon">⭐</div>
+                    <div class="info-text">
+                        <div class="label">Premiações</div>
+                        <div id="total-premiacoes" class="value">0</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="table-wrapper">
+            <div class="table-scroll">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>MÊS</th>
+                            <th>FUNCIONÁRIO</th>
+                            <th>TOTAL DE VITÓRIAS</th>
+                        </tr>
+                    </thead>
+                    <tbody id="historico-body">
+                        <tr>
+                            <td colspan="3" style="text-align: center; padding: 20px;">Carregando dados...</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="section-title">👑 Candidatos ao Funcionário do Ano 👑</div>
+        <div class="candidatos-grid" id="candidatos-grid">
+            <div style="grid-column: 1/-1; text-align: center; padding: 40px;">
+                <p>Carregando candidatos...</p>
+            </div>
+        </div>
+    </div>
+
+    <script type="module" src="firebase-config.js"></script>
+    <script src="auth-manager.js"></script>
+    <script type="module" src="colaboradores.js" defer></script>
+    <script>
+        // ========================================
+        // CARREGAMENTO UNIFICADO COM FALLBACK
+        // ========================================
+        let dados = {};
+
+        function carregarDadosFuncionarioMes() {
+            // Tentar carregar do window.dadosEscala (preenchido pelo colaboradores.js)
+            if (window.dadosEscala && window.dadosEscala.dadosCarregados) {
+                dados = JSON.parse(JSON.stringify(window.dadosEscala));
+                console.log('[Funcionário Mês] Dados carregados de window.dadosEscala:', dados.origemDados);
+                return true;
+            }
+            
+            // Fallback: tentar localStorage
+            const dadosSalvos = localStorage.getItem('escalasData');
+            if (dadosSalvos) {
+                try {
+                    dados = JSON.parse(dadosSalvos);
+                    dados.origemDados = 'localStorage';
+                    console.log('[Funcionário Mês] Dados carregados de localStorage');
+                    return true;
+                } catch (e) {
+                    console.error('[Funcionário Mês] Erro ao parsear localStorage:', e);
+                }
+            }
+            
+            // Fallback final: usar globais do colaboradores.js
+            if (typeof historicoFuncionariosMes !== 'undefined') {
+                dados = {
+                    historicoFuncionariosMes: historicoFuncionariosMes,
+                    origemDados: 'padrao'
+                };
+                console.log('[Funcionário Mês] Usando dados padrão do colaboradores.js');
+                return true;
+            }
+            
+            console.error('[Funcionário Mês] Nenhuma fonte de dados disponível');
+            return false;
+        }
+
+        // Meses em português
+        const mesesNomes = ['janeiro', 'fevereiro', 'março', 'abril', 'maio', 'junho', 
+                           'julho', 'agosto', 'setembro', 'outubro', 'novembro', 'dezembro'];
+        const mesesExibicao = ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho',
+                              'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'];
+
+        function obterMesAtual() {
+            return mesesNomes[new Date().getMonth()];
+        }
+
+        function contarPremiacoes() {
+    const contagem = {};
+
+    if (!dados.historicoFuncionariosMes) return contagem;
+
+    Object.values(dados.historicoFuncionariosMes).forEach(mes => {
+        const nome = (mes.nome || '').trim();
+
+        // Ignora nomes vazios
+        if (!nome) return;
+
+        contagem[nome] = (contagem[nome] || 0) + 1;
+    });
+
+    return contagem;
+}
+
+        function carregarHistorico() {
+            const contagem = contarPremiacoes();
+            const historicoBody = document.getElementById('historico-body');
+            historicoBody.innerHTML = '';
+
+            if (!dados.historicoFuncionariosMes) return;
+
+            Object.entries(dados.historicoFuncionariosMes).forEach(([mesKey, dadosMes]) => {
+                const mesIndex = mesesNomes.indexOf(mesKey);
+                const mesExibir = mesesExibicao[mesIndex] || mesKey;
+                
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td><span class="badge-mes">${mesExibir}</span></td>
+                    <td class="nome">${dadosMes.nome}</td>
+                    <td><span class="badge-count">${contagem[dadosMes.nome] || 1}x</span></td>
+                `;
+                if((dadosMes.nome || '').trim() !== '') historicoBody.appendChild(row);
+            });
+
+            // Atualizar mês atual
+            const mesAtual = obterMesAtual();
+            const mesIndex = mesesNomes.indexOf(mesAtual);
+            document.getElementById('mes-atual').textContent = mesesExibicao[mesIndex] || mesAtual;
+            document.getElementById('total-premiacoes').textContent = Object.values(contagem).length;
+        }
+
+        function carregarCandidatos() {
+            const contagem = contarPremiacoes();
+            const candidatos = Object.entries(contagem)
+    .filter(([nome]) => nome.trim() !== '')
+    .map(([nome, count]) => ({ nome, count }))
+    .sort((a, b) => b.count - a.count)
+    .slice(0, 5);
+
+            const totalPremiacoes = Object.values(contagem).reduce((a, b) => a + b, 0);
+            const candidatosGrid = document.getElementById('candidatos-grid');
+            candidatosGrid.innerHTML = '';
+
+            if (candidatos.length === 0) {
+                candidatosGrid.innerHTML = '<div style="grid-column: 1/-1; text-align: center; padding: 40px;"><p>Nenhum candidato disponível</p></div>';
+                return;
+            }
+
+            candidatos.forEach((candidato, index) => {
+                const medalhas = [
+                    'assets/images/LOGOBK_GOLD.png',
+                    'assets/images/LOGOBK_SILVER.png',
+                    'assets/images/LOGOBK_BRONZE.png',
+                    'assets/images/LOGO BK.png',
+                    'assets/images/LOGO BK.png'
+                ];
+                
+                const medalhaSrc = medalhas[index] || 'assets/images/LOGO BK.png';
+                const posicao = `<img src="${medalhaSrc}" style="width: 60px; height: 60px; object-fit: contain;">`;
+                const probabilidade = totalPremiacoes  > 0 && candidato.nome != ""? Math.round((candidato.count / totalPremiacoes) * 100) : 0;
+
+                const card = document.createElement('div');
+                card.className = 'candidato-card';
+                card.innerHTML = `
+                    <div class="candidato-posicao">${posicao}</div>
+                    <div class="candidato-nome">${candidato.nome}</div>
+                    <div class="candidato-premiacoes">${candidato.count}</div>
+                    <div class="candidato-label">Premiações</div>
+                    <div class="prob-bar">
+                        <div class="prob-fill" style="width: ${probabilidade}%"></div>
+                    </div>
+                    <div class="prob-valor">${probabilidade}%</div>
+                `;
+                candidatosGrid.appendChild(card);
+            });
+        }
+
+        // Inicializar
+        function inicializar() {
+            if (!carregarDadosFuncionarioMes()) {
+                document.getElementById('historico-body').innerHTML = '<tr><td colspan="3" style="text-align: center; color: red; padding: 20px;">Erro ao carregar dados</td></tr>';
+                return;
+            }
+            carregarHistorico();
+            carregarCandidatos();
+        }
+
+        window.addEventListener('load', () => {
+            inicializar();
+        });
+
+        // Também ouvir o evento de dados prontos (caso o Firebase termine depois do load)
+        window.addEventListener('dadosEscalaProntos', () => {
+            inicializar();
+        });
+    </script>
+</body>
+</html>

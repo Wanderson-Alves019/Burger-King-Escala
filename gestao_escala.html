@@ -1,0 +1,486 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Portal de Gestão BK - Burger King</title>
+    <link rel="icon" href="assets/images/LOGO BK.png" type="image/png">
+    <script src="auth-manager.js"></script>
+    <script>
+        // Verificar autenticação antes de carregar a página
+        window.addEventListener('load', function() {
+            if (!window.authManager.estaAutenticado()) {
+                window.location.href = 'index.html';
+            }
+        });
+    </script>
+    <style>
+        :root {
+            --bk-red: #D62300;
+            --bk-beige: #F5EBDC;
+            --bk-orange: #FF8732;
+            --bk-brown: #502314;
+            --bk-yellow: #FFAA00;
+            --bk-white: #FFFFFF;
+            --bk-flame: #E31837;
+        }
+
+        * {
+            box-sizing: border-box;
+            transition: all 0.3s ease;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Open Sans', sans-serif;
+            background-color: var(--bk-beige);
+            color: var(--bk-brown);
+            overflow-x: hidden;
+        }
+
+        /* Header com Barra de Controle */
+        header {
+            background-color: var(--bk-beige);
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            position: relative;
+        }
+
+        /* Barra Superior com Loja e Logout */
+        .header-top {
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding: 0 20px;
+        }
+
+        .loja-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            background: rgb(255, 255, 255);
+            padding: 10px 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            border-left: 10px solid var(--bk-orange);
+        }
+
+        .loja-icone-header {
+            width: 120px;
+            height: 120px;
+            object-fit: contain;
+            filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
+           background-color: rgb(246, 246, 246);
+        }
+
+        .loja-detalhes {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            text-align: left;
+        }
+
+        .loja-label {
+            font-size: 50px;
+            color: var(--bk-orange);
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .loja-nome-header {
+            font-size: 30px;
+            font-weight: 700;
+            color: var(--bk-orange);
+            line-height: 1.2;
+        }
+
+        .btn-logout {
+            background: linear-gradient(135deg, var(--bk-yellow) 0%, var(--bk-orange) 100%);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-weight: 700;
+            font-size: 12px;
+            text-transform: uppercase;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 12px rgba(214, 35, 0, 0.3);
+            letter-spacing: 0.5px;
+        }
+
+        .btn-logout:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(214, 35, 0, 0.4);
+        }
+
+        .btn-logout:active {
+            transform: translateY(0);
+        }
+
+        .logo-container {
+            margin-bottom: 20px;
+        }
+
+        .logo-img {
+            max-height: 250px;
+            filter: drop-shadow(0 5px 15px rgba(80, 35, 20, 0.2));
+        }
+
+        /* Ajuste do nome da marca para fidelidade à logo atual */
+        .brand-name {
+            font-family: 'Luckiest Guy', cursive;
+            font-size: 4.5rem;
+            color: var(--bk-red);
+            margin: 0;
+            letter-spacing: -1px;
+            text-transform: uppercase;
+            line-height: 0.9;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .brand-name span {
+            display: block;
+        }
+
+        .brand-name .burger {
+            font-size: 3.5rem;
+            color: var(--bk-red);
+            margin-bottom: -10px;
+        }
+
+        .brand-name .king {
+            font-size: 5rem;
+            color: var(--bk-red);
+        }
+
+        /* Seção Hero */
+        .hero {
+            padding: 20px 20px 40px;
+            text-align: center;
+        }
+
+        .hero h2 {
+            font-family: 'Luckiest Guy', cursive;
+            font-size: 2rem;
+            color: var(--bk-brown);
+            opacity: 0.8;
+            margin: 0;
+        }
+
+        /* Grid de Gestão */
+        .main-container {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 0 20px 80px;
+        }
+
+        .grid-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 30px;
+        }
+
+        .card {
+            background-color: var(--bk-white);
+            border-radius: 25px;
+            padding: 40px 30px;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(80, 35, 20, 0.08);
+            border: 4px solid transparent;
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: space-between;
+            min-height: 220px;
+        }
+
+        .card:hover {
+            transform: translateY(-10px);
+            border-color: var(--bk-red);
+            box-shadow: 0 15px 45px rgba(214, 35, 0, 0.15);
+        }
+
+        .card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,135,50,0.05) 0%, transparent 70%);
+            z-index: 0;
+        }
+
+        .card h3 {
+            font-family: 'Luckiest Guy', cursive;
+            font-size: 2rem;
+            color: var(--bk-brown);
+            margin: 0 0 20px;
+            z-index: 1;
+            line-height: 1.2;
+        }
+
+        .card-btn {
+            background-color: var(--bk-red);
+            color: var(--bk-white);
+            text-decoration: none;
+            padding: 16px 45px;
+            border-radius: 50px;
+            font-weight: 700;
+            font-size: 1.1rem;
+            z-index: 1;
+            box-shadow: 0 6px 20px rgba(214, 35, 0, 0.35);
+            text-transform: uppercase;
+            border: 2px solid transparent;
+            display: inline-block;
+            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+            letter-spacing: 0.5px;
+        }
+
+        .card-btn:hover {
+            background-color: var(--bk-brown);
+            transform: translateY(-3px) scale(1.08);
+            box-shadow: 0 10px 30px rgba(80, 35, 20, 0.5);
+            border-color: var(--bk-orange);
+        }
+
+        .card-btn:active {
+            transform: translateY(-1px) scale(1.05);
+        }
+
+        /* Estilo especial para o botão de guia */
+        .card.guia {
+            border-color: var(--bk-orange);
+            background-color: #fff9f5;
+        }
+        
+        .card.guia .card-btn {
+            background-color: var(--bk-orange);
+        }
+        
+        .card.guia .card-btn:hover {
+            background-color: var(--bk-brown);
+            border-color: var(--bk-red);
+        }
+
+        /* Estilo especial para Meta Vendas */
+        .card.meta-vendas {
+            border-color: var(--bk-yellow);
+            background-color: #fffbf0;
+        }
+        
+        .card.meta-vendas .card-btn {
+            background-color: var(--bk-yellow);
+            color: var(--bk-brown);
+        }
+        
+        .card.meta-vendas .card-btn:hover {
+            background-color: var(--bk-orange);
+            color: white;
+            border-color: var(--bk-red);
+        }
+
+        /* Rodapé com Créditos */
+        footer {
+            background-color: var(--bk-brown);
+            color: var(--bk-beige);
+            padding: 60px 20px;
+            text-align: center;
+            border-top: 8px solid var(--bk-orange);
+        }
+
+        .footer-content {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .dev-info {
+            margin-top: 20px;
+            font-size: 0.95rem;
+            opacity: 0.9;
+            line-height: 1.6;
+        }
+
+        .dev-name {
+            color: var(--bk-yellow);
+            font-weight: 700;
+            font-size: 1.1rem;
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        .dev-email {
+            color: var(--bk-orange);
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .dev-email:hover {
+            text-decoration: underline;
+        }
+
+        @media (max-width: 768px) {
+            .header-top {
+                flex-direction: column;
+                gap: 15px;
+                padding: 0 10px;
+            }
+
+            .loja-info {
+                width: 100%;
+                justify-content: center;
+            }
+
+            .btn-logout {
+                width: 100%;
+            }
+
+            .brand-name .burger { font-size: 2.5rem; }
+            .brand-name .king { font-size: 3.5rem; }
+            .grid-container { grid-template-columns: 1fr; }
+            .card { min-height: 180px; padding: 30px 20px; }
+            .logo-img { max-height: 200px; }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <!-- Barra Superior com Loja e Logout -->
+        <div class="header-top">
+            <div class="loja-info">
+                <img id="lojaIconoHeader" src="" alt="Loja" class="loja-icone-header" onerror="this.src='assets/images/LOGO BK.png'">
+                <div class="loja-detalhes">
+                    <span class="loja-nome-header" id="lojaNomeHeader">Carregando...</span>
+                </div>
+            </div>
+            <button class="btn-logout" onclick="fazerLogout()">Sair</button>
+        </div>
+
+        <!-- Logo e Marca -->
+        <div class="logo-container">
+            <img src="assets/images/LOGO BK.png" alt="Burger King Logo" class="logo-img" onerror="this.src='https://upload.wikimedia.org/wikipedia/commons/thumb/c/cc/Burger_King_2020.svg/1200px-Burger_King_2020.svg.png'">
+        </div>
+        <h1 class="brand-name">
+            <span class="burger">BURGER</span>
+            <span class="king">KING</span>
+        </h1>
+    </header>
+
+    <main class="main-container">
+        <section class="hero">
+            <h2>PAINEL DE CONTROLE E GESTÃO</h2>
+        </section>
+
+        <section class="grid-container">
+            <div class="card">
+                <h3>Análise metas</h3>
+                <a href="analise_metas.html" class="card-btn">Abrir Relatório</a>
+            </div>
+            <div class="card">
+                <h3>Análise metas 2</h3>
+                <a href="analise_metas2.html" class="card-btn">Abrir Relatório</a>
+            </div>
+            <div class="card">
+                <h3>Relatório folgas</h3>
+                <a href="relatorio_folgas_v2.html" class="card-btn">Abrir Relatório</a>
+            </div>
+            <div class="card">
+                <h3>Relatório turnos</h3>
+                <a href="relatorio_turnos.html" class="card-btn">Abrir Relatório</a>
+            </div>
+            <div class="card">
+                <h3>Escala funcionários</h3>
+                <a href="escala_bk_v12.html" class="card-btn">Abrir Escala</a>
+            </div>
+            <div class="card">
+                <h3>Escala liderança</h3>
+                <a href="escala_lideranca_dinamica.html" class="card-btn">Abrir Escala</a>
+            </div>
+            <div class="card">
+                <h3>Guia Posicionamento</h3>
+                <a href="guia_posicionamento.html" class="card-btn">Abrir Guia</a>
+            </div>
+            <div class="card meta-vendas">
+                <h3>Meta de Vendas</h3>
+                <a href="meta_vendas.html" class="card-btn">Calcular Meta</a>
+            </div>
+            <div class="card">
+                <h3>Sugestão de Escala</h3>
+                <a href="sugestao_escala.html" class="card-btn">Ver Sugestões</a>
+            </div>
+            <div class="card" style="border-color: #002D72; background-color: #f0f4f8;">
+                <h3>Código de Conduta</h3>
+                <a href="codigo_conduta.html" class="card-btn" style="background-color: #002D72;">Ver Código</a>
+            </div>
+            <div class="card" style="border-color: var(--bk-brown); background-color: #f5f5f5;">
+                <h3>Mapa da Câmara</h3>
+                <a href="mapa_camara.html" class="card-btn" style="background-color: var(--bk-brown);">Abrir Mapa</a>
+            </div>
+            <div class="card" style="border-color: var(--bk-gold); background-color: #fffbf0;">
+                <h3>Funcionário do Mês</h3>
+                <a href="funcionario_mes.html" class="card-btn" style="background-color: #FFD700; color: var(--bk-brown);">Ver Destaque</a>
+            </div>
+            <div class="card" style="border-color: #FF69B4; background-color: #fff0f5;">
+                <h3>Aniversariantes</h3>
+                <a href="aniversariantes.html" class="card-btn" style="background-color: #FF69B4;">Ver Aniversários</a>
+            </div>
+            <div class="card" style="border-color: var(--bk-green); background-color: #f0fdf4;">
+                <h3>Editor</h3>
+                <a href="editor_escalas.html" class="card-btn">Abrir Editor</a>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="footer-content">
+            <p>&copy; 2026 Burger King Corporation. Todos os direitos reservados.</p>
+            <div class="dev-info">
+                <span>Desenvolvido por:</span>
+                <span class="dev-name">Wanderson Alves Pereira</span>
+                <a href="mailto:wa758833@gmail.com" class="dev-email">wa758833@gmail.com</a>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Carregar informações da loja ao abrir a página
+        window.addEventListener('load', function() {
+            const loja = window.authManager.obterLojaAtual();
+            
+            if (loja) {
+                document.getElementById('lojaIconoHeader').src = loja.icone;
+                document.getElementById('lojaNomeHeader').textContent = loja.nome;
+            }
+        });
+
+        // Função para fazer logout
+        function fazerLogout() {
+            if (confirm('Tem certeza que deseja sair do sistema?')) {
+                const resultado = window.authManager.logout();
+                
+                if (resultado.sucesso) {
+                    // Redirecionar para login
+                    window.location.href = 'index.html';
+                } else {
+                    alert('Erro ao fazer logout: ' + resultado.mensagem);
+                }
+            }
+        }
+    </script>
+
+</body>
+</html>

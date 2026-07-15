@@ -1,0 +1,1120 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Editor de Escalas - Burger King</title>
+   <link rel="icon" href="assets/images/LOGO BK.png" type="image/png">
+    <style>
+        :root {
+            --bk-red: #D62300;
+            --bk-beige: #F5EBDC;
+            --bk-orange: #FF8732;
+            --bk-brown: #502314;
+            --bk-yellow: #FFAA00;
+            --bk-white: #FFFFFF;
+            --bk-green: #007A33;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Open Sans', sans-serif;
+            background-color: var(--bk-beige);
+            color: var(--bk-brown);
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        /* Header */
+        .header {
+            background-color: var(--bk-brown);
+            color: var(--bk-white);
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 4px 15px rgba(80, 35, 20, 0.2);
+        }
+
+        .header-title {
+            font-family: 'Luckiest Guy', cursive;
+            font-size: 1.8rem;
+            color: var(--bk-orange);
+            text-transform: uppercase;
+        }
+
+        .btn-voltar {
+            background-color: var(--bk-orange);
+            color: var(--bk-white);
+            text-decoration: none;
+            padding: 10px 20px;
+            border-radius: 25px;
+            font-weight: 700;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+            border: none;
+            cursor: pointer;
+        }
+
+        .btn-voltar:hover {
+            background-color: var(--bk-red);
+            transform: scale(1.05);
+        }
+
+        /* Tabs */
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #ddd;
+            overflow-x: auto;
+        }
+
+        .tab-btn {
+            background-color: transparent;
+            border: none;
+            padding: 12px 20px;
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--bk-brown);
+            cursor: pointer;
+            border-bottom: 3px solid transparent;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            white-space: nowrap;
+        }
+
+        .tab-btn:hover {
+            color: var(--bk-orange);
+        }
+
+        .tab-btn.active {
+            color: var(--bk-orange);
+            border-bottom-color: var(--bk-orange);
+        }
+
+        .tab-content {
+            display: none;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 5px;
+            color: var(--bk-brown);
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-family: 'Open Sans', sans-serif;
+            font-size: 0.95rem;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: var(--bk-orange);
+            box-shadow: 0 0 5px rgba(255, 135, 50, 0.3);
+        }
+
+        /* Grid de Colaboradores */
+        .colaboradores-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .colaborador-card {
+            background-color: var(--bk-white);
+            border: 2px solid #eee;
+            border-radius: 10px;
+            padding: 15px;
+            transition: all 0.3s ease;
+        }
+
+        .colaborador-card:hover {
+            border-color: var(--bk-orange);
+            box-shadow: 0 4px 15px rgba(255, 135, 50, 0.2);
+        }
+
+        .colaborador-card h4 {
+            color: var(--bk-brown);
+            margin-bottom: 10px;
+            font-size: 1rem;
+        }
+
+        .colaborador-info {
+            font-size: 0.85rem;
+            color: #666;
+            margin-bottom: 10px;
+            line-height: 1.6;
+        }
+
+        .colaborador-info strong {
+            color: var(--bk-brown);
+        }
+
+        .colaborador-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .btn-edit, .btn-delete, .btn-add {
+            flex: 1;
+            padding: 8px 12px;
+            border: none;
+            border-radius: 5px;
+            font-weight: 600;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+        }
+
+        .btn-edit {
+            background-color: var(--bk-orange);
+            color: var(--bk-white);
+        }
+
+        .btn-edit:hover {
+            background-color: #ff7000;
+            transform: scale(1.05);
+        }
+
+        .btn-delete {
+            background-color: var(--bk-red);
+            color: var(--bk-white);
+        }
+
+        .btn-delete:hover {
+            background-color: #a01a00;
+            transform: scale(1.05);
+        }
+
+        .btn-add {
+            background-color: var(--bk-green);
+            color: var(--bk-white);
+            width: 100%;
+        }
+
+        .btn-add:hover {
+            background-color: #005a26;
+            transform: scale(1.02);
+        }
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            animation: fadeIn 0.3s ease;
+            overflow-y: auto;
+        }
+
+        .modal.active {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-content {
+            background-color: var(--bk-white);
+            padding: 30px;
+            border-radius: 10px;
+            max-width: 500px;
+            width: 90%;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+            margin: 20px 0;
+        }
+
+        .modal-header {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--bk-brown);
+            margin-bottom: 20px;
+            border-bottom: 2px solid var(--bk-orange);
+            padding-bottom: 10px;
+        }
+
+        .modal-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .btn-save {
+            flex: 1;
+            background-color: var(--bk-green);
+            color: var(--bk-white);
+            padding: 12px;
+            border: none;
+            border-radius: 5px;
+            font-weight: 700;
+            cursor: pointer;
+            text-transform: uppercase;
+            transition: all 0.3s ease;
+        }
+
+        .btn-save:hover {
+            background-color: #005a26;
+            transform: scale(1.02);
+        }
+
+        .btn-cancel {
+            flex: 1;
+            background-color: #ccc;
+            color: var(--bk-brown);
+            padding: 12px;
+            border: none;
+            border-radius: 5px;
+            font-weight: 700;
+            cursor: pointer;
+            text-transform: uppercase;
+            transition: all 0.3s ease;
+        }
+
+        .btn-cancel:hover {
+            background-color: #aaa;
+        }
+
+        /* Botões de Ação Gerais */
+        .action-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+
+        .btn-primary {
+            background-color: var(--bk-green);
+            color: var(--bk-white);
+            padding: 12px 24px;
+            border: none;
+            border-radius: 25px;
+            font-weight: 700;
+            font-size: 1rem;
+            cursor: pointer;
+            text-transform: uppercase;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0, 122, 51, 0.3);
+        }
+
+        .btn-primary:hover {
+            background-color: #005a26;
+            transform: scale(1.05);
+        }
+
+        /* Mensagens */
+        .message {
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 15px;
+            display: none;
+            animation: slideDown 0.3s ease;
+        }
+
+        .message.active {
+            display: block;
+        }
+
+        .message.success {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .message.error {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Metas Table */
+        .metas-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+        }
+
+        .metas-table th, .metas-table td {
+            padding: 12px;
+            text-align: center;
+            border: 1px solid #eee;
+        }
+
+        .metas-table th {
+            background-color: var(--bk-brown);
+            color: white;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+        }
+
+        .metas-table input {
+            width: 60px;
+            text-align: center;
+            padding: 5px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+
+        /* Historico Funcionario Table */
+        .historico-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+        }
+
+        .historico-table th, .historico-table td {
+            padding: 12px;
+            text-align: left;
+            border: 1px solid #eee;
+        }
+
+        .historico-table th {
+            background-color: var(--bk-brown);
+            color: white;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+        }
+
+        /* Responsivo */
+        @media (max-width: 768px) {
+            .header {
+                flex-direction: column;
+                gap: 15px;
+                text-align: center;
+            }
+
+            .tabs {
+                flex-wrap: wrap;
+            }
+
+            .colaboradores-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .modal-content {
+                max-width: 90%;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <div class="header">
+            <h1 class="header-title">📋 Editor de Escalas</h1>
+            <a href="gestao_escala.html" class="btn-voltar">← Voltar ao Portal</a>
+        </div>
+
+        <div id="message" class="message"></div>
+        <div id="syncStatus" style="display:none; margin-bottom: 15px; padding: 10px 15px; border-radius: 8px; font-size: 0.9rem; font-weight: 600;"></div>
+
+        <!-- Tabs -->
+        <div class="tabs">
+            <button class="tab-btn active" onclick="switchTab('colaboradores')">👥 Colaboradores</button>
+            <button class="tab-btn" onclick="switchTab('lideranca')">👔 Liderança</button>
+            <button class="tab-btn" onclick="switchTab('metas')">🎯 Metas por Turno</button>
+            <button class="tab-btn" onclick="switchTab('funcionario')">🏆 Funcionário do Mês</button>
+        </div>
+
+        <!-- TAB 1: Colaboradores -->
+        <div id="colaboradores" class="tab-content active">
+            <div style="background-color: var(--bk-white); padding: 25px; border-radius: 10px; margin-bottom: 20px; box-shadow: 0 4px 15px rgba(80, 35, 20, 0.08);">
+                <h3 style="font-size: 1.3rem; color: var(--bk-brown); margin-bottom: 15px; border-bottom: 2px solid var(--bk-orange); padding-bottom: 10px;">Gerenciar Colaboradores</h3>
+                <button class="btn-add" onclick="abrirModalAdicionar()">➕ Adicionar Novo Colaborador</button>
+                <div id="colaboradoresList" class="colaboradores-grid"></div>
+            </div>
+        </div>
+
+        <!-- TAB 2: Liderança -->
+        <div id="lideranca" class="tab-content">
+            <div style="background-color: var(--bk-white); padding: 25px; border-radius: 10px; margin-bottom: 20px; box-shadow: 0 4px 15px rgba(80, 35, 20, 0.08);">
+                <h3 style="font-size: 1.3rem; color: var(--bk-brown); margin-bottom: 15px; border-bottom: 2px solid var(--bk-orange); padding-bottom: 10px;">Gerenciar Escala de Liderança</h3>
+                <button class="btn-add" onclick="abrirModalAdicionarLideranca()">➕ Adicionar Novo Colaborador na Liderança</button>
+                <div id="liderancaList" class="colaboradores-grid"></div>
+            </div>
+        </div>
+
+        <!-- TAB 3: Metas -->
+        <div id="metas" class="tab-content">
+            <div style="background-color: var(--bk-white); padding: 25px; border-radius: 10px; margin-bottom: 20px; box-shadow: 0 4px 15px rgba(80, 35, 20, 0.08);">
+                <h3 style="font-size: 1.3rem; color: var(--bk-brown); margin-bottom: 15px; border-bottom: 2px solid var(--bk-orange); padding-bottom: 10px;">Editar Metas por Turno</h3>
+                <p style="font-size: 0.85rem; color: #666; margin-bottom: 15px;">Defina a quantidade ideal de funcionários para cada dia da semana.</p>
+                
+                <div style="overflow-x: auto;">
+                    <table class="metas-table">
+                        <thead>
+                            <tr>
+                                <th>Turno</th>
+                                <th>Dom</th>
+                                <th>Seg</th>
+                                <th>Ter</th>
+                                <th>Qua</th>
+                                <th>Qui</th>
+                                <th>Sex</th>
+                                <th>Sáb</th>
+                            </tr>
+                        </thead>
+                        <tbody id="metasTableBody">
+                            <!-- Preenchido via JS -->
+                        </tbody>
+                    </table>
+                </div>
+                <div style="margin-top: 20px; display: flex; justify-content: flex-end;">
+                    <button class="btn-primary" onclick="salvarMetas()">💾 Salvar Metas</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- TAB 4: Funcionário do Mês -->
+        <div id="funcionario" class="tab-content">
+            <div style="background-color: var(--bk-white); padding: 25px; border-radius: 10px; margin-bottom: 20px; box-shadow: 0 4px 15px rgba(80, 35, 20, 0.08);">
+                <h3 style="font-size: 1.3rem; color: var(--bk-brown); margin-bottom: 15px; border-bottom: 2px solid var(--bk-orange); padding-bottom: 10px;">Histórico de Funcionário do Mês</h3>
+                <p style="font-size: 0.85rem; color: #666; margin-bottom: 15px;">Selecione o funcionário destaque para cada mês do ano.</p>
+                
+                <div style="overflow-x: auto;">
+                    <table class="historico-table">
+                        <thead>
+                            <tr>
+                                <th>Mês</th>
+                                <th>Funcionário</th>
+                                <th>Motivo / Destaque</th>
+                            </tr>
+                        </thead>
+                        <tbody id="historicoTableBody">
+                            <!-- Preenchido via JS -->
+                        </tbody>
+                    </table>
+                </div>
+                <div style="margin-top: 20px; display: flex; justify-content: flex-end;">
+                    <button class="btn-primary" onclick="salvarHistoricoFuncionario()">💾 Salvar Histórico</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modais (Colaborador e Liderança mantidos como no original) -->
+    <!-- Modal Colaborador -->
+    <div id="modalColaborador" class="modal">
+        <div class="modal-content">
+            <div class="modal-header" id="modalTitle">Adicionar Colaborador</div>
+            <div class="form-group"><label>Nome:</label><input type="text" id="modalNome"></div>
+            <div class="form-group">
+                <label>Turno:</label>
+                <select id="modalTurno">
+                    <option value="08:00">Manhã (08:00)</option>
+                    <option value="15:00">Tarde (15:00)</option>
+                    <option value="22:00">Noite (22:00)</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Folga Fixa:</label>
+                <select id="modalFolgaFixa">
+                    <option value="segunda">Segunda</option>
+                    <option value="terça">Terça</option>
+                    <option value="quarta">Quarta</option>
+                    <option value="quinta">Quinta</option>
+                    <option value="sexta">Sexta</option>
+                    <option value="sábado">Sábado</option>
+                    <option value="domingo">Domingo</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Domingos de Folga:</label>
+                <div id="domingosMarcacao" style="display: flex; flex-wrap: wrap; gap: 8px;"></div>
+            </div>
+            <div class="form-group"><label>Descanso Extra:</label><input type="text" id="modalDescansoExtra" placeholder="Ex: 5, 12" onchange="validarCampoData(this)"></div>
+            <div class="form-group"><label>Férias:</label><input type="text" id="modalFerias" placeholder="Ex: 1, 30"></div>
+            <div class="form-group"><label>Aniversário Mês:</label><select id="modalAniversarioMes" onchange="atualizarLimiteDia('modalAniversarioMes', 'modalAniversarioDia')"><option value="">-- Selecionar --</option><option value="janeiro">Janeiro</option><option value="fevereiro">Fevereiro</option><option value="março">Março</option><option value="abril">Abril</option><option value="maio">Maio</option><option value="junho">Junho</option><option value="julho">Julho</option><option value="agosto">Agosto</option><option value="setembro">Setembro</option><option value="outubro">Outubro</option><option value="novembro">Novembro</option><option value="dezembro">Dezembro</option></select></div>
+            <div class="form-group"><label>Aniversário Dia:</label><input type="number" id="modalAniversarioDia" min="1" max="31" placeholder="1-31"></div>
+            <div class="form-group" style="display: flex; gap: 20px;">
+                <label><input type="checkbox" id="modalJovemAprendiz"> Jovem Aprendiz</label>
+                <label><input type="checkbox" id="modalIntermediario"> Intermediário</label>
+            </div>
+            <div class="modal-actions">
+                <button class="btn-save" onclick="salvarColaborador()">✓ Salvar</button>
+                <button class="btn-cancel" onclick="fecharModal()">✕ Cancelar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Liderança -->
+    <div id="modalLideranca" class="modal">
+        <div class="modal-content">
+            <div class="modal-header" id="modalLidTitle">Editar Liderança</div>
+            <div class="form-group"><label>Nome:</label><input type="text" id="modalLidNome"></div>
+            <div class="form-group">
+                <label>Cargo:</label>
+                <select id="modalLidCargo">
+                    <option value="Gerente de Negócios">Gerente de Negócios</option>
+                    <option value="Coordenador(a) de Turno">Coordenador(a) de Turno</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Turno:</label>
+                <select id="modalLidTurno">
+                    <option value="08:00">Manhã (08:00)</option>
+                    <option value="15:00">Tarde (15:00)</option>
+                    <option value="22:00">Noite (22:00)</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Folga Fixa:</label>
+                <select id="modalLidFolga">
+                    <option value="segunda">Segunda</option>
+                    <option value="terça">Terça</option>
+                    <option value="quarta">Quarta</option>
+                    <option value="quinta">Quinta</option>
+                    <option value="sexta">Sexta</option>
+                    <option value="sábado">Sábado</option>
+                    <option value="domingo">Domingo</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Domingos de Folga:</label>
+                <div id="domingosLidMarcacao" style="display: flex; flex-wrap: wrap; gap: 8px;"></div>
+            </div>
+            <div class="form-group"><label>Folgas Extras:</label><input type="text" id="modalLidFolgasExtras" placeholder="Ex: 5, 12" onchange="validarCampoData(this)"></div>
+            <div class="form-group"><label>Férias:</label><input type="text" id="modalLidFerias" placeholder="Ex: 1, 30"></div>
+            <div class="form-group"><label>Aniversário Mês:</label><select id="modalLidAniversarioMes" onchange="atualizarLimiteDia('modalLidAniversarioMes', 'modalLidAniversarioDia')"><option value="">-- Selecionar --</option><option value="janeiro">Janeiro</option><option value="fevereiro">Fevereiro</option><option value="março">Março</option><option value="abril">Abril</option><option value="maio">Maio</option><option value="junho">Junho</option><option value="julho">Julho</option><option value="agosto">Agosto</option><option value="setembro">Setembro</option><option value="outubro">Outubro</option><option value="novembro">Novembro</option><option value="dezembro">Dezembro</option></select></div>
+            <div class="form-group"><label>Aniversário Dia:</label><input type="number" id="modalLidAniversarioDia" min="1" max="31" placeholder="1-31"></div>
+            <div class="modal-actions">
+                <button class="btn-save" onclick="salvarLideranca()">✓ Salvar</button>
+                <button class="btn-cancel" onclick="fecharModalLideranca()">✕ Cancelar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Firebase SDK -->
+    <script type="module" src="firebase-config.js"></script>
+    <script src="auth-manager.js"></script>
+    <script type="module" src="colaboradores.js" defer></script>
+
+    <script>
+        let dados = {};
+        let colaboradorEditando = null;
+        let liderancaEditando = null;
+        let adicionandoLideranca = false;
+        const mesesNomes = ["janeiro", "fevereiro", "março", "abril", "maio", "junho", "julho", "agosto", "setembro", "outubro", "novembro", "dezembro"];
+        const diasSemana = ["domingo", "segunda", "terça", "quarta", "quinta", "sexta", "sábado"];
+
+        // Helper para obter o último dia do mês baseado no nome e ano atual
+        function obterUltimoDiaMes(nomeMes) {
+            if (!nomeMes) return 31;
+            const mapaMeses = {
+                "janeiro": 0, "fevereiro": 1, "março": 2, "abril": 3, "maio": 4, "junho": 5,
+                "julho": 6, "agosto": 7, "setembro": 8, "outubro": 9, "novembro": 10, "dezembro": 11
+            };
+            const mesNum = mapaMeses[nomeMes.toLowerCase()];
+            if (mesNum === undefined) return 31;
+            const anoAtual = new Date().getFullYear();
+            return new Date(anoAtual, mesNum + 1, 0).getDate();
+        }
+
+        function atualizarLimiteDia(idMes, idDia) {
+            const mes = document.getElementById(idMes).value;
+            const inputDia = document.getElementById(idDia);
+            const ultimoDia = obterUltimoDiaMes(mes);
+            
+            inputDia.max = ultimoDia;
+            inputDia.placeholder = `1-${ultimoDia}`;
+            
+            if (parseInt(inputDia.value) > ultimoDia) {
+                inputDia.value = ultimoDia;
+            }
+        }
+
+        function carregarDados() {
+            if (window.dadosEscala && window.dadosEscala.dadosCarregados) {
+                dados = JSON.parse(JSON.stringify(window.dadosEscala));
+            } else {
+                const dadosSalvos = localStorage.getItem('escalasData');
+                if (dadosSalvos) dados = JSON.parse(dadosSalvos);
+            }
+            const origem = window.dadosEscala ? window.dadosEscala.origemDados : 'local';
+            const nomeLoja = window.authManager?.obterNomeLoja?.() || 'Geral';
+            mostrarSyncStatus(`Loja: ${nomeLoja} | Dados: ${origem.toUpperCase()}`, 'info');
+            atualizarInterface();
+        }
+
+        function atualizarInterface() {
+            renderizarColaboradores();
+            renderizarLideranca();
+            renderizarMetas();
+            renderizarHistoricoFuncionario();
+        }
+
+        function renderizarColaboradores() {
+            const lista = document.getElementById('colaboradoresList');
+            lista.innerHTML = '';
+            (dados.colaboradores || []).forEach((colab, index) => {
+                const card = document.createElement('div');
+                card.className = 'colaborador-card';
+                card.innerHTML = `
+                    <h4>${colab.nome}</h4>
+		                    <div class="colaborador-info">
+		                        <strong>Turno:</strong> ${colab.turno} | <strong>Folga:</strong> ${colab.folgaFixa}<br>
+	                        <strong>Domingos:</strong> ${colab.domingos.join(', ') || 'Nenhum'}<br>
+	                        <strong>Férias:</strong> ${colab.ferias && colab.ferias.length > 0 ? colab.ferias.join(' a ') : 'Não'}
+	                    </div>
+                    <div class="colaborador-actions">
+                        <button class="btn-edit" onclick="editarColaborador(${index})">✏️ Editar</button>
+                        <button class="btn-delete" onclick="deletarColaborador(${index})">🗑️ Deletar</button>
+                    </div>
+                `;
+                lista.appendChild(card);
+            });
+        }
+
+        function renderizarLideranca() {
+            const lista = document.getElementById('liderancaList');
+            lista.innerHTML = '';
+            (dados.lideranca || []).forEach((lid, index) => {
+                const card = document.createElement('div');
+                card.className = 'colaborador-card';
+	                card.innerHTML = `
+	                    <h4>${lid.nome}</h4>
+	                    <div class="colaborador-info">
+	                        <strong>Cargo:</strong> ${lid.cargo}<br>
+	                        <strong>Turno:</strong> ${lid.turno} | <strong>Folga:</strong> ${lid.folga || lid.folgaFixa}<br>
+	                        <strong>Férias:</strong> ${lid.ferias && lid.ferias.length > 0 ? lid.ferias.join(' a ') : 'Não'}
+	                    </div>
+	                    <div class="colaborador-actions">
+                        <button class="btn-edit" onclick="editarLideranca(${index})">✏️ Editar</button>
+                        <button class="btn-delete" onclick="deletarLideranca(${index})">🗑️ Deletar</button>
+                    </div>
+                `;
+                lista.appendChild(card);
+            });
+        }
+
+        function renderizarMetas() {
+            const tbody = document.getElementById('metasTableBody');
+            tbody.innerHTML = '';
+            const turnos = [{ key: 'metasLunch', label: 'Almoço' }, { key: 'metasDinner', label: 'Janta' }];
+            turnos.forEach(turno => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `<td><strong>${turno.label}</strong></td>`;
+                diasSemana.forEach(dia => {
+                    const val = dados[turno.key][dia] || 0;
+                    tr.innerHTML += `<td><input type="number" data-turno="${turno.key}" data-dia="${dia}" value="${val}" min="0" max="100" placeholder="0-100"></td>`;
+                });
+                tbody.appendChild(tr);
+            });
+        }
+
+        function renderizarHistoricoFuncionario() {
+            const tbody = document.getElementById('historicoTableBody');
+            tbody.innerHTML = '';
+            mesesNomes.forEach(mes => {
+                const historico = dados.historicoFuncionariosMes[mes] || { nome: '', motivo: '' };
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td><strong style="text-transform: capitalize;">${mes}</strong></td>
+                    <td><input type="text" data-mes="${mes}" data-field="nome" value="${historico.nome}" placeholder="Nome do funcionário"></td>
+                    <td><input type="text" data-mes="${mes}" data-field="motivo" value="${historico.motivo}" placeholder="Motivo do destaque"></td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        async function salvarMetas() {
+            let temErro = false;
+            document.querySelectorAll('#metas input').forEach(input => {
+                const { turno, dia } = input.dataset;
+                let valor = parseInt(input.value) || 0;
+                
+                // Validar intervalo 0-100
+                if (valor < 0 || valor > 100) {
+                    temErro = true;
+                    input.style.borderColor = 'var(--bk-red)';
+                    input.style.backgroundColor = '#ffe6e6';
+                } else {
+                    input.style.borderColor = '#ddd';
+                    input.style.backgroundColor = 'white';
+                    dados[turno][dia] = valor;
+                }
+            });
+            
+            if (temErro) {
+                mostrarMensagem('Erro: Metas devem estar entre 0 e 100!', 'error');
+                return;
+            }
+            
+            await salvarDados();
+            mostrarMensagem('Metas salvas com sucesso!', 'success');
+        }
+
+        async function salvarHistoricoFuncionario() {
+            document.querySelectorAll('#funcionario input').forEach(input => {
+                const { mes, field } = input.dataset;
+                if (!dados.historicoFuncionariosMes[mes]) dados.historicoFuncionariosMes[mes] = { nome: '', motivo: '' };
+                dados.historicoFuncionariosMes[mes][field] = input.value;
+            });
+            await salvarDados();
+            mostrarMensagem('Histórico salvo com sucesso!', 'success');
+        }
+
+        async function salvarDados() {
+            localStorage.setItem('escalasData', JSON.stringify(dados));
+            await salvarNoFirebase();
+            sincronizarComColaboradoresJS();
+        }
+
+        function sincronizarComColaboradoresJS() {
+            if (window.dadosEscala) {
+                Object.assign(window.dadosEscala, dados);
+                window.metasLunch = dados.metasLunch;
+                window.metasDinner = dados.metasDinner;
+                window.historicoFuncionariosMes = dados.historicoFuncionariosMes;
+            }
+        }
+
+        async function salvarNoFirebase() {
+            if (!window.firebaseDb) return;
+            try {
+                const idLoja = window.authManager?.obterIdLoja?.();
+                const nomeMes = mesesNomes[new Date().getMonth()];
+                const docId = `${nomeMes}_${new Date().getFullYear()}`;
+                const colecao = idLoja ? `escalas_loja_${idLoja}` : 'escalas_geral';
+                const { doc, setDoc, getFirestore, Timestamp } = await import('https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore.js');
+                await setDoc(doc(getFirestore(), colecao, docId), { ...dados, ultimaAtualizacao: Timestamp.now() });
+                mostrarMensagem('Sincronizado com Firebase!', 'success');
+            } catch (e) { console.error(e); }
+        }
+
+        // Funções de Modal e Auxiliares (Simplificadas para brevidade, mantendo lógica original)
+        function switchTab(tab) {
+            document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            document.getElementById(tab).classList.add('active');
+            event.target.classList.add('active');
+        }
+
+        function mostrarMensagem(texto, tipo) {
+            const msg = document.getElementById('message');
+            msg.textContent = texto; msg.className = `message active ${tipo}`;
+            setTimeout(() => msg.classList.remove('active'), 3000);
+        }
+
+        function mostrarSyncStatus(texto, tipo) {
+            const status = document.getElementById('syncStatus');
+            status.textContent = texto; status.style.display = 'block';
+            status.style.backgroundColor = tipo === 'success' ? '#d4edda' : '#d1ecf1';
+        }
+        
+        // Funcao de validacao em tempo real para campos de data
+        function validarCampoData(input) {
+            const valor = input.value.trim();
+            if (!valor) {
+                input.style.borderColor = '#ddd';
+                input.style.backgroundColor = 'white';
+                return true;
+            }
+            
+            const dias = valor.split(',').map(s => parseInt(s.trim())).filter(n => !isNaN(n));
+            const valoresInvalidos = dias.some(d => d < 1 || d > 31);
+            
+            if (valoresInvalidos) {
+                input.style.borderColor = 'var(--bk-red)';
+                input.style.backgroundColor = '#ffe6e6';
+                return false;
+            } else {
+                input.style.borderColor = '#ddd';
+                input.style.backgroundColor = 'white';
+                return true;
+            }
+        }
+
+        function fecharModal() { document.getElementById('modalColaborador').classList.remove('active'); }
+        function fecharModalLideranca() { document.getElementById('modalLideranca').classList.remove('active'); }
+        function abrirModalAdicionar() { 
+            colaboradorEditando = null; 
+            document.getElementById('modalTitle').textContent = "Adicionar Colaborador";
+            document.getElementById('modalNome').value = "";
+            document.getElementById('modalTurno').value = "08:00";
+            document.getElementById('modalDescansoExtra').value = "";
+            document.getElementById('modalFerias').value = "";
+            document.getElementById('modalAniversarioMes').value = "";
+            document.getElementById('modalAniversarioDia').value = "";
+            atualizarLimiteDia('modalAniversarioMes', 'modalAniversarioDia');
+            document.getElementById('modalColaborador').classList.add('active'); 
+            renderizarDomingosCheckboxes('domingosMarcacao', []); 
+        }
+        
+        function abrirModalAdicionarLideranca() { 
+            liderancaEditando = null; 
+            adicionandoLideranca = true;
+            document.getElementById('modalLidTitle').textContent = "Adicionar Liderança";
+            document.getElementById('modalLidNome').value = "";
+            document.getElementById('modalLidTurno').value = "";
+            document.getElementById('modalLidFolgasExtras').value = "";
+            document.getElementById('modalLidFerias').value = "";
+            document.getElementById('modalLidAniversarioMes').value = "";
+            document.getElementById('modalLidAniversarioDia').value = "";
+            atualizarLimiteDia('modalLidAniversarioMes', 'modalLidAniversarioDia');
+            renderizarDomingosCheckboxes('domingosLidMarcacao', []);
+            document.getElementById('modalLideranca').classList.add('active'); 
+        }
+
+        function renderizarDomingosCheckboxes(containerId, selecionados = []) {
+            const container = document.getElementById(containerId);
+            if (!container) return;
+            container.innerHTML = '';
+
+            const hoje = new Date();
+            const ano = hoje.getFullYear();
+            const mes = hoje.getMonth();
+
+            const ultimoDiaMes = new Date(ano, mes + 1, 0).getDate();
+            const domingos = [];
+
+            for (let dia = 1; dia <= ultimoDiaMes; dia++) {
+                const data = new Date(ano, mes, dia);
+                if (data.getDay() === 0) {
+                    domingos.push(dia);
+                }
+            }
+
+            domingos.forEach(dia => {
+                const label = document.createElement('label');
+                label.style.marginRight = '10px';
+                const checked = selecionados.includes(dia) ? 'checked' : '';
+                label.innerHTML = `<input type="checkbox" value="${dia}" ${checked}> ${dia}`;
+                container.appendChild(label);
+            });
+        }
+
+        async function salvarColaborador() {
+    const mesAniversario = document.getElementById('modalAniversarioMes').value;
+    const diaAniversario = parseInt(document.getElementById('modalAniversarioDia').value);
+
+    let aniversario = null;
+
+    const ultimoDiaValido = obterUltimoDiaMes(mesAniversario);
+    if (
+        mesAniversario &&
+        !isNaN(diaAniversario) &&
+        diaAniversario >= 1 &&
+        diaAniversario <= ultimoDiaValido
+    ) {
+        aniversario = {
+            mes: mesAniversario,
+            dia: diaAniversario
+        };
+    } else if (mesAniversario && diaAniversario > ultimoDiaValido) {
+        mostrarMensagem(`Erro: O mês de ${mesAniversario} só possui ${ultimoDiaValido} dias!`, 'error');
+        return;
+    }
+
+    // Validar campos de data
+    const descansoExtraArray = document.getElementById('modalDescansoExtra').value
+        .split(',')
+        .map(s => parseInt(s.trim()))
+        .filter(n => !isNaN(n));
+    
+    const feriasArray = document.getElementById('modalFerias').value
+        .split(',')
+        .map(s => parseInt(s.trim()))
+        .filter(n => !isNaN(n));
+    
+    // Validar se todos os valores estão entre 1 e 31
+    const todosValores = [...descansoExtraArray, ...feriasArray];
+    const valoresInvalidos = todosValores.some(v => v < 1 || v > 31);
+    
+    if (valoresInvalidos) {
+        mostrarMensagem('Erro: Dias devem estar entre 1 e 31!', 'error');
+        return;
+    }
+    
+    const colab = {
+        nome: document.getElementById('modalNome').value,
+        turno: document.getElementById('modalTurno').value,
+        folgaFixa: document.getElementById('modalFolgaFixa').value,
+        domingos: Array.from(
+            document.querySelectorAll('#domingosMarcacao input:checked')
+        ).map(i => parseInt(i.value)),
+        descansoExtra: descansoExtraArray,
+        ferias: feriasArray,
+
+        ...(aniversario ? { aniversario } : {})
+    };
+
+    if (colaboradorEditando !== null) {
+        dados.colaboradores[colaboradorEditando] = colab;
+    } else {
+        dados.colaboradores.push(colab);
+    }
+
+    await salvarDados();
+    fecharModal();
+    atualizarInterface();
+}
+
+        function editarColaborador(index) {
+            colaboradorEditando = index;
+            const c = dados.colaboradores[index];
+            document.getElementById('modalTitle').textContent = "Editar Colaborador";
+            document.getElementById('modalNome').value = c.nome;
+            document.getElementById('modalTurno').value = c.turno;
+            document.getElementById('modalFolgaFixa').value = c.folgaFixa;
+            document.getElementById('modalDescansoExtra').value = (c.descansoExtra || []).join(',');
+            document.getElementById('modalFerias').value = (c.ferias || []).join(',');
+            renderizarDomingosCheckboxes('domingosMarcacao', c.domingos || []);
+            if (c.aniversario) {
+                document.getElementById('modalAniversarioMes').value = c.aniversario.mes || '';
+                document.getElementById('modalAniversarioDia').value = c.aniversario.dia || '';
+            } else {
+                document.getElementById('modalAniversarioMes').value = '';
+                document.getElementById('modalAniversarioDia').value = '';
+            }
+            atualizarLimiteDia('modalAniversarioMes', 'modalAniversarioDia');
+            document.getElementById('modalColaborador').classList.add('active');
+        }
+
+        function editarLideranca(index) {
+            liderancaEditando = index;
+            adicionandoLideranca = false;
+            const c = dados.lideranca[index];
+            document.getElementById('modalLidTitle').textContent = "Editar Liderança";
+            document.getElementById('modalLidNome').value = c.nome;
+            document.getElementById('modalLidCargo').value = c.cargo;
+            document.getElementById('modalLidTurno').value = c.turno;
+            document.getElementById('modalLidFolga').value = c.folga || c.folgaFixa || 'segunda';
+            document.getElementById('modalLidFolgasExtras').value = (c.folgasExtras || []).join(',');
+            document.getElementById('modalLidFerias').value = (c.ferias || []).join(',');
+            renderizarDomingosCheckboxes('domingosLidMarcacao', c.folgaDominical || []);
+            if (c.aniversario) {
+                document.getElementById('modalLidAniversarioMes').value = c.aniversario.mes || '';
+                document.getElementById('modalLidAniversarioDia').value = c.aniversario.dia || '';
+            } else {
+                document.getElementById('modalLidAniversarioMes').value = '';
+                document.getElementById('modalLidAniversarioDia').value = '';
+            }
+            atualizarLimiteDia('modalLidAniversarioMes', 'modalLidAniversarioDia');
+            document.getElementById('modalLideranca').classList.add('active');
+        }
+
+        async function salvarLideranca() {
+            const nome = document.getElementById('modalLidNome').value.trim();
+            const cargo = document.getElementById('modalLidCargo').value.trim();
+            const turno = document.getElementById('modalLidTurno').value.trim();
+            const folga = document.getElementById('modalLidFolga').value;
+            const folgasExtras = document.getElementById('modalLidFolgasExtras').value.split(',').map(d => parseInt(d.trim())).filter(d => !isNaN(d));
+            const ferias = document.getElementById('modalLidFerias').value.split(',').map(d => parseInt(d.trim())).filter(d => !isNaN(d));
+            
+            // Validar se todos os valores estão entre 1 e 31
+            const todosValoresLid = [...folgasExtras, ...ferias];
+            const valoresInvalidosLid = todosValoresLid.some(v => v < 1 || v > 31);
+            
+            if (valoresInvalidosLid) {
+                mostrarMensagem('Erro: Dias devem estar entre 1 e 31!', 'error');
+                return;
+            }
+            const folgaDominical = Array.from(document.querySelectorAll('#domingosLidMarcacao input:checked')).map(i => parseInt(i.value));
+
+            const mesAniversario = document.getElementById('modalLidAniversarioMes').value;
+            const diaAniversario = parseInt(document.getElementById('modalLidAniversarioDia').value);
+            let aniversario = null;
+            const ultimoDiaValidoLid = obterUltimoDiaMes(mesAniversario);
+            if (mesAniversario && diaAniversario && diaAniversario >= 1 && diaAniversario <= ultimoDiaValidoLid) {
+                aniversario = { mes: mesAniversario, dia: diaAniversario };
+            } else if (mesAniversario && diaAniversario > ultimoDiaValidoLid) {
+                mostrarMensagem(`Erro: O mês de ${mesAniversario} só possui ${ultimoDiaValidoLid} dias!`, 'error');
+                return;
+            }
+
+            if (!nome || !turno) {
+                mostrarMensagem('Por favor, preencha o nome e o turno', 'error');
+                return;
+            }
+
+            const novaLid = {
+                nome: nome.toUpperCase(),
+                cargo: cargo,
+                turno,
+                folga,
+                folgasExtras,
+                folgaDominical,
+                ferias,
+                aniversario: aniversario // Salvar no mesmo local que colaboradores
+            };
+
+            if (adicionandoLideranca) {
+                dados.lideranca.push(novaLid);
+                mostrarMensagem('Liderança adicionada com sucesso!', 'success');
+            } else {
+                dados.lideranca[liderancaEditando] = novaLid;
+                mostrarMensagem('Liderança atualizada com sucesso!', 'success');
+            }
+
+            await salvarDados();
+            fecharModalLideranca();
+            renderizarLideranca();
+        }
+
+        function deletarLideranca(index) {
+            if (confirm('Deseja realmente excluir este membro da liderança?')) {
+                dados.lideranca.splice(index, 1);
+                salvarDados();
+                renderizarLideranca();
+            }
+        }
+
+        function deletarColaborador(index) { if(confirm('Excluir?')) { dados.colaboradores.splice(index, 1); salvarDados(); atualizarInterface(); } }
+
+        window.addEventListener('load', carregarDados);
+        window.addEventListener('dadosEscalaProntos', carregarDados);
+    </script>
+</body>
+</html>

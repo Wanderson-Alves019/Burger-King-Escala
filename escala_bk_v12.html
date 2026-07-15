@@ -1,0 +1,483 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<title>Escala de Trabalho - Burger King</title>
+<link rel="icon" href="assets/images/LOGO BK.png" type="image/png">
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Flame:wght@400;700&family=Roboto:wght@400;500;700;900&display=swap');
+
+  :root {
+    --bk-beige: #ffffff;
+    --bk-brown: #502314;
+    --bk-orange: #FF8732;
+    --bk-red: #D62300;
+    --bk-yellow: #FFD700;
+    --bk-green: #007A33;
+    --bk-teal: #00A3A1;
+    --bk-dark-brown: #32140A;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Roboto', sans-serif;
+    background-color: var(--bk-beige);
+    padding: 10px;
+    color: var(--bk-brown);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .container {
+    background-color: white;
+    border-radius: 15px;
+    padding: 15px;
+    width: 100%;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+  }
+
+  .container::before {
+    content: '';
+    position: absolute;
+    top: 0; right: 0; bottom: 0; left: 0;
+    background-image: url('https://imgur.com/qFy20zg.png');
+    opacity: 0.03;
+    pointer-events: none;
+  }
+
+  .header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+    flex-shrink: 0;
+  }
+
+  .header-left {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+  }
+
+  .bk-logo { width: 140px; height: 140px; }
+
+  .title-group h1 { font-size: 32px; font-weight: 900; color: var(--bk-brown); text-transform: uppercase; line-height: 1; }
+  .title-group h2 { font-size: 24px; font-weight: 900; color: var(--bk-orange); text-transform: uppercase; margin-top: 2px; }
+
+  .info-boxes { display: flex; gap: 20px; }
+  .info-box { display: flex; align-items: center; gap: 8px; }
+  .info-icon { width: 30px; height: 30px; background: #eee; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 16px; }
+  .info-text .label { font-size: 10px; font-weight: 700; text-transform: uppercase; color: var(--bk-brown); }
+  .info-text .value { font-size: 12px; font-weight: 500; }
+
+  .legenda-top {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    background: #f9f9f9;
+    padding: 12px;
+    border-radius: 10px;
+    margin-bottom: 10px;
+  }
+
+  .legenda-item { display: flex; align-items: center; gap: 10px; min-width: 160px; }
+  .leg-box { width: 30px; height: 30px; border-radius: 5px; display: flex; align-items: center; justify-content: center; color: white; font-weight: 900; font-size: 10px; }
+  .leg-info { display: flex; flex-direction: column; }
+  .leg-name { font-size: 12px; font-weight: 700; text-transform: uppercase; }
+  .leg-time { font-size: 11px; color: #666; }
+
+  .table-wrapper { margin-top: 10px; border: 1px solid #EEDDC5; border-radius: 10px; overflow: visible; }
+  .table-scroll { overflow-x: auto; width: 100%; }
+  table { width: 100%; border-collapse: collapse; min-width: 1400px; }
+  thead { position: sticky; top: 0; z-index: 10; }
+  thead th { background-color: var(--bk-brown); color: white; padding: 8px 4px; font-size: 11px; font-weight: 700; border: 1px solid #633221; }
+  thead th.name-col { text-align: left; padding-left: 15px; min-width: 280px; position: sticky; left: 0; z-index: 11; background-color: var(--bk-brown); border-right: 2px solid #633221; }
+  thead th.day-col { width: 35px; }
+
+  tbody tr:nth-child(even) { background-color: #FDF9F3; }
+  tbody td { border: 1px solid #EEDDC5; padding: 0; text-align: center; font-size: 11px; font-weight: 500; height: 35px; }
+  tbody td.name-cell { text-align: left; padding: 8px 15px; font-weight: 700; color: var(--bk-brown); font-size: 12px; position: sticky; left: 0; background-color: white; z-index: 5; border-right: 2px solid #EEDDC5; white-space: nowrap; }
+  tbody tr:nth-child(even) td.name-cell { background-color: #FDF9F3; }
+
+  .ja-icon { color: var(--bk-teal); font-size: 10px; margin-left: 5px; background: #E0F2F1; padding: 2px 4px; border-radius: 4px; }
+
+  .shift-badge { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; color: white; font-weight: 900; font-size: 11px; }
+  .badge-m { background-color: var(--bk-orange); }
+  .badge-t { background-color: var(--bk-red); }
+  .badge-n { background-color: var(--bk-dark-brown); }
+  .badge-i { background-color: var(--bk-green); }
+  .badge-fe { background-color: var(--bk-teal); }
+  .badge-de { background-color: #84BD00; }
+  .badge-f { background-color: #F5EBDC; color: var(--bk-brown); }
+  .badge-n { background-color: #32140A; }
+  .badge-ja { background-color: #9C27B0; }
+
+  .total-row { background-color: var(--bk-brown) !important; color: white; font-weight: 900; text-transform: uppercase; position: sticky; bottom: 0; z-index: 10; }
+  .total-row td { border-color: #633221; padding: 10px 4px; }
+  .total-row td.name-cell { background-color: var(--bk-brown); color: white; }
+
+  .actions { position: fixed; bottom: 20px; right: 20px; z-index: 1000; display: flex; gap: 10px; flex-wrap: wrap; justify-content: flex-end; }
+  .btn-save { background-color: var(--bk-orange); color: white; border: none; padding: 12px 24px; border-radius: 50px; font-weight: 700; cursor: pointer; box-shadow: 0 4px 15px rgba(0,0,0,0.2); display: flex; align-items: center; gap: 8px; transition: transform 0.2s, background-color 0.2s; font-family: 'Roboto', sans-serif; text-transform: uppercase; font-size: 14px; }
+  .btn-save:hover { transform: scale(1.05); }
+  .btn-save:disabled { opacity: 0.6; cursor: not-allowed; }
+  .btn-png { background-color: var(--bk-orange); }
+  .btn-png:hover { background-color: #ff7000; }
+  .btn-pdf { background-color: var(--bk-red); }
+  .btn-pdf:hover { background-color: #a01a00; }
+  .btn-print { background-color: var(--bk-green); }
+  .btn-print:hover { background-color: #005a26; }
+
+  #error-message { display: none; background: #ffdddd; color: #d00; padding: 20px; margin: 20px; border: 1px solid #d00; border-radius: 10px; font-weight: bold; text-align: center; }
+
+  @media print {
+    @page {
+      size: landscape;
+      margin: 5mm;
+    }
+    * {
+      -webkit-print-color-adjust: exact !important;
+      print-color-adjust: exact !important;
+      color-adjust: exact !important;
+    }
+    body { 
+      padding: 0 !important; 
+      margin: 0 !important; 
+      background: white !important;
+      display: block !important;
+    }
+    .actions, .btn-voltar-portal { display: none !important; }
+    .container { 
+      width: 100% !important;
+      height: auto !important;
+      max-width: none !important;
+      border-radius: 0 !important;
+      box-shadow: none !important;
+      padding: 0 !important;
+      overflow: visible !important;
+    }
+    .table-wrapper {
+      border: 1px solid #EEDDC5 !important;
+      margin-top: 5mm !important;
+    }
+    .table-scroll {
+      overflow: visible !important;
+    }
+    table {
+      min-width: 0 !important;
+      width: 100% !important;
+      table-layout: fixed;
+    }
+    thead th, tbody td {
+      font-size: 7pt !important;
+      padding: 1px !important;
+      height: 25px !important;
+      border: 1px solid #EEDDC5 !important;
+    }
+    .name-col, .name-cell {
+      width: 150px !important;
+      min-width: 150px !important;
+      position: static !important;
+      padding-left: 5px !important;
+      font-size: 8pt !important;
+    }
+    .day-col {
+      width: auto !important;
+    }
+    .bk-logo { width: 40px !important; height: 40px !important; }
+    .title-group h1 { font-size: 16pt !important; }
+    .title-group h2 { font-size: 12pt !important; }
+    .info-boxes { gap: 10px !important; }
+    .legenda-top { padding: 5px !important; gap: 5px !important; margin-bottom: 5px !important; }
+    .legenda-item { min-width: 100px !important; gap: 5px !important; }
+    .leg-box { width: 18px !important; height: 18px !important; font-size: 7pt !important; }
+    .leg-name { font-size: 7pt !important; }
+    .leg-time { font-size: 6pt !important; }
+    .shift-badge { font-size: 7pt !important; }
+    .total-row td { font-size: 8pt !important; padding: 5px !important; }
+  }
+
+    
+
+    /* Estilo do Botão Voltar ao Portal Atualizado */
+    .btn-voltar-portal {
+        position: fixed;
+        top: 10px;
+        left: 10px;
+        background-color: #502314;
+        color: #F5EBDC;
+        padding: 5px 12px;
+        border-radius: 30px;
+        text-decoration: none;
+        font-weight: 700;
+        font-size: 11px;
+        z-index: 10000;
+        box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        border: 1.5px solid #FF8732;
+        font-family: 'Open Sans', sans-serif;
+        opacity: 0.8;
+    }
+
+    .btn-voltar-portal:hover {
+        opacity: 1;
+        background-color: #D62300;
+        transform: scale(1.02);
+    }
+
+    .btn-voltar-portal img {
+        width: 18px;
+        height: 18px;
+    }
+
+    @media print {
+        .btn-voltar-portal {
+            display: none !important;
+        }
+    }
+
+
+    /* Responsividade para Dispositivos Móveis */
+    @media screen and (max-width: 768px) {
+        body { padding: 5px; }
+        .container { padding: 10px; border-radius: 0; }
+        .header { flex-direction: column; text-align: center; gap: 15px; }
+        .header-left { flex-direction: column; gap: 10px; }
+        .bk-logo { width: 80px; height: 80px; }
+        .title-group h1 { font-size: 24px; }
+        .title-group h2 { font-size: 18px; }
+        .info-boxes { flex-direction: column; gap: 10px; width: 100%; }
+        .info-box { justify-content: center; }
+        .legenda-top { justify-content: center; gap: 8px; padding: 8px; }
+        .legenda-item { min-width: 120px; }
+        .table-wrapper { margin-top: 15px; }
+        thead th.name-col, tbody td.name-cell { min-width: 150px; font-size: 11px; padding: 5px; }
+        .actions { position: relative; bottom: 0; right: 0; margin-top: 20px; justify-content: center; width: 100%; }
+        .btn-save { width: 100%; justify-content: center; }
+    }
+    
+    </style>
+</head>
+<body>
+
+    <!-- Botão Voltar ao Portal Atualizado -->
+    <a href="gestao_escala.html" class="btn-voltar-portal">
+        <img src="assets/images/LOGO BK.png" alt="BK">
+        <span>PORTAL</span>
+    </a>
+
+<div id="error-message">⚠️ ERRO: Arquivo "colaboradores.js" não encontrado.</div>
+
+<div class="actions">
+  <button class="btn-save btn-print" onclick="window.print()"><span>🖨️</span> IMPRIMIR ESCALA</button>
+</div>
+
+<div class="container" id="capture-area">
+  <div class="header">
+    <div class="header-left">
+      <img src="assets/images/LOGO BK.png" class="bk-logo" alt="BK">
+      <div class="title-group"><h1>ESCALA DE TRABALHO</h1><h2>BURGER KING</h2></div>
+    </div>
+    <div class="info-boxes">
+      <div class="info-box"><div class="info-icon">📅</div><div class="info-text"><div class="label">Período</div><div id="periodo-display" class="value">01/05/2026 a 31/05/2026</div></div></div>
+      <div class="info-box"><div class="info-icon">🕒</div><div class="info-text"><div class="label">Jornada Diária</div><div class="value">7h20</div></div></div>
+    </div>
+    <div class="legenda-top">
+      <div class="legenda-item"><div class="leg-box badge-m">M</div><div class="leg-info"><span class="leg-name">MANHÃ</span><span class="leg-time">08h00-16h20</span></div></div>
+      <div class="legenda-item"><div class="leg-box badge-t">T</div><div class="leg-info"><span class="leg-name">TARDE</span><span class="leg-time">15h00-23h20</span></div></div>
+      <div class="legenda-item"><div class="leg-box badge-i">I</div><div class="leg-info"><span class="leg-name">INTERM.</span><span class="leg-time">Variável</span></div></div>
+      <div class="legenda-item"><div class="leg-box badge-f">F</div><div class="leg-info"><span class="leg-name">FOLGA</span><span class="leg-time">Folga</span></div></div>
+      <div class="legenda-item"><div class="leg-box badge-fe">FER</div><div class="leg-info"><span class="leg-name">FÉRIAS</span><span class="leg-time">Férias</span></div></div>
+      <div class="legenda-item"><div class="leg-box badge-de">DE</div><div class="leg-info"><span class="leg-name">DESCANSO EXTRA</span><span class="leg-time">Descanso</span></div></div>
+      <div class="legenda-item"><div class="leg-box badge-n">N</div><div class="leg-info"><span class="leg-name">NOITE</span><span class="leg-time">Madrugada</span></div></div>
+      <div class="legenda-item"><div class="leg-box badge-ja">J.A.</div><div class="leg-info"><span class="leg-name">JOVEM APRENDIZ</span><span class="leg-time">Aprendiz</span></div></div>
+    </div>
+  </div>
+
+  <div class="table-wrapper">
+    <div class="table-scroll">
+      <table id="escala-table">
+        <thead><tr id="header-days-row"><th class="name-col">EQUIPE</th></tr></thead>
+        <tbody id="table-body"></tbody>
+        <tfoot><tr class="total-row" id="total-row"><td class="name-cell">Total de Colaboradores</td></tr></tfoot>
+      </table>
+    </div>
+  </div>
+</div>
+
+<script type="module" src="firebase-config.js"></script>
+<script src="auth-manager.js"></script>
+<script type="module" src="colaboradores.js" defer></script>
+
+<script>
+// ========================================
+// CARREGAMENTO UNIFICADO COM FALLBACK
+// ========================================
+let dados = {};
+
+function carregarDadosEscala() {
+    // Tentar carregar do window.dadosEscala (preenchido pelo colaboradores.js)
+    if (window.dadosEscala && window.dadosEscala.dadosCarregados) {
+        dados = JSON.parse(JSON.stringify(window.dadosEscala));
+        console.log('[Escala BK] Dados carregados de window.dadosEscala:', dados.origemDados);
+        return true;
+    }
+    
+    // Fallback: tentar localStorage
+    const dadosSalvos = localStorage.getItem('escalasData');
+    if (dadosSalvos) {
+        try {
+            dados = JSON.parse(dadosSalvos);
+            dados.origemDados = 'localStorage';
+            console.log('[Escala BK] Dados carregados de localStorage');
+            return true;
+        } catch (e) {
+            console.error('[Escala BK] Erro ao parsear localStorage:', e);
+        }
+    }
+    
+    // Fallback final: usar globais do colaboradores.js
+    if (typeof mesConfig !== 'undefined' && typeof colaboradores !== 'undefined') {
+        dados = {
+            mesConfig: mesConfig,
+            periodo: periodo,
+            intermediarios: typeof intermediarios !== 'undefined' ? intermediarios : [],
+            jovensAprendizes: typeof jovensAprendizes !== 'undefined' ? jovensAprendizes : [],
+            colaboradores: colaboradores,
+            origemDados: 'padrao'
+        };
+        console.log('[Escala BK] Usando dados padrão do colaboradores.js');
+        return true;
+    }
+    
+    console.error('[Escala BK] Nenhuma fonte de dados disponível');
+    return false;
+}
+
+function initEscala() {
+    // Carregar dados com fallback
+    if (!carregarDadosEscala()) {
+        document.getElementById('error-message').style.display = 'block';
+        return;
+    }
+
+    // Usar configMes do colaboradores.js, com fallback para valor padrão
+    const configMes = dados.mesConfig || [1, "sexta", 31];
+    const periodoDados = dados.periodo || null;
+    const diasSemana = ["domingo", "segunda", "terça", "quarta", "quinta", "sexta", "sábado"];
+    const diasSemanaAbbr = ["DOM", "SEG", "TER", "QUA", "QUI", "SEX", "SÁB"];
+//console.log(configMes)
+    function getDiasDoMes(config) {
+      const [primeiroDia, diaSemanaInicial, ultimoDia] = config;
+      const startIndex = diasSemana.indexOf(diaSemanaInicial.toLowerCase());
+      const dias = [];
+      for (let i = 1; i <= ultimoDia; i++) {
+        const currentDayIndex = (startIndex + (i - 1)) % 7;
+        dias.push({ numero: i, numeroStr: i.toString().padStart(2, '0'), abbr: diasSemanaAbbr[currentDayIndex], isDomingo: currentDayIndex === 0 });
+      }
+      return dias;
+    }
+
+    const listaDias = getDiasDoMes(configMes);
+    const numDias = listaDias.length;
+    const headerRow = document.getElementById('header-days-row');
+    listaDias.forEach(dia => {
+      const th = document.createElement('th');
+      th.className = 'day-col';
+      th.innerHTML = `${dia.numeroStr}<br>${dia.abbr}`;
+      headerRow.appendChild(th);
+    });
+
+    // Atualizar o período: usar dados do colaboradores.js ou gerar automaticamente
+    if (periodoDados) {
+      document.getElementById('periodo-display').textContent = periodoDados;
+    } else {
+      const [primeiroDia, , ultimoDia] = configMes;
+      document.getElementById('periodo-display').textContent = `${primeiroDia.toString().padStart(2, '0')}/05/2026 a ${ultimoDia.toString().padStart(2, '0')}/05/2026`;
+    }
+
+    function isIntermediario(name) {
+      const n = name.toUpperCase();
+      return dados.intermediarios && dados.intermediarios.some(i => n.includes(i.toUpperCase()));
+    }
+
+    function isJA(name) {
+      const n = name.toUpperCase();
+      return dados.jovensAprendizes && dados.jovensAprendizes.some(ja => n.includes(ja.toUpperCase()));
+    }
+
+    function getBadge(sched, empName) {
+      if (!sched) return '';
+      const s = sched.toUpperCase().trim();
+      if (s === 'FE') return '<div class="shift-badge badge-fe">FER</div>';
+      if (s === 'DE') return '<div class="shift-badge badge-de">DE</div>';
+      if (s === 'JA') return '<div class="shift-badge badge-ja">J.A.</div>';
+      if (s === 'N') return '<div class="shift-badge badge-n">N</div>';
+      if (s === 'FO' || s === 'F') return '<div class="shift-badge badge-f">F</div>';
+      if (isIntermediario(empName)) return '<div class="shift-badge badge-i">I</div>';
+      const hour = parseInt(s.split(':')[0]);
+      if (hour <= 12) return '<div class="shift-badge badge-m">M</div>';
+      if (hour >= 22 || hour < 6) return '<div class="shift-badge badge-n">N</div>';
+      return '<div class="shift-badge badge-t">T</div>';
+    }
+
+    const tbody = document.getElementById('table-body');
+    const totalRow = document.getElementById('total-row');
+    const dailyTotals = new Array(numDias).fill(0);
+
+    dados.colaboradores.forEach(colab => {
+      const tr = document.createElement('tr');
+      const nameTd = document.createElement('td');
+      nameTd.className = 'name-cell';
+      nameTd.innerHTML = colab.nome + (isJA(colab.nome) ? '<span class="ja-icon">J.A.</span>' : '');
+      tr.appendChild(nameTd);
+
+      listaDias.forEach((dia, index) => {
+        const td = document.createElement('td');
+        let status = colab.turno;
+        const diaNum = dia.numero;
+        const diaSemanaNome = dia.abbr.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+        
+        if (colab.ferias && diaNum >= colab.ferias[0] && diaNum <= colab.ferias[1]) status = 'FE';
+        else if (colab.descansoExtra && colab.descansoExtra.includes(diaNum)) status = 'DE';
+        else if (dia.isDomingo && colab.domingos && colab.domingos.includes(diaNum)) status = 'FO';
+        else if (colab.folgaFixa && diaSemanaNome === colab.folgaFixa.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").substring(0, 3)) status = 'FO';
+        
+        if (status !== 'FO' && status !== 'FE' && status !== 'DE') dailyTotals[index]++;
+        td.innerHTML = getBadge(status, colab.nome);
+        tr.appendChild(td);
+      });
+      tbody.appendChild(tr);
+    });
+
+    dailyTotals.forEach(total => {
+      const td = document.createElement('td');
+      td.textContent = total;
+      totalRow.appendChild(td);
+    });
+}
+
+// ========================================
+// INICIALIZAR
+// ========================================
+window.addEventListener('load', () => {
+    return initEscala();
+});
+
+// Também ouvir o evento de dados prontos (caso o Firebase termine depois do load)
+window.addEventListener('dadosEscalaProntos', () => {
+    // Limpar e recarregar
+    document.getElementById('table-body').innerHTML = '';
+    document.getElementById('total-row').innerHTML = '<td class="name-cell">Total de Colaboradores</td>';
+    document.getElementById('header-days-row').innerHTML = '<th class="name-col">EQUIPE</th>';
+  return initEscala();
+});
+</script>
+</body>
+</html>

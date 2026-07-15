@@ -1,0 +1,545 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>Aniversariantes - Burger King</title>
+    <link rel="icon" href="assets/images/LOGO BK.png" type="image/png">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Flame:wght@400;700&family=Roboto:wght@400;500;700;900&display=swap');
+
+        :root {
+            --bk-beige: #ffffff;
+            --bk-brown: #502314;
+            --bk-orange: #FF8732;
+            --bk-red: #D62300;
+            --bk-yellow: #FFD700;
+            --bk-green: #007A33;
+            --bk-teal: #00A3A1;
+            --bk-dark-brown: #32140A;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: var(--bk-beige);
+            padding: 10px;
+            color: var(--bk-brown);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .container {
+            background-color: white;
+            border-radius: 15px;
+            padding: 15px;
+            width: 100%;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+        }
+
+        .container::before {
+            content: '';
+            position: absolute;
+            top: 0; right: 0; bottom: 0; left: 0;
+            background-image: url('https://imgur.com/qFy20zg.png');
+            opacity: 0.03;
+            pointer-events: none;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+            flex-shrink: 0;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .bk-logo { width: 140px; height: 140px; }
+
+        .title-group h1 { font-size: 32px; font-weight: 900; color: var(--bk-brown); text-transform: uppercase; line-height: 1; }
+        .title-group h2 { font-size: 24px; font-weight: 900; color: var(--bk-orange); text-transform: uppercase; margin-top: 2px; }
+
+        .info-boxes { display: flex; gap: 20px; }
+        .info-box { display: flex; align-items: center; gap: 8px; }
+        .info-icon { width: 30px; height: 30px; background: #eee; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 16px; }
+        .info-text .label { font-size: 10px; font-weight: 700; text-transform: uppercase; color: var(--bk-brown); }
+        .info-text .value { font-size: 12px; font-weight: 500; }
+
+        .filtro-meses {
+            background: #f9f9f9;
+            padding: 12px;
+            border-radius: 10px;
+            margin-bottom: 10px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            align-items: center;
+        }
+
+        .filtro-label {
+            font-weight: 700;
+            color: var(--bk-red);
+            font-size: 11px;
+            text-transform: uppercase;
+            margin-right: 5px;
+        }
+
+        .mes-btn {
+            padding: 6px 12px;
+            border: 1px solid var(--bk-orange);
+            background-color: white;
+            color: var(--bk-brown);
+            border-radius: 15px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.2s ease;
+            font-size: 10px;
+            text-transform: uppercase;
+        }
+
+        .mes-btn:hover {
+            background-color: var(--bk-orange);
+            color: white;
+        }
+
+        .mes-btn.ativo {
+            background-color: var(--bk-red);
+            color: white;
+            border-color: var(--bk-red);
+        }
+
+        .table-wrapper { margin-top: 10px; border: 1px solid #EEDDC5; border-radius: 10px; overflow: visible; }
+        .table-scroll { overflow-x: auto; width: 100%; }
+        table { width: 100%; border-collapse: collapse; min-width: 100%; }
+        thead { position: sticky; top: 0; z-index: 10; }
+        thead th { background-color: var(--bk-brown); color: white; padding: 12px 8px; font-size: 12px; font-weight: 700; border: 1px solid #633221; text-align: left; }
+        
+        tbody tr:nth-child(even) { background-color: #FDF9F3; }
+        tbody td { border: 1px solid #EEDDC5; padding: 12px 8px; text-align: left; font-size: 12px; font-weight: 500; }
+        tbody td.nome { font-weight: 700; color: var(--bk-brown); }
+
+        .badge-mes { 
+            background-color: var(--bk-orange); 
+            color: white; 
+            padding: 4px 12px; 
+            border-radius: 20px; 
+            font-weight: 700;
+            font-size: 11px;
+            display: inline-block;
+        }
+
+        .badge-data {
+            background-color: var(--bk-red);
+            color: white;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-weight: 700;
+            font-size: 11px;
+            display: inline-block;
+        }
+
+        .btn-voltar-portal {
+            position: fixed;
+            top: 10px;
+            left: 10px;
+            background-color: #502314;
+            color: #F5EBDC;
+            padding: 5px 12px;
+            border-radius: 30px;
+            text-decoration: none;
+            font-weight: 700;
+            font-size: 11px;
+            z-index: 10000;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            border: 1.5px solid #FF8732;
+            font-family: 'Open Sans', sans-serif;
+            opacity: 0.8;
+        }
+
+        .btn-voltar-portal:hover {
+            opacity: 1;
+            background-color: #D62300;
+            transform: scale(1.02);
+        }
+
+        .btn-voltar-portal img {
+            width: 18px;
+            height: 18px;
+        }
+
+        .stats-box {
+            background: linear-gradient(135deg, #f5e6d3 0%, #e8d4bf 100%);
+            border: 2px solid var(--bk-brown);
+            border-radius: 10px;
+            padding: 15px;
+            text-align: center;
+            box-shadow: 3px 3px 0px rgba(80, 35, 20, 0.2);
+            margin-bottom: 15px;
+        }
+
+        .stats-numero {
+            font-size: 1.8rem;
+            font-weight: 900;
+            color: var(--bk-red);
+        }
+
+        .stats-label {
+            font-size: 11px;
+            color: var(--bk-brown);
+            margin-top: 5px;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .actions {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 1000;
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            justify-content: flex-end;
+        }
+
+        .btn-print {
+            background-color: var(--bk-green);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 50px;
+            font-weight: 700;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: transform 0.2s, background-color 0.2s;
+            font-family: 'Roboto', sans-serif;
+            text-transform: uppercase;
+            font-size: 14px;
+        }
+
+        .btn-print:hover {
+            transform: scale(1.05);
+            background-color: var(--bk-dark-brown);
+        }
+
+        @media print {
+            .btn-voltar-portal, .actions, .btn-print { display: none !important; }
+            body { padding: 0 !important; margin: 0 !important; background: white !important; }
+            .container { width: 100% !important; height: auto !important; max-width: none !important; border-radius: 0 !important; box-shadow: none !important; padding: 0 !important; }
+        }
+
+        @media (max-width: 768px) {
+            .header { flex-direction: column; }
+            .bk-logo { width: 100px; height: 100px; }
+            .title-group h1 { font-size: 24px; }
+            .title-group h2 { font-size: 18px; }
+            .info-boxes { flex-direction: column; gap: 10px; }
+            .filtro-meses { flex-direction: column; }
+            .stats-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+    <a href="gestao_escala.html" class="btn-voltar-portal">
+        <img src="assets/images/LOGO BK.png" alt="BK">
+        <span>PORTAL</span>
+    </a>
+
+    <div class="actions">
+        <button class="btn-print" onclick="window.print()">
+            <span>🖨️</span>
+            <span>Imprimir</span>
+        </button>
+    </div>
+
+    <div class="container">
+        <div class="header">
+            <div class="header-left">
+                <img src="assets/images/LOGO BK.png" class="bk-logo" alt="BK">
+                <div class="title-group">
+                    <h1>Aniversariantes</h1>
+                    <h2>BURGER KING</h2>
+                </div>
+            </div>
+            <div class="info-boxes">
+                <div class="info-box">
+                    <div class="info-icon">🎂</div>
+                    <div class="info-text">
+                        <div class="label">Total</div>
+                        <div id="total-aniversarios" class="value">0</div>
+                    </div>
+                </div>
+                <div class="info-box">
+                    <div class="info-icon">📅</div>
+                    <div class="info-text">
+                        <div class="label">Próximo</div>
+                        <div id="proximo-aniversario" class="value">-</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Filtro de Meses -->
+        <div class="filtro-meses">
+            <span class="filtro-label">Filtrar:</span>
+            <button class="mes-btn ativo" onclick="filtrarMes('todos')">Todos</button>
+            <button class="mes-btn" onclick="filtrarMes('janeiro')">Jan</button>
+            <button class="mes-btn" onclick="filtrarMes('fevereiro')">Fev</button>
+            <button class="mes-btn" onclick="filtrarMes('marco')">Mar</button>
+            <button class="mes-btn" onclick="filtrarMes('abril')">Abr</button>
+            <button class="mes-btn" onclick="filtrarMes('maio')">Mai</button>
+            <button class="mes-btn" onclick="filtrarMes('junho')">Jun</button>
+            <button class="mes-btn" onclick="filtrarMes('julho')">Jul</button>
+            <button class="mes-btn" onclick="filtrarMes('agosto')">Ago</button>
+            <button class="mes-btn" onclick="filtrarMes('setembro')">Set</button>
+            <button class="mes-btn" onclick="filtrarMes('outubro')">Out</button>
+            <button class="mes-btn" onclick="filtrarMes('novembro')">Nov</button>
+            <button class="mes-btn" onclick="filtrarMes('dezembro')">Dez</button>
+        </div>
+
+        <!-- Estatísticas -->
+        <div class="stats-grid">
+            <div class="stats-box">
+                <div class="stats-numero" id="stat-total">0</div>
+                <div class="stats-label">Total de Aniversariantes</div>
+            </div>
+            <div class="stats-box">
+                <div class="stats-numero" id="stat-mes">0</div>
+                <div class="stats-label">Mês com Mais Aniversários</div>
+            </div>
+        </div>
+
+        <!-- Tabela de Aniversariantes -->
+        <div class="table-wrapper">
+            <div class="table-scroll">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>MÊS</th>
+                            <th>FUNCIONÁRIO</th>
+                            <th>DATA</th>
+                        </tr>
+                    </thead>
+                    <tbody id="aniversarios-body">
+                        <tr>
+                            <td colspan="3" style="text-align: center; padding: 20px;">Carregando dados...</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <script type="module" src="firebase-config.js"></script>
+    <script src="auth-manager.js"></script>
+    <script type="module" src="colaboradores.js" defer></script>
+    <script>
+        // ========================================
+        // CARREGAMENTO UNIFICADO COM FALLBACK
+        // ========================================
+        let dados = {};
+
+        function carregarDadosAniversarios() {
+            // Tentar carregar do window.dadosEscala (preenchido pelo colaboradores.js)
+            if (window.dadosEscala && window.dadosEscala.dadosCarregados) {
+                dados = JSON.parse(JSON.stringify(window.dadosEscala));
+                console.log('[Aniversariantes] Dados carregados de window.dadosEscala:', dados.origemDados);
+                return true;
+            }
+            
+            // Fallback: tentar localStorage
+            const dadosSalvos = localStorage.getItem('escalasData');
+            if (dadosSalvos) {
+                try {
+                    dados = JSON.parse(dadosSalvos);
+                    dados.origemDados = 'localStorage';
+                    console.log('[Aniversariantes] Dados carregados de localStorage');
+                    return true;
+                } catch (e) {
+                    console.error('[Aniversariantes] Erro ao parsear localStorage:', e);
+                }
+            }
+            
+            // Fallback final: usar globais do colaboradores.js
+            if (typeof colaboradores !== 'undefined') {
+                dados = {
+                    colaboradores: colaboradores,
+                    origemDados: 'padrao'
+                };
+                console.log('[Aniversariantes] Usando dados padrão do colaboradores.js');
+                return true;
+            }
+            
+            console.error('[Aniversariantes] Nenhuma fonte de dados disponível');
+            return false;
+        }
+
+        const mesesNomes = ['janeiro', 'fevereiro', 'marco', 'abril', 'maio', 'junho', 
+                           'julho', 'agosto', 'setembro', 'outubro', 'novembro', 'dezembro'];
+        const mesesExibicao = ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho',
+                              'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'];
+        const mesesIcones = ['❄️', '💕', '🌸', '🌼', '🌺', '☀️', '🏖️', '🌞', '🍂', '🎃', '🦃', '🎄'];
+
+        let mesFiltroAtivo = 'todos';
+
+        function construirAniversarios() {
+            const aniversarios = {};
+            
+            mesesNomes.forEach(mes => {
+                aniversarios[mes] = [];
+            });
+
+            const listaColaboradores = dados.colaboradores || [];
+            const listaLideranca = dados.lideranca || [];
+            const todosMembros = [...listaColaboradores, ...listaLideranca];
+
+            todosMembros.forEach(membro => {
+                if (membro.aniversario) {
+                    const { mes, dia } = membro.aniversario;
+                    if (!aniversarios[mes]) {
+                        aniversarios[mes] = [];
+                    }
+                    aniversarios[mes].push({
+                        nome: membro.nome,
+                        dia: dia,
+                        turno: membro.turno || membro.cargo // Usa cargo se turno não estiver presente (comum na liderança)
+                    });
+                }
+            });
+
+            // Ordenar por dia dentro de cada mês
+            Object.keys(aniversarios).forEach(mes => {
+                aniversarios[mes].sort((a, b) => a.dia - b.dia);
+            });
+
+            return aniversarios;
+        }
+
+        function carregarAniversarios() {
+            const aniversarios = construirAniversarios();
+            const aniversariosBody = document.getElementById('aniversarios-body');
+            aniversariosBody.innerHTML = '';
+
+            let totalAniversarios = 0;
+            Object.entries(aniversarios).forEach(([mesKey, anivs]) => {
+                totalAniversarios += anivs.length;
+                anivs.forEach(aniv => {
+                    const mesIndex = mesesNomes.indexOf(mesKey);
+                    const mesExibir = mesesExibicao[mesIndex] || mesKey;
+                    const icone = mesesIcones[mesIndex] || '📅';
+                    
+                    const row = document.createElement('tr');
+                    row.setAttribute('data-mes', mesKey);
+                    row.innerHTML = `
+                        <td><span class="badge-mes">${icone} ${mesExibir}</span></td>
+                        <td class="nome">${aniv.nome}</td>
+                        <td><span class="badge-data">${aniv.dia} de ${mesExibir}</span></td>
+                    `;
+                    aniversariosBody.appendChild(row);
+                });
+            });
+
+            // Atualizar estatísticas
+            document.getElementById('stat-total').textContent = totalAniversarios;
+            document.getElementById('total-aniversarios').textContent = totalAniversarios;
+
+            // Encontrar mês com mais aniversários
+            let mesComMais = '';
+            let maxCount = 0;
+            Object.entries(aniversarios).forEach(([mes, anivs]) => {
+                if (anivs.length > maxCount) {
+                    maxCount = anivs.length;
+                    const mesIndex = mesesNomes.indexOf(mes);
+                    mesComMais = mesesExibicao[mesIndex] || mes;
+                }
+            });
+            document.getElementById('stat-mes').textContent = mesComMais || '-';
+
+            // Próximo aniversário
+            const hoje = new Date();
+            let proximoAniv = null;
+            let menorDiferenca = Infinity;
+
+            Object.entries(aniversarios).forEach(([mes, anivs]) => {
+                const mesIndex = mesesNomes.indexOf(mes);
+                anivs.forEach(aniv => {
+                    const dataAniv = new Date(hoje.getFullYear(), mesIndex, aniv.dia);
+                    
+                    if (dataAniv < hoje) {
+                        dataAniv.setFullYear(hoje.getFullYear() + 1);
+                    }
+
+                    const diferenca = dataAniv - hoje;
+                    if (diferenca < menorDiferenca) {
+                        menorDiferenca = diferenca;
+                        const mesExibir = mesesExibicao[mesIndex];
+                        proximoAniv = `${aniv.dia} de ${mesExibir}`;
+                    }
+                });
+            });
+
+            document.getElementById('proximo-aniversario').textContent = proximoAniv || '-';
+        }
+
+        function filtrarMes(mes) {
+            mesFiltroAtivo = mes;
+
+            // Atualizar botões
+            document.querySelectorAll('.mes-btn').forEach(btn => {
+                btn.classList.remove('ativo');
+            });
+            event.target.classList.add('ativo');
+
+            // Filtrar linhas
+            document.querySelectorAll('#aniversarios-body tr').forEach(row => {
+                const mesRow = row.getAttribute('data-mes');
+                if (mes === 'todos' || mesRow === mes) {
+                    row.style.display = '';
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+        }
+
+        // Inicializar
+        function inicializar() {
+            if (!carregarDadosAniversarios()) {
+                document.getElementById('aniversarios-body').innerHTML = '<tr><td colspan="3" style="text-align: center; color: red; padding: 20px;">Erro ao carregar dados</td></tr>';
+                return;
+            }
+            carregarAniversarios();
+        }
+
+        window.addEventListener('load', () => {
+            inicializar();
+        });
+
+        // Também ouvir o evento de dados prontos (caso o Firebase termine depois do load)
+        window.addEventListener('dadosEscalaProntos', () => {
+            inicializar();
+        });
+    </script>
+</body>
+</html>

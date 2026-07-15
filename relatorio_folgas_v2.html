@@ -1,0 +1,543 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Relatório de Folgas - Burger King</title>
+  <link rel="icon" href="assets/images/LOGO BK.png" type="image/png">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    
+    /* Estilo do Botão Voltar ao Portal Atualizado */
+    .btn-voltar-portal {
+        position: fixed;
+        top: 10px;
+        left: 10px;
+        background-color: #502314;
+        color: #F5EBDC;
+        padding: 5px 12px;
+        border-radius: 30px;
+        text-decoration: none;
+        font-weight: 700;
+        font-size: 11px;
+        z-index: 10000;
+        box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        border: 1.5px solid #FF8732;
+        font-family: 'Open Sans', sans-serif;
+        opacity: 0.8;
+    }
+
+    .btn-voltar-portal:hover {
+        opacity: 1;
+        background-color: #D62300;
+        transform: scale(1.02);
+    }
+
+    .btn-voltar-portal img {
+        width: 18px;
+        height: 18px;
+    }
+
+    .actions-bar {
+        margin: 20px 0;
+        display: flex;
+        justify-content: center;
+    }
+
+    .btn-print {
+        background-color: #007A33;
+        color: white;
+        padding: 12px 24px;
+        border: none;
+        border-radius: 50px;
+        cursor: pointer;
+        font-weight: 900;
+        text-transform: uppercase;
+        transition: 0.3s;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .btn-print:hover {
+        background-color: #005a26;
+        transform: scale(1.05);
+    }
+    
+    body {
+      font-family: 'Roboto', sans-serif;
+      background-color: #f5f5f5;
+      padding: 20px;
+      color: #333;
+    }
+    
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      background: white;
+      padding: 30px;
+      border-radius: 10px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+    
+    .header {
+      text-align: center;
+      margin-bottom: 30px;
+      border-bottom: 3px solid #D62300;
+      padding-bottom: 20px;
+    }
+    
+    .header h1 {
+      font-size: 28px;
+      color: #502314;
+      margin-bottom: 10px;
+    }
+    
+    .header-info {
+      display: flex;
+      justify-content: space-around;
+      margin-top: 15px;
+      font-size: 14px;
+    }
+    
+    .info-item {
+      display: flex;
+      gap: 10px;
+    }
+    
+    .info-label {
+      font-weight: 700;
+      color: #502314;
+    }
+    
+    .info-value {
+      color: #666;
+    }
+    
+    .pagina-section {
+      page-break-inside: avoid;
+      margin-bottom: 40px;
+    }
+    
+    .pagina-section-title {
+      font-size: 18px;
+      font-weight: 700;
+      color: #502314;
+      margin-bottom: 15px;
+      padding-bottom: 10px;
+      border-bottom: 2px solid #FF8732;
+    }
+    
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 20px;
+    }
+    
+    thead {
+      background-color: #502314;
+      color: white;
+    }
+    
+    th {
+      padding: 12px;
+      text-align: left;
+      font-weight: 700;
+      border: 1px solid #ddd;
+    }
+    
+    td {
+      padding: 10px 12px;
+      border: 1px solid #ddd;
+    }
+    
+    tbody tr:nth-child(even) {
+      background-color: #f9f9f9;
+    }
+    
+    tbody tr:hover {
+      background-color: #f0f0f0;
+    }
+    
+    tr.domingo {
+      background-color: #fff3e0;
+    }
+    
+    tr.domingo:hover {
+      background-color: #ffe0b2;
+    }
+    
+    .dia-col { width: 80px; text-align: center; font-weight: 700; }
+    .semana-col { width: 80px; text-align: center; }
+    .folgas-col { flex: 1; }
+    
+    .sem-folga {
+      color: #999;
+      font-style: italic;
+    }
+    
+    .folga-nome {
+      display: block;
+      font-weight: 600;
+      color: #502314;
+      margin-bottom: 4px;
+    }
+    
+    .folga-tag {
+      display: inline-block;
+      padding: 2px 6px;
+      margin-right: 4px;
+      border-radius: 3px;
+      font-size: 11px;
+      font-weight: 700;
+      color: white;
+      margin-bottom: 4px;
+    }
+    
+    .tag-fer { background-color: #00A3A1; }
+    .tag-dom { background-color: #D62300; }
+    .tag-de { background-color: #84BD00; }
+    .tag-f { background-color: #FF8732; }
+    
+    .legenda {
+      margin-top: 30px;
+      padding: 15px;
+      background-color: #f9f9f9;
+      border-radius: 8px;
+      border-left: 4px solid #FF8732;
+    }
+    
+    .legenda-title {
+      font-weight: 700;
+      margin-bottom: 10px;
+      color: #502314;
+    }
+    
+    .legenda-items {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
+    }
+    
+    .legenda-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    
+    .legenda-box {
+      width: 20px;
+      height: 20px;
+      border-radius: 3px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 10px;
+      font-weight: 700;
+    }
+    
+    @media print {
+      body { background: white; padding: 0; }
+      .container { box-shadow: none; padding: 0; max-width: 100%; }
+      .btn-voltar-portal, .actions-bar { display: none !important; }
+      .pagina-section { page-break-inside: avoid; margin-bottom: 20px; }
+      table { margin-bottom: 10px; }
+      th, td { padding: 8px; font-size: 12px; }
+    }
+  
+    /* Responsividade para Dispositivos Móveis */
+    @media screen and (max-width: 768px) {
+        body { padding: 10px; }
+        .container { padding: 15px; width: 100%; max-width: 100%; border-radius: 0; }
+        .header h1 { font-size: 22px; }
+        .header-info { flex-direction: column; gap: 10px; align-items: center; }
+        table { display: block; overflow-x: auto; white-space: nowrap; }
+        th, td { padding: 8px; font-size: 13px; }
+        .btn-print { width: 100%; justify-content: center; }
+        .actions-bar { flex-direction: column; gap: 10px; }
+        .legenda-items { flex-direction: column; gap: 10px; }
+        
+        /* Ajustes específicos para menus e grids se existirem */
+        .menu-grid, .grid-container { grid-template-columns: 1fr !important; }
+        .card { margin-bottom: 15px; }
+    }
+    
+    </style>
+</head>
+<body>
+
+<a href="gestao_escala.html" class="btn-voltar-portal">
+    <img src="assets/images/LOGO BK.png" alt="BK">
+    <span>PORTAL</span>
+</a>
+
+<div class="container">
+  <div class="actions-bar">
+    <button onclick="window.print()" class="btn-print">
+        <span>🖨️</span>
+        <span>IMPRIMIR RELATÓRIO</span>
+    </button>
+  </div>
+  <div class="header">
+    <img src="assets/images/LOGO BK.png" alt="Burger King Logo" style="width: 80px; height: 80px; margin-bottom: 10px;">
+    <h1>📋 RELATÓRIO DE FOLGAS</h1>
+    <h2 style="color: #FF8732; font-size: 18px; margin-top: 5px;">Burger King</h2>
+    <div class="header-info">
+      <div class="info-item">
+        <span class="info-label">Período:</span>
+        <span class="info-value" id="periodo-display">01/05/2026 a 31/05/2026</span>
+      </div>
+      <div class="info-item">
+        <span class="info-label">Gerado em:</span>
+        <span class="info-value" id="data-geracao">--/--/----</span>
+      </div>
+      <div class="info-item">
+        <span class="info-label">Total de Colaboradores:</span>
+        <span class="info-value" id="total-colabs">0</span>
+      </div>
+    </div>
+  </div>
+
+  <div id="tabelas-container"></div>
+
+  <div class="legenda">
+    <div class="legenda-title">Legenda de Folgas:</div>
+    <div class="legenda-items">
+      <span class="folga-tag tag-fer">FER</span> Férias &nbsp;
+      <span class="folga-tag tag-de">DE</span> Descanso Extra &nbsp;
+      <span class="folga-tag tag-dom">DOM</span> Folga Dominical
+    </div>
+  </div>
+</div>
+
+<script type="module" src="firebase-config.js"></script>
+<script src="auth-manager.js"></script>
+<script type="module" src="colaboradores.js" defer></script>
+
+<script>
+// ========================================
+// CARREGAMENTO UNIFICADO COM FALLBACK
+// ========================================
+let dados = {};
+
+function carregarDadosRelatorio() {
+    // Tentar carregar do window.dadosEscala (preenchido pelo colaboradores.js)
+    if (window.dadosEscala && window.dadosEscala.dadosCarregados) {
+        dados = JSON.parse(JSON.stringify(window.dadosEscala));
+        console.log('[Relatório Folgas] Dados carregados de window.dadosEscala:', dados.origemDados);
+        return true;
+    }
+    
+    // Fallback: tentar localStorage
+    const dadosSalvos = localStorage.getItem('escalasData');
+    if (dadosSalvos) {
+        try {
+            dados = JSON.parse(dadosSalvos);
+            dados.origemDados = 'localStorage';
+            console.log('[Relatório Folgas] Dados carregados de localStorage');
+            return true;
+        } catch (e) {
+            console.error('[Relatório Folgas] Erro ao parsear localStorage:', e);
+        }
+    }
+    
+    // Fallback final: usar globais do colaboradores.js
+    if (typeof mesConfig !== 'undefined' && typeof colaboradores !== 'undefined') {
+        dados = {
+            mesConfig: mesConfig,
+            periodo: periodo,
+            colaboradores: colaboradores,
+            origemDados: 'padrao'
+        };
+        console.log('[Relatório Folgas] Usando dados padrão do colaboradores.js');
+        return true;
+    }
+    
+    console.error('[Relatório Folgas] Nenhuma fonte de dados disponível');
+    return false;
+}
+
+function gerarRelatorio() {
+    if (!carregarDadosRelatorio()) {
+        document.getElementById('tabelas-container').innerHTML = '<p style="color: red; text-align: center;">Erro ao carregar dados. Verifique o console.</p>';
+        return;
+    }
+
+    const diasSemana = ["domingo", "segunda", "terça", "quarta", "quinta", "sexta", "sábado"];
+    const diasSemanaAbbr = ["DOM", "SEG", "TER", "QUA", "QUI", "SEX", "SÁB"];
+
+    // Usar configMes do colaboradores.js, com fallback para valor padrão
+    const configMes3 = dados.mesConfig || [1, "sexta", 31];
+    const periodoDados = dados.periodo || null;
+    const colabs = dados.colaboradores || [];
+
+    function getDiasDoMes(config) {
+      const [primeiroDia, diaSemanaInicial, ultimoDia] = config;
+      const startIndex = diasSemana.indexOf(diaSemanaInicial.toLowerCase());
+      
+      const dias = [];
+      for (let i = 1; i <= ultimoDia; i++) {
+        const currentDayIndex = (startIndex + (i - 1)) % 7;
+        dias.push({
+          numero: i,
+          numeroStr: i.toString().padStart(2, '0'),
+          abbr: diasSemanaAbbr[currentDayIndex],
+          diaSemana: diasSemana[currentDayIndex],
+          isDomingo: currentDayIndex === 0
+        });
+      }
+      return dias;
+    }
+
+    const listaDias = getDiasDoMes(configMes3);
+
+    // Atualizar período
+    if (periodoDados) {
+      document.getElementById('periodo-display').textContent = periodoDados;
+    } else {
+      const [primeiroDia, , ultimoDia] = configMes3;
+      document.getElementById('periodo-display').textContent = `${primeiroDia.toString().padStart(2, '0')}/05/2026 a ${ultimoDia.toString().padStart(2, '0')}/05/2026`;
+    }
+
+    // Data de geração
+    const hoje = new Date();
+    const dataFormatada = `${hoje.getDate().toString().padStart(2, '0')}/${(hoje.getMonth() + 1).toString().padStart(2, '0')}/${hoje.getFullYear()}`;
+    document.getElementById('data-geracao').textContent = dataFormatada;
+    document.getElementById('total-colabs').textContent = colabs.length;
+
+    function getFolgasDoColab(colab, dia) {
+      const folgasInfo = [];
+      
+      if (colab.ferias && dia.numero >= colab.ferias[0] && dia.numero <= colab.ferias[1]) {
+        folgasInfo.push({ tipo: 'fer', label: 'FER' });
+      }
+      
+      if (colab.domingos && colab.domingos.includes(dia.numero)) {
+        folgasInfo.push({ tipo: 'dom', label: 'DOM' });
+      }
+      
+      if (colab.descansoExtra && colab.descansoExtra.includes(dia.numero)) {
+        folgasInfo.push({ tipo: 'de', label: 'DE' });
+      }
+      
+      if (dia.diaSemana === colab.folgaFixa) {
+        folgasInfo.push({ tipo: 'f', label: 'F' });
+      }
+      
+      return folgasInfo;
+    }
+
+    // Gerar tabelas divididas em 2 páginas (01-15 e 16-31)
+    const tabelasContainer = document.getElementById('tabelas-container');
+    tabelasContainer.innerHTML = '';
+    const grupos = [
+      { dias: listaDias.slice(0, 15), titulo: 'Dias 01 a 15' },
+      { dias: listaDias.slice(15), titulo: 'Dias 16 a 31' }
+    ];
+
+    grupos.forEach((grupo) => {
+      const paginaDiv = document.createElement('div');
+      paginaDiv.className = 'pagina-section';
+      
+      const tituloDiv = document.createElement('div');
+      tituloDiv.className = 'pagina-section-title';
+      tituloDiv.textContent = grupo.titulo;
+      paginaDiv.appendChild(tituloDiv);
+      
+      const table = document.createElement('table');
+      
+      const thead = document.createElement('thead');
+      const headerRow = document.createElement('tr');
+      
+      const th1 = document.createElement('th');
+      th1.className = 'dia-col';
+      th1.textContent = 'Dia';
+      headerRow.appendChild(th1);
+      
+      const th2 = document.createElement('th');
+      th2.className = 'semana-col';
+      th2.textContent = 'Semana';
+      headerRow.appendChild(th2);
+      
+      const th3 = document.createElement('th');
+      th3.className = 'folgas-col';
+      th3.textContent = 'Colaboradores em Folga';
+      headerRow.appendChild(th3);
+      
+      thead.appendChild(headerRow);
+      table.appendChild(thead);
+      
+      const tbody = document.createElement('tbody');
+      
+      grupo.dias.forEach(dia => {
+        const folgasNoDia = [];
+        
+        colabs.forEach(colab => {
+          const folgas = getFolgasDoColab(colab, dia);
+          if (folgas.length > 0) {
+            folgasNoDia.push({ nome: colab.nome, folgas });
+          }
+        });
+        
+        const tr = document.createElement('tr');
+        if (dia.isDomingo) {
+          tr.className = 'domingo';
+        }
+        
+        const tdDia = document.createElement('td');
+        tdDia.className = 'dia-col';
+        tdDia.textContent = dia.numeroStr;
+        tr.appendChild(tdDia);
+        
+        const tdSemana = document.createElement('td');
+        tdSemana.className = 'semana-col';
+        tdSemana.textContent = dia.abbr;
+        tr.appendChild(tdSemana);
+        
+        const tdFolgas = document.createElement('td');
+        tdFolgas.className = 'folgas-col';
+        
+        if (folgasNoDia.length === 0) {
+          tdFolgas.innerHTML = '<span class="sem-folga">-</span>';
+        } else {
+          let html = '';
+          folgasNoDia.forEach((folga, idx) => {
+            if (idx > 0) html += '<br>';
+            html += `<span class="folga-nome">${folga.nome}</span>`;
+            folga.folgas.forEach(f => {
+              html += `<span class="folga-tag tag-${f.tipo}">${f.label}</span>`;
+            });
+          });
+          tdFolgas.innerHTML = html;
+        }
+        
+        tr.appendChild(tdFolgas);
+        tbody.appendChild(tr);
+      });
+      
+      table.appendChild(tbody);
+      paginaDiv.appendChild(table);
+      tabelasContainer.appendChild(paginaDiv);
+    });
+}
+
+// ========================================
+// INICIALIZAR
+// ========================================
+window.addEventListener('load', () => {
+    gerarRelatorio();
+});
+
+// Também ouvir o evento de dados prontos (caso o Firebase termine depois do load)
+window.addEventListener('dadosEscalaProntos', () => {
+    gerarRelatorio();
+});
+</script>
+
+</body>
+</html>

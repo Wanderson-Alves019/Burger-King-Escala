@@ -1,0 +1,563 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dashboard de Metas - Burger King</title>
+<link rel="icon" href="assets/images/LOGO BK.png" type="image/png">
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Flame:wght@400;700&family=Roboto:wght@400;500;700;900&display=swap');
+
+  :root {
+    --bk-beige: #F5EBDC;
+    --bk-brown: #502314;
+    --bk-orange: #FF8732;
+    --bk-red: #D62300;
+    --bk-yellow: #FFD700;
+    --bk-green: #007A33;
+    --bk-teal: #00A3A1;
+    --bk-dark: #32140A;
+    --shadow: 0 10px 30px rgba(80, 35, 20, 0.1);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Roboto', sans-serif;
+    background-color: var(--bk-beige);
+    color: var(--bk-brown);
+    padding: 30px;
+    line-height: 1.6;
+  }
+
+  .container {
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+
+  /* HEADER */
+  .header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: white;
+    padding: 25px 40px;
+    border-radius: 24px;
+    box-shadow: var(--shadow);
+    margin-bottom: 30px;
+    border: 3px solid var(--bk-brown);
+  }
+
+  .header-info h1 {
+    font-family: 'Flame', sans-serif;
+    font-size: 32px;
+    color: var(--bk-brown);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+
+  .header-info p {
+    color: var(--bk-orange);
+    font-weight: 900;
+    text-transform: uppercase;
+    font-size: 14px;
+  }
+
+  .bk-logo { width: 120px; }
+
+  /* DASHBOARD CARDS */
+  .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 15px;
+    margin-bottom: 30px;
+  }
+
+  .stat-card {
+    background: white;
+    padding: 20px;
+    border-radius: 20px;
+    box-shadow: var(--shadow);
+    text-align: center;
+    border-bottom: 5px solid var(--bk-brown);
+    transition: transform 0.3s;
+  }
+
+  .stat-card:hover { transform: translateY(-5px); }
+
+  .stat-card h3 {
+    font-size: 11px;
+    text-transform: uppercase;
+    color: #888;
+    margin-bottom: 8px;
+  }
+
+  .stat-card .value {
+    font-size: 28px;
+    font-weight: 900;
+    color: var(--bk-brown);
+  }
+
+  .stat-card.alert { border-bottom-color: var(--bk-red); }
+  .stat-card.success { border-bottom-color: var(--bk-green); }
+  .stat-card.teal { border-bottom-color: var(--bk-teal); }
+
+  /* TABLE AREA */
+  .main-content {
+    background: white;
+    border-radius: 24px;
+    box-shadow: var(--shadow);
+    padding: 30px;
+    border: 1px solid rgba(80, 35, 20, 0.1);
+  }
+
+  .table-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+  }
+
+  .table-header h2 {
+    font-size: 20px;
+    font-weight: 900;
+    text-transform: uppercase;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0 6px;
+  }
+
+  th {
+    padding: 12px;
+    font-size: 10px;
+    text-transform: uppercase;
+    color: #888;
+    text-align: center;
+  }
+
+  tr.day-row td {
+    background: #FDFDFD;
+    padding: 12px;
+    text-align: center;
+    border-top: 1px solid #F0F0F0;
+    border-bottom: 1px solid #F0F0F0;
+    font-weight: 500;
+  }
+
+  tr.day-row td:first-child {
+    border-left: 1px solid #F0F0F0;
+    border-radius: 12px 0 0 12px;
+    text-align: left;
+    font-weight: 900;
+    color: var(--bk-brown);
+  }
+
+  tr.day-row td:last-child {
+    border-right: 1px solid #F0F0F0;
+    border-radius: 0 12px 12px 0;
+  }
+
+  .badge {
+    padding: 5px 10px;
+    border-radius: 8px;
+    font-size: 11px;
+    font-weight: 900;
+    text-transform: uppercase;
+  }
+
+  .badge-lunch { background: #FFF3E0; color: #E65100; }
+  .badge-dinner { background: #EFEBE9; color: #4E342E; }
+  .badge-ja { background: #E0F2F1; color: #00796B; }
+  
+  .meta-box {
+    background: var(--bk-yellow);
+    color: var(--bk-brown);
+    padding: 3px 6px;
+    border-radius: 6px;
+    font-weight: 900;
+  }
+
+  .diff { font-weight: 900; font-size: 13px; }
+  .diff.plus { color: var(--bk-green); }
+  .diff.minus { color: var(--bk-red); }
+
+  .status-dot {
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    margin-right: 6px;
+  }
+
+  .dot-ok { background: var(--bk-green); box-shadow: 0 0 8px var(--bk-green); }
+  .dot-alert { background: var(--bk-orange); box-shadow: 0 0 8px var(--bk-orange); }
+  .dot-critico { background: var(--bk-red); box-shadow: 0 0 8px var(--bk-red); }
+
+  .btn-print {
+    background: var(--bk-orange);
+    color: white;
+    border: none;
+    padding: 12px 25px;
+    border-radius: 50px;
+    font-weight: 900;
+    cursor: pointer;
+    text-transform: uppercase;
+    font-size: 12px;
+    box-shadow: 0 4px 15px rgba(255, 135, 50, 0.3);
+    transition: 0.3s;
+  }
+
+  .btn-print:hover { background: var(--bk-red); transform: scale(1.05); }
+
+  #error-message {
+    display: none;
+    background: var(--bk-red);
+    color: white;
+    padding: 20px;
+    border-radius: 15px;
+    text-align: center;
+    margin-bottom: 20px;
+    font-weight: 900;
+  }
+
+  @media print {
+    @page { size: landscape; margin: 5mm; }
+    * {
+      -webkit-print-color-adjust: exact !important;
+      print-color-adjust: exact !important;
+      color-adjust: exact !important;
+    }
+    .btn-print, .btn-voltar-portal { display: none !important; }
+    body { padding: 0 !important; margin: 0 !important; background: white !important; transform: none !important; }
+    .container { width: 100% !important; max-width: none !important; }
+    .header { padding: 10px !important; margin-bottom: 10px !important; border-radius: 10px !important; }
+    .header-info h1 { font-size: 18pt !important; }
+    .bk-logo { width: 40px !important; }
+    .stats-grid { gap: 10px !important; margin-bottom: 10px !important; grid-template-columns: repeat(5, 1fr) !important; }
+    .stat-card { padding: 10px !important; }
+    .stat-card .value { font-size: 14pt !important; }
+    .main-content { padding: 10px !important; }
+    .table-header h2 { font-size: 12pt !important; }
+    table { width: 100% !important; table-layout: fixed !important; }
+    th { padding: 4px !important; font-size: 8pt !important; }
+    tr.day-row td { padding: 3px !important; font-size: 8pt !important; }
+  }
+
+    
+
+
+    /* Estilo do Botão Voltar ao Portal Atualizado */
+    .btn-voltar-portal {
+        position: fixed;
+        top: 10px;
+        left: 10px;
+        background-color: #502314;
+        color: #F5EBDC;
+        padding: 5px 12px;
+        border-radius: 30px;
+        text-decoration: none;
+        font-weight: 700;
+        font-size: 11px;
+        z-index: 10000;
+        box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        border: 1.5px solid #FF8732;
+        font-family: 'Open Sans', sans-serif;
+        opacity: 0.8;
+    }
+
+    .btn-voltar-portal:hover {
+        opacity: 1;
+        background-color: #D62300;
+        transform: scale(1.02);
+    }
+
+    .btn-voltar-portal img {
+        width: 18px;
+        height: 18px;
+    }
+
+    @media print {
+        .btn-voltar-portal {
+            display: none !important;
+        }
+    }
+
+
+    /* Responsividade para Dispositivos Móveis */
+    @media screen and (max-width: 768px) {
+        body { padding: 10px; }
+        .container { padding: 15px; width: 100%; max-width: 100%; border-radius: 0; }
+        .header h1 { font-size: 22px; }
+        .header-info { flex-direction: column; gap: 10px; align-items: center; }
+        table { display: block; overflow-x: auto; white-space: nowrap; }
+        th, td { padding: 8px; font-size: 13px; }
+        .btn-print { width: 100%; justify-content: center; }
+        .actions-bar { flex-direction: column; gap: 10px; }
+        .legenda-items { flex-direction: column; gap: 10px; }
+        
+        /* Ajustes específicos para menus e grids se existirem */
+        .menu-grid, .grid-container { grid-template-columns: 1fr !important; }
+        .card { margin-bottom: 15px; }
+    }
+    
+    </style>
+</head>
+<body>
+
+    <!-- Botão Voltar ao Portal Atualizado -->
+    <a href="gestao_escala.html" class="btn-voltar-portal">
+        <img src="assets/images/LOGO BK.png" alt="BK">
+        <span>PORTAL</span>
+    </a>
+
+
+    
+    
+
+
+<div class="container">
+  <div id="error-message">⚠️ ARQUIVO "colaboradores.js" NÃO ENCONTRADO NA PASTA</div>
+
+  <div class="header">
+    <div class="header-info">
+      <p>Gestão de Escala</p>
+      <h1>Análise de Metas</h1>
+    </div>
+    <img src="assets/images/LOGO BK.png" class="bk-logo" alt="BK">
+  </div>
+
+  <div class="stats-grid">
+    <div class="stat-card">
+      <h3>Efetivos Ativos</h3>
+      <div class="value" id="stat-total">0</div>
+    </div>
+    <div class="stat-card teal">
+      <h3>Jovens Aprendizes</h3>
+      <div class="value" id="stat-ja">0</div>
+    </div>
+    <div class="stat-card alert" id="card-critico">
+      <h3>Dias Críticos</h3>
+      <div class="value" id="stat-critico">0</div>
+    </div>
+    <div class="stat-card success">
+      <h3>Cobertura Almoço</h3>
+      <div class="value" id="stat-lunch-avg">0%</div>
+    </div>
+    <div class="stat-card">
+      <h3>Cobertura Janta</h3>
+      <div class="value" id="stat-dinner-avg">0%</div>
+    </div>
+  </div>
+
+  <div class="main-content">
+    <div class="table-header">
+      <h2>Relatório Detalhado - Maio 2026</h2>
+      <button class="btn-print" onclick="window.print()">💾 Salvar Relatório</button>
+    </div>
+
+    <table id="metas-table">
+      <thead>
+        <tr>
+          <th>Dia</th>
+          <th>J.A. (Extra)</th>
+          <th>Efetivos Almoço</th>
+          <th>Meta</th>
+          <th>Saldo</th>
+          <th>Efetivos Janta</th>
+          <th>Meta</th>
+          <th>Saldo</th>
+        </tr>
+      </thead>
+      <tbody id="table-body"></tbody>
+    </table>
+  </div>
+</div>
+
+<script type="module" src="firebase-config.js"></script>
+<script src="auth-manager.js"></script>
+<script type="module" src="colaboradores.js" defer></script>
+
+<script>
+// ========================================
+// CARREGAMENTO UNIFICADO COM FALLBACK
+// ========================================
+let dados = {};
+
+function carregarDadosAnalise() {
+    // Tentar carregar do window.dadosEscala (preenchido pelo colaboradores.js)
+    if (window.dadosEscala && window.dadosEscala.dadosCarregados) {
+        dados = JSON.parse(JSON.stringify(window.dadosEscala));
+        console.log('[Análise Metas] Dados carregados de window.dadosEscala:', dados.origemDados);
+        return true;
+    }
+    
+    // Fallback: tentar localStorage
+    const dadosSalvos = localStorage.getItem('escalasData');
+    if (dadosSalvos) {
+        try {
+            dados = JSON.parse(dadosSalvos);
+            dados.origemDados = 'localStorage';
+            console.log('[Análise Metas] Dados carregados de localStorage');
+            return true;
+        } catch (e) {
+            console.error('[Análise Metas] Erro ao parsear localStorage:', e);
+        }
+    }
+    
+    // Fallback final: usar globais do colaboradores.js
+    if (typeof mesConfig !== 'undefined' && typeof colaboradores !== 'undefined') {
+        dados = {
+            mesConfig: mesConfig,
+            periodo: periodo,
+            intermediarios: typeof intermediarios !== 'undefined' ? intermediarios : [],
+            jovensAprendizes: typeof jovensAprendizes !== 'undefined' ? jovensAprendizes : [],
+            colaboradores: colaboradores,
+            origemDados: 'padrao'
+        };
+        console.log('[Análise Metas] Usando dados padrão do colaboradores.js');
+        return true;
+    }
+    
+    console.error('[Análise Metas] Nenhuma fonte de dados disponível');
+    return false;
+}
+
+function initDashboard() {
+    if (!carregarDadosAnalise()) {
+        document.getElementById('error-message').style.display = 'block';
+        return;
+    }
+    // Usar metas do objeto dados (carregado via Firebase/Local) ou globais com fallback
+    const mAlmocoPadrao = { 'segunda': 5, 'terça': 5, 'quarta': 5, 'quinta': 6, 'sexta': 7, 'sábado': 7, 'domingo': 5 };
+    const mJantaPadrao = { 'segunda': 11, 'terça': 12, 'quarta': 12, 'quinta': 12, 'sexta': 13, 'sábado': 15, 'domingo': 11 };
+    
+    const metasLunchRef = dados.metasLunch || (typeof metasLunch !== 'undefined' ? metasLunch : mAlmocoPadrao);
+    const metasDinnerRef = dados.metasDinner || (typeof metasDinner !== 'undefined' ? metasDinner : mJantaPadrao);
+    
+    const configMes = dados.mesConfig || [1, "sexta", 31];
+    const diasSemana = ["domingo", "segunda", "terça", "quarta", "quinta", "sexta", "sábado"];
+    const diasSemanaAbbr = ["DOM", "SEG", "TER", "QUA", "QUI", "SEX", "SÁB"];
+
+    function getDiasDoMes(config) {
+      const [primeiroDia, diaSemanaInicial, ultimoDia] = config;
+      const startIndex = diasSemana.indexOf(diaSemanaInicial.toLowerCase());
+      const dias = [];
+      for (let i = 1; i <= ultimoDia; i++) {
+        const currentDayIndex = (startIndex + (i - 1)) % 7;
+        dias.push({ numero: i, nomeSemana: diasSemana[currentDayIndex], abbr: diasSemanaAbbr[currentDayIndex], isDomingo: currentDayIndex === 0 });
+      }
+      return dias;
+    }
+
+    const listaDias = getDiasDoMes(configMes);
+    const tbody = document.getElementById('table-body');
+    
+    let diasCriticos = 0;
+    let totalLunchReal = 0;
+    let totalLunchMeta = 0;
+    let totalDinnerReal = 0;
+    let totalDinnerMeta = 0;
+    let countEfetivos = 0;
+
+    function isIntermediario(name) {
+      const n = name.toUpperCase();
+      return dados.intermediarios && dados.intermediarios.some(i => n.includes(i.toUpperCase()));
+    }
+
+    function isJA(name) {
+      const n = name.toUpperCase();
+      return dados.jovensAprendizes && dados.jovensAprendizes.some(ja => n.includes(ja.toUpperCase()));
+    }
+
+    // Contar total de efetivos (não J.A.)
+    dados.colaboradores.forEach(c => {
+        if(!isJA(c.nome)) countEfetivos++;
+    });
+
+    listaDias.forEach(dia => {
+      let lunchReal = 0;
+      let dinnerReal = 0;
+      let jaAtivos = 0;
+
+      dados.colaboradores.forEach(colab => {
+        const diaNum = dia.numero;
+        const diaSemanaNome = dia.abbr.toLowerCase();
+        let estaTrabalhando = true;
+        
+        if (colab.ferias && diaNum >= colab.ferias[0] && diaNum <= colab.ferias[1]) estaTrabalhando = false;
+        else if (colab.descansoExtra && colab.descansoExtra.includes(diaNum)) estaTrabalhando = false;
+        else if (dia.isDomingo && colab.domingos && colab.domingos.includes(diaNum)) estaTrabalhando = false;
+        else if (colab.folgaFixa && diaSemanaNome === colab.folgaFixa.normalize("NFD").replace(/[\u0300-\u036f]/g, "").substring(0, 3).toLowerCase()) estaTrabalhando = false;
+
+        if (estaTrabalhando) {
+          const hour = parseInt(colab.turno.split(':')[0]);
+          const inter = isIntermediario(colab.nome);
+          const ja = isJA(colab.nome);
+          
+          if (ja) {
+              jaAtivos++;
+          } else {
+              // Só conta se NÃO for J.A.
+              if (hour <= 12 || inter) lunchReal++;
+              if (hour > 12 || inter) dinnerReal++;
+          }
+        }
+      });
+
+      const mAlmoco = metasLunchRef[dia.nomeSemana];
+      const mJanta = metasDinnerRef[dia.nomeSemana];
+      const diffAlmoco = lunchReal - mAlmoco;
+      const diffJanta = dinnerReal - mJanta;
+
+      if (diffAlmoco < 0 || diffJanta < 0) diasCriticos++;
+      totalLunchReal += lunchReal;
+      totalLunchMeta += mAlmoco;
+      totalDinnerReal += dinnerReal;
+      totalDinnerMeta += mJanta;
+
+      const tr = document.createElement('tr');
+      tr.className = 'day-row';
+      tr.innerHTML = `
+        <td>${dia.numero.toString().padStart(2,'0')} - ${dia.abbr}</td>
+        <td><span class="badge badge-ja">${jaAtivos}</span></td>
+        <td><span class="badge badge-lunch">${lunchReal}</span></td>
+        <td><span class="meta-box">${mAlmoco}</span></td>
+        <td class="diff ${diffAlmoco >= 0 ? 'plus' : 'minus'}">
+          <span class="status-dot ${diffAlmoco >= 0 ? 'dot-ok' : (diffAlmoco >= -2 ? 'dot-alert' : 'dot-critico')}"></span>
+          ${diffAlmoco > 0 ? '+' : ''}${diffAlmoco}
+        </td>
+        <td><span class="badge badge-dinner">${dinnerReal}</span></td>
+        <td><span class="meta-box">${mJanta}</span></td>
+        <td class="diff ${diffJanta >= 0 ? 'plus' : 'minus'}">
+          <span class="status-dot ${diffJanta >= 0 ? 'dot-ok' : (diffJanta >= -2 ? 'dot-alert' : 'dot-critico')}"></span>
+          ${diffJanta > 0 ? '+' : ''}${diffJanta}
+        </td>
+      `;
+      tbody.appendChild(tr);
+    });
+
+    // Update Stats
+    document.getElementById('stat-total').textContent = countEfetivos;
+    document.getElementById('stat-ja').textContent = dados.jovensAprendizes ? dados.jovensAprendizes.length : 0;
+    document.getElementById('stat-critico').textContent = diasCriticos;
+    document.getElementById('stat-lunch-avg').textContent = Math.round((totalLunchReal / totalLunchMeta) * 100) + '%';
+    document.getElementById('stat-dinner-avg').textContent = Math.round((totalDinnerReal / totalDinnerMeta) * 100) + '%';
+}
+
+window.addEventListener('load', () => {
+    initDashboard();
+});
+
+// Também ouvir o evento de dados prontos (caso o Firebase termine depois do load)
+window.addEventListener('dadosEscalaProntos', () => {
+    initDashboard();
+});
+</script>
+</body>
+</html>

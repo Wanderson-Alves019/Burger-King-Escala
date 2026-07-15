@@ -1,0 +1,696 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - Burger King - Gestão de Escala</title>
+    <link rel="icon" href="assets/images/LOGO BK.png" type="image/png">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700;900&display=swap');
+
+        :root {
+            --bk-beige: #F5EBDC;
+            --bk-brown: #502314;
+            --bk-orange: #FF8732;
+            --bk-red: #D62300;
+            --bk-yellow: #FFD700;
+            --bk-green: #007A33;
+            --bk-teal: #00A3A1;
+            --bk-dark-brown: #32140A;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: var(--bk-beige);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        /* Padrão de fundo sutil */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-image: url('https://imgur.com/qFy20zg.png');
+            opacity: 0.02;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .login-wrapper {
+            display: flex;
+            width: 100%;
+            max-width: 1200px;
+            height: auto;
+            min-height: 600px;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+            overflow: hidden;
+            animation: slideIn 0.6s ease-out;
+            position: relative;
+            z-index: 1;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-40px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Lado esquerdo - Decorativo */
+        .login-side-left {
+            flex: 1;
+            background: linear-gradient(135deg, var(--bk-red) 0%, var(--bk-orange) 50%, var(--bk-yellow) 100%);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 60px 40px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .login-side-left::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 500px;
+            height: 500px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            animation: float 6s ease-in-out infinite;
+        }
+
+        .login-side-left::after {
+            content: '';
+            position: absolute;
+            bottom: -30%;
+            left: -30%;
+            width: 400px;
+            height: 400px;
+            background: rgba(255, 255, 255, 0.08);
+            border-radius: 50%;
+            animation: float 8s ease-in-out infinite reverse;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(30px); }
+        }
+
+        .logo-side {
+            position: relative;
+            z-index: 2;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .logo-side img {
+            width: 180px;
+            height: 180px;
+            object-fit: contain;
+            filter: drop-shadow(0 10px 25px rgba(0, 0, 0, 0.2));
+            animation: pulse 3s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        .side-text {
+            position: relative;
+            z-index: 2;
+            color: white;
+            text-align: center;
+        }
+
+        .side-text h2 {
+            font-size: 28px;
+            font-weight: 900;
+            text-transform: uppercase;
+            line-height: 1.2;
+            margin-bottom: 15px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        .side-text p {
+            font-size: 14px;
+            font-weight: 500;
+            opacity: 0.95;
+            line-height: 1.6;
+        }
+
+        /* Lado direito - Formulário */
+        .login-side-right {
+            flex: 1;
+            padding: 60px 50px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            position: relative;
+            overflow-y: auto;
+            max-height: 600px;
+        }
+
+        .form-container {
+            width: 100%;
+        }
+
+        .form-header {
+            margin-bottom: 40px;
+        }
+
+        .form-header h1 {
+            font-size: 32px;
+            font-weight: 900;
+            color: var(--bk-brown);
+            text-transform: uppercase;
+            line-height: 1;
+            margin-bottom: 8px;
+        }
+
+        .form-header p {
+            font-size: 13px;
+            color: var(--bk-orange);
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .form-divider {
+            width: 50px;
+            height: 4px;
+            background: linear-gradient(90deg, var(--bk-orange), var(--bk-red));
+            border-radius: 2px;
+            margin-top: 15px;
+            margin-bottom: 30px;
+        }
+
+        .form-subtitle {
+            font-size: 14px;
+            color: var(--bk-brown);
+            margin-bottom: 30px;
+            opacity: 0.8;
+            line-height: 1.6;
+        }
+
+        /* Grid de Lojas */
+        .lojas-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .loja-card {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 15px;
+            border: 3px solid #EEDDC5;
+            border-radius: 10px;
+            background-color: #FAFAFA;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            color: var(--bk-brown);
+        }
+
+        .loja-card:hover {
+            border-color: var(--bk-orange);
+            background-color: white;
+            box-shadow: 0 0 15px rgba(255, 135, 50, 0.25);
+            transform: translateY(-5px);
+        }
+
+        .loja-card.selecionada {
+            border-color: var(--bk-red);
+            background-color: #fff5f0;
+            box-shadow: 0 0 20px rgba(214, 35, 0, 0.3);
+        }
+
+        .loja-icone {
+            width: 60px;
+            height: 60px;
+            object-fit: contain;
+            margin-bottom: 10px;
+            filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
+        }
+
+        .loja-nome {
+            font-size: 11px;
+            font-weight: 700;
+            text-align: center;
+            line-height: 1.3;
+            color: var(--bk-brown);
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        .form-group label {
+            display: block;
+            font-weight: 700;
+            color: var(--bk-brown);
+            margin-bottom: 10px;
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .input-wrapper {
+            position: relative;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 14px 16px;
+            padding-left: 45px;
+            border: 2px solid #EEDDC5;
+            border-radius: 10px;
+            font-size: 14px;
+            font-family: 'Roboto', sans-serif;
+            transition: all 0.3s ease;
+            background-color: #FAFAFA;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: var(--bk-orange);
+            background-color: white;
+            box-shadow: 0 0 15px rgba(255, 135, 50, 0.25);
+        }
+
+        .form-group input::placeholder {
+            color: #BBB;
+        }
+
+        .input-icon {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 18px;
+            opacity: 0.6;
+        }
+
+        .btn-login {
+            width: 100%;
+            padding: 16px;
+            background: linear-gradient(135deg, var(--bk-red) 0%, var(--bk-orange) 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-weight: 700;
+            font-size: 14px;
+            text-transform: uppercase;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 6px 20px rgba(214, 35, 0, 0.3);
+            font-family: 'Roboto', sans-serif;
+            letter-spacing: 0.5px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-login::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.2);
+            transition: left 0.3s ease;
+        }
+
+        .btn-login:hover::before {
+            left: 100%;
+        }
+
+        .btn-login:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(214, 35, 0, 0.4);
+        }
+
+        .btn-login:active {
+            transform: translateY(0);
+        }
+
+        .btn-login:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .error-message {
+            display: none;
+            background: linear-gradient(135deg, #ffebee 0%, #ffcdd2 100%);
+            color: var(--bk-red);
+            padding: 14px 16px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            font-size: 12px;
+            border-left: 4px solid var(--bk-red);
+            animation: shake 0.4s ease-in-out;
+            font-weight: 600;
+        }
+
+        .error-message.show {
+            display: block;
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-8px); }
+            75% { transform: translateX(8px); }
+        }
+
+        .success-message {
+            display: none;
+            background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%);
+            color: var(--bk-green);
+            padding: 14px 16px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            font-size: 12px;
+            border-left: 4px solid var(--bk-green);
+            font-weight: 600;
+        }
+
+        .success-message.show {
+            display: block;
+        }
+
+        .info-box {
+            background: linear-gradient(135deg, #f5e6d3 0%, #e8d4bf 100%);
+            padding: 16px;
+            border-radius: 10px;
+            margin-top: 25px;
+            font-size: 12px;
+            color: var(--bk-brown);
+            text-align: center;
+            border: 2px solid var(--bk-brown);
+            box-shadow: 3px 3px 0px rgba(80, 35, 20, 0.1);
+        }
+
+        .info-box strong {
+            color: var(--bk-orange);
+            display: block;
+            margin-bottom: 8px;
+        }
+
+        /* Responsivo */
+        @media (max-width: 968px) {
+            .login-wrapper {
+                flex-direction: column;
+                min-height: auto;
+            }
+
+            .login-side-left {
+                padding: 40px 30px;
+                min-height: 250px;
+            }
+
+            .login-side-right {
+                padding: 40px 30px;
+                max-height: none;
+            }
+
+            .logo-side img {
+                width: 140px;
+                height: 140px;
+            }
+
+            .side-text h2 {
+                font-size: 24px;
+            }
+
+            .form-header h1 {
+                font-size: 28px;
+            }
+
+            .lojas-grid {
+                grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            }
+        }
+
+        @media (max-width: 600px) {
+            .login-wrapper {
+                border-radius: 15px;
+            }
+
+            .login-side-left {
+                padding: 30px 20px;
+                min-height: 200px;
+            }
+
+            .login-side-right {
+                padding: 30px 20px;
+                max-height: none;
+            }
+
+            .logo-side img {
+                width: 120px;
+                height: 120px;
+            }
+
+            .side-text h2 {
+                font-size: 20px;
+            }
+
+            .side-text p {
+                font-size: 12px;
+            }
+
+            .form-header h1 {
+                font-size: 24px;
+            }
+
+            .form-group input {
+                padding: 12px 14px;
+                padding-left: 40px;
+                font-size: 13px;
+            }
+
+            .btn-login {
+                padding: 14px;
+                font-size: 13px;
+            }
+
+            .info-box {
+                font-size: 11px;
+                padding: 12px;
+            }
+
+            .lojas-grid {
+                grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+                gap: 10px;
+            }
+
+            .loja-icone {
+                width: 50px;
+                height: 50px;
+            }
+
+            .loja-nome {
+                font-size: 10px;
+            }
+        }
+    
+    /* Responsividade para Dispositivos Móveis */
+    @media screen and (max-width: 768px) {
+        body { padding: 10px; }
+        .container { padding: 15px; width: 100%; max-width: 100%; border-radius: 0; }
+        .header h1 { font-size: 22px; }
+        .header-info { flex-direction: column; gap: 10px; align-items: center; }
+        table { display: block; overflow-x: auto; white-space: nowrap; }
+        th, td { padding: 8px; font-size: 13px; }
+        .btn-print { width: 100%; justify-content: center; }
+        .actions-bar { flex-direction: column; gap: 10px; }
+        .legenda-items { flex-direction: column; gap: 10px; }
+        
+        /* Ajustes específicos para menus e grids se existirem */
+        .menu-grid, .grid-container { grid-template-columns: 1fr !important; }
+        .card { margin-bottom: 15px; }
+    }
+    
+    </style>
+</head>
+<body>
+
+    <div class="login-wrapper">
+        <!-- Lado Esquerdo - Decorativo -->
+        <div class="login-side-left">
+            <div class="logo-side">
+                <img src="assets/images/LOGO BK.png" alt="Burger King Logo">
+            </div>
+            <div class="side-text">
+                <h2>Bem-vindo ao Portal</h2>
+                <p>Sistema de Gestão de Escala e Funcionários</p>
+            </div>
+        </div>
+
+        <!-- Lado Direito - Formulário -->
+        <div class="login-side-right">
+            <div class="form-container">
+                <div class="form-header">
+                    <h1>Acesso</h1>
+                    <p>Burger King</p>
+                    <div class="form-divider"></div>
+                </div>
+
+                <p class="form-subtitle">Digite a senha de acesso</p>
+
+                <div class="error-message" id="errorMessage"></div>
+                <div class="success-message" id="successMessage"></div>
+
+                <form id="loginForm" onsubmit="validarLogin(event)">
+                    <input type="hidden" id="lojaId" name="lojaId" value="1">
+
+                    <!-- Senha -->
+                    <div class="form-group">
+                        <label for="senha">Senha de Acesso</label>
+                        <div class="input-wrapper">
+                            <span class="input-icon">🔐</span>
+                            <input 
+                                type="password" 
+                                id="senha" 
+                                name="senha" 
+                                placeholder="Digite sua senha" 
+                                required 
+                                autofocus
+                            >
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn-login" id="btnLogin">
+                        <span>Entrar no Portal</span>
+                    </button>
+                </form>
+
+                <div class="info-box">
+                    <strong>ℹ️ Informação Importante</strong>
+                    Digite sua senha. Contate o administrador se necessário.
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script type="module" src="firebase-config.js"></script>
+    <script src="auth-manager.js"></script>
+    <script>
+        // Validar login
+        function validarLogin(event) {
+            event.preventDefault();
+
+            const lojaId = '1';
+            const senhaInput = document.getElementById('senha').value.trim();
+            const errorMessage = document.getElementById('errorMessage');
+            const successMessage = document.getElementById('successMessage');
+            const btnLogin = document.getElementById('btnLogin');
+
+            // Limpar mensagens anteriores
+            errorMessage.classList.remove('show');
+            successMessage.classList.remove('show');
+
+                        // Validar se a senha está vazia
+            if (!senhaInput) {
+                mostrarErro('Por favor, digite sua senha de acesso.');
+                return;
+            }
+
+            // Desabilitar botão durante a validação
+            btnLogin.disabled = true;
+            btnLogin.textContent = 'Verificando...';
+
+            // Simular pequeno delay para melhor UX
+            setTimeout(() => {
+                // Fazer login através do authManager
+                const resultado = window.authManager.login(senhaInput);
+
+                if (resultado.sucesso) {
+                    mostrarSucesso(resultado.mensagem);
+                    
+                    // Redirecionar após 1.5 segundos
+                    setTimeout(() => {
+                        // Verificar se é administrador
+                        const lojaAtual = window.authManager.obterLojaAtual();
+                        if (lojaAtual && lojaAtual.isAdmin) {
+                            window.location.href = 'admin_dashboard.html';
+                        } else {
+                            window.location.href = 'gestao_escala.html';
+                        }
+                    }, 1500);
+                } else {
+                    mostrarErro('✗ ' + resultado.mensagem);
+                    document.getElementById('senha').value = '';
+                    document.getElementById('senha').focus();
+                    btnLogin.disabled = false;
+                    btnLogin.textContent = 'Entrar no Portal';
+                }
+            }, 600);
+        }
+
+        function mostrarErro(mensagem) {
+            const errorMessage = document.getElementById('errorMessage');
+            errorMessage.textContent = mensagem;
+            errorMessage.classList.add('show');
+            
+            // Auto-hide após 5 segundos
+            setTimeout(() => {
+                errorMessage.classList.remove('show');
+            }, 5000);
+        }
+
+        function mostrarSucesso(mensagem) {
+            const successMessage = document.getElementById('successMessage');
+            successMessage.textContent = mensagem;
+            successMessage.classList.add('show');
+        }
+
+        // Permitir login com Enter
+        document.getElementById('loginForm').addEventListener('keypress', function(event) {
+            if (event.key === 'Enter') {
+                validarLogin(event);
+            }
+        });
+
+        // Verificar se o usuário já está autenticado
+        window.addEventListener('load', function() {
+            
+            // Verificar autenticação
+            if (window.authManager.estaAutenticado()) {
+                // Redirecionar automaticamente se já está autenticado
+                window.location.href = 'gestao_escala.html';
+            }
+        });
+    </script>
+
+</body>
+</html>

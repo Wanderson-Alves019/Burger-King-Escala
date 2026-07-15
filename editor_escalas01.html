@@ -1,0 +1,1321 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Editor de Escalas - Burger King</title>
+   <link href="assets/images/LOGO BK.png" rel="stylesheet">
+    <style>
+        :root {
+            --bk-red: #D62300;
+            --bk-beige: #F5EBDC;
+            --bk-orange: #FF8732;
+            --bk-brown: #502314;
+            --bk-yellow: #FFAA00;
+            --bk-white: #FFFFFF;
+            --bk-green: #007A33;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Open Sans', sans-serif;
+            background-color: var(--bk-beige);
+            color: var(--bk-brown);
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        /* Header */
+        .header {
+            background-color: var(--bk-brown);
+            color: var(--bk-white);
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 4px 15px rgba(80, 35, 20, 0.2);
+        }
+
+        .header-title {
+            font-family: 'Luckiest Guy', cursive;
+            font-size: 1.8rem;
+            color: var(--bk-orange);
+            text-transform: uppercase;
+        }
+
+        .btn-voltar {
+            background-color: var(--bk-orange);
+            color: var(--bk-white);
+            text-decoration: none;
+            padding: 10px 20px;
+            border-radius: 25px;
+            font-weight: 700;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+            border: none;
+            cursor: pointer;
+        }
+
+        .btn-voltar:hover {
+            background-color: var(--bk-red);
+            transform: scale(1.05);
+        }
+
+        /* Tabs */
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #ddd;
+            overflow-x: auto;
+        }
+
+        .tab-btn {
+            background-color: transparent;
+            border: none;
+            padding: 12px 20px;
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--bk-brown);
+            cursor: pointer;
+            border-bottom: 3px solid transparent;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            white-space: nowrap;
+        }
+
+        .tab-btn:hover {
+            color: var(--bk-orange);
+        }
+
+        .tab-btn.active {
+            color: var(--bk-orange);
+            border-bottom-color: var(--bk-orange);
+        }
+
+        .tab-content {
+            display: none;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 5px;
+            color: var(--bk-brown);
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-family: 'Open Sans', sans-serif;
+            font-size: 0.95rem;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: var(--bk-orange);
+            box-shadow: 0 0 5px rgba(255, 135, 50, 0.3);
+        }
+
+        /* Grid de Colaboradores */
+        .colaboradores-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .colaborador-card {
+            background-color: var(--bk-white);
+            border: 2px solid #eee;
+            border-radius: 10px;
+            padding: 15px;
+            transition: all 0.3s ease;
+        }
+
+        .colaborador-card:hover {
+            border-color: var(--bk-orange);
+            box-shadow: 0 4px 15px rgba(255, 135, 50, 0.2);
+        }
+
+        .colaborador-card h4 {
+            color: var(--bk-brown);
+            margin-bottom: 10px;
+            font-size: 1rem;
+        }
+
+        .colaborador-info {
+            font-size: 0.85rem;
+            color: #666;
+            margin-bottom: 10px;
+            line-height: 1.6;
+        }
+
+        .colaborador-info strong {
+            color: var(--bk-brown);
+        }
+
+        .colaborador-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .btn-edit, .btn-delete, .btn-add {
+            flex: 1;
+            padding: 8px 12px;
+            border: none;
+            border-radius: 5px;
+            font-weight: 600;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+        }
+
+        .btn-edit {
+            background-color: var(--bk-orange);
+            color: var(--bk-white);
+        }
+
+        .btn-edit:hover {
+            background-color: #ff7000;
+            transform: scale(1.05);
+        }
+
+        .btn-delete {
+            background-color: var(--bk-red);
+            color: var(--bk-white);
+        }
+
+        .btn-delete:hover {
+            background-color: #a01a00;
+            transform: scale(1.05);
+        }
+
+        .btn-add {
+            background-color: var(--bk-green);
+            color: var(--bk-white);
+            width: 100%;
+        }
+
+        .btn-add:hover {
+            background-color: #005a26;
+            transform: scale(1.02);
+        }
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            animation: fadeIn 0.3s ease;
+            overflow-y: auto;
+        }
+
+        .modal.active {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-content {
+            background-color: var(--bk-white);
+            padding: 30px;
+            border-radius: 10px;
+            max-width: 500px;
+            width: 90%;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+            margin: 20px 0;
+        }
+
+        .modal-header {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--bk-brown);
+            margin-bottom: 20px;
+            border-bottom: 2px solid var(--bk-orange);
+            padding-bottom: 10px;
+        }
+
+        .modal-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .btn-save {
+            flex: 1;
+            background-color: var(--bk-green);
+            color: var(--bk-white);
+            padding: 12px;
+            border: none;
+            border-radius: 5px;
+            font-weight: 700;
+            cursor: pointer;
+            text-transform: uppercase;
+            transition: all 0.3s ease;
+        }
+
+        .btn-save:hover {
+            background-color: #005a26;
+            transform: scale(1.02);
+        }
+
+        .btn-cancel {
+            flex: 1;
+            background-color: #ccc;
+            color: var(--bk-brown);
+            padding: 12px;
+            border: none;
+            border-radius: 5px;
+            font-weight: 700;
+            cursor: pointer;
+            text-transform: uppercase;
+            transition: all 0.3s ease;
+        }
+
+        .btn-cancel:hover {
+            background-color: #aaa;
+        }
+
+        /* Botões de Ação Gerais */
+        .action-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+
+        .btn-primary {
+            background-color: var(--bk-green);
+            color: var(--bk-white);
+            padding: 12px 24px;
+            border: none;
+            border-radius: 25px;
+            font-weight: 700;
+            font-size: 1rem;
+            cursor: pointer;
+            text-transform: uppercase;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0, 122, 51, 0.3);
+        }
+
+        .btn-primary:hover {
+            background-color: #005a26;
+            transform: scale(1.05);
+        }
+
+        .btn-secondary {
+            background-color: var(--bk-orange);
+            color: var(--bk-white);
+            padding: 12px 24px;
+            border: none;
+            border-radius: 25px;
+            font-weight: 700;
+            font-size: 1rem;
+            cursor: pointer;
+            text-transform: uppercase;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(255, 135, 50, 0.3);
+        }
+
+        .btn-secondary:hover {
+            background-color: #ff7000;
+            transform: scale(1.05);
+        }
+
+        /* Mensagens */
+        .message {
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 15px;
+            display: none;
+            animation: slideDown 0.3s ease;
+        }
+
+        .message.active {
+            display: block;
+        }
+
+        .message.success {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .message.error {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Liderança Grid */
+        .lideranca-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .lideranca-card {
+            background-color: var(--bk-white);
+            border: 2px solid #eee;
+            border-radius: 10px;
+            padding: 15px;
+            transition: all 0.3s ease;
+        }
+
+        .lideranca-card:hover {
+            border-color: var(--bk-orange);
+            box-shadow: 0 4px 15px rgba(255, 135, 50, 0.2);
+        }
+
+        .lideranca-card h4 {
+            color: var(--bk-brown);
+            margin-bottom: 5px;
+            font-size: 1rem;
+        }
+
+        .lideranca-cargo {
+            font-size: 0.85rem;
+            color: var(--bk-orange);
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+
+        .lideranca-info {
+            font-size: 0.85rem;
+            color: #666;
+            margin-bottom: 10px;
+            line-height: 1.6;
+        }
+
+        .lideranca-info strong {
+            color: var(--bk-brown);
+        }
+
+        .lideranca-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        /* Responsivo */
+        @media (max-width: 768px) {
+            .header {
+                flex-direction: column;
+                gap: 15px;
+                text-align: center;
+            }
+
+            .tabs {
+                flex-wrap: wrap;
+            }
+
+            .colaboradores-grid,
+            .lideranca-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .modal-content {
+                max-width: 90%;
+            }
+
+            .lideranca-actions {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <div class="header">
+            <h1 class="header-title">📋 Editor de Escalas</h1>
+            <a href="gestao_escala.html" class="btn-voltar">← Voltar ao Portal</a>
+        </div>
+
+        <div id="message" class="message"></div>
+
+        <!-- Status de sincronização Firebase -->
+        <div id="syncStatus" style="display:none; margin-bottom: 15px; padding: 10px 15px; border-radius: 8px; font-size: 0.9rem; font-weight: 600;"></div>
+
+        <!-- Tabs -->
+        <div class="tabs">
+            <button class="tab-btn active" onclick="switchTab('colaboradores')">👥 Colaboradores</button>
+            <button class="tab-btn" onclick="switchTab('lideranca')">👔 Liderança</button>
+        </div>
+
+        <!-- TAB 1: Colaboradores -->
+        <div id="colaboradores" class="tab-content active">
+            <div style="background-color: var(--bk-white); padding: 25px; border-radius: 10px; margin-bottom: 20px; box-shadow: 0 4px 15px rgba(80, 35, 20, 0.08);">
+                <h3 style="font-size: 1.3rem; color: var(--bk-brown); margin-bottom: 15px; border-bottom: 2px solid var(--bk-orange); padding-bottom: 10px;">Gerenciar Colaboradores</h3>
+                <p style="font-size: 0.85rem; color: #666; margin-bottom: 15px;">As configurações do mês são geradas automaticamente pelo <strong>colaboradores.js</strong>. Os domingos de folga são marcados abaixo com base na escala mensal.</p>
+                <button class="btn-add" onclick="abrirModalAdicionar()">➕ Adicionar Novo Colaborador</button>
+                <div id="colaboradoresList" class="colaboradores-grid"></div>
+            </div>
+        </div>
+
+        <!-- TAB 2: Liderança -->
+        <div id="lideranca" class="tab-content">
+            <div style="background-color: var(--bk-white); padding: 25px; border-radius: 10px; margin-bottom: 20px; box-shadow: 0 4px 15px rgba(80, 35, 20, 0.08);">
+                <h3 style="font-size: 1.3rem; color: var(--bk-brown); margin-bottom: 15px; border-bottom: 2px solid var(--bk-orange); padding-bottom: 10px;">Gerenciar Escala de Liderança</h3>
+                <button class="btn-add" onclick="abrirModalAdicionarLideranca()">➕ Adicionar Novo Colaborador na Liderança</button>
+                <div id="liderancaList" class="lideranca-grid"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal para Editar/Adicionar Colaborador -->
+    <div id="modalColaborador" class="modal">
+        <div class="modal-content">
+            <div class="modal-header" id="modalTitle">Adicionar Colaborador</div>
+            
+            <div class="form-group">
+                <label for="modalNome">Nome:</label>
+                <input type="text" id="modalNome" placeholder="Nome completo">
+            </div>
+
+            <div class="form-group">
+                <label for="modalTurno">Turno:</label>
+                <select id="modalTurno">
+                    <option value="08:00">Manhã (08:00)</option>
+                    <option value="15:00">Tarde (15:00)</option>
+                    <option value="22:00">Noite (22:00)</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="modalFolgaFixa">Folga Fixa:</label>
+                <select id="modalFolgaFixa">
+                    <option value="segunda">Segunda</option>
+                    <option value="terça">Terça</option>
+                    <option value="quarta">Quarta</option>
+                    <option value="quinta">Quinta</option>
+                    <option value="sexta">Sexta</option>
+                    <option value="sábado">Sábado</option>
+                    <option value="domingo">Domingo</option>
+                </select>
+            </div>
+
+            <!-- Domingos de Folga - Marcação Visual -->
+            <div class="form-group">
+                <label style="font-weight: 700; margin-bottom: 8px; display: block;">Domingos de Folga:</label>
+                <div id="domingosMarcacao" style="display: flex; flex-wrap: wrap; gap: 8px; margin-top: 5px;"></div>
+            </div>
+
+            <div class="form-group">
+                <label for="modalDescansoExtra">Descanso Extra (separados por vírgula):</label>
+                <input type="text" id="modalDescansoExtra" placeholder="Ex: 5, 12, 19">
+            </div>
+
+            <div class="form-group">
+                <label for="modalFerias">Férias (início e fim, separados por vírgula):</label>
+                <input type="text" id="modalFerias" placeholder="Ex: 5, 31">
+            </div>
+
+            <div class="form-group">
+                <label for="modalAniversarioMes">Aniversário - Mês:</label>
+                <select id="modalAniversarioMes">
+                    <option value="">-- Selecionar --</option>
+                    <option value="janeiro">Janeiro</option>
+                    <option value="fevereiro">Fevereiro</option>
+                    <option value="marco">Março</option>
+                    <option value="abril">Abril</option>
+                    <option value="maio">Maio</option>
+                    <option value="junho">Junho</option>
+                    <option value="julho">Julho</option>
+                    <option value="agosto">Agosto</option>
+                    <option value="setembro">Setembro</option>
+                    <option value="outubro">Outubro</option>
+                    <option value="novembro">Novembro</option>
+                    <option value="dezembro">Dezembro</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="modalAniversarioDia">Aniversário - Dia:</label>
+                <input type="number" id="modalAniversarioDia" min="1" max="31" placeholder="Dia">
+            </div>
+
+            <div class="form-group">
+                <label style="font-weight: 700; margin-bottom: 10px; display: block;">Informações Adicionais:</label>
+                <div style="display: flex; gap: 20px; margin-top: 10px;">
+                    <label style="display: flex; align-items: center; gap: 8px; font-weight: 400;">
+                        <input type="checkbox" id="modalJovemAprendiz" style="width: 18px; height: 18px; cursor: pointer;">
+                        <span>Jovem Aprendiz</span>
+                    </label>
+                    <label style="display: flex; align-items: center; gap: 8px; font-weight: 400;">
+                        <input type="checkbox" id="modalIntermediario" style="width: 18px; height: 18px; cursor: pointer;">
+                        <span>Intermediário</span>
+                    </label>
+                </div>
+            </div>
+
+            <div class="modal-actions">
+                <button class="btn-save" onclick="salvarColaborador()">✓ Salvar</button>
+                <button class="btn-cancel" onclick="fecharModal()">✕ Cancelar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal para Editar/Adicionar Liderança -->
+    <div id="modalLideranca" class="modal">
+        <div class="modal-content">
+            <div class="modal-header" id="modalLidTitle">Editar Liderança</div>
+            
+            <div class="form-group">
+                <label for="modalLidNome">Nome:</label>
+                <input type="text" id="modalLidNome" placeholder="Nome">
+            </div>
+
+            <div class="form-group">
+                <label for="modalLidCargo">Cargo:</label>
+                <select id="modalLidCargo">
+                    <option value="Gerente de Negócios">Gerente de Negócios</option>
+                    <option value="Coordenador(a) de Turno">Coordenador(a) de Turno</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="modalLidTurno">Turno:</label>
+                <input type="text" id="modalLidTurno" placeholder="Ex: I ou 08:00-16:20">
+            </div>
+
+            <div class="form-group">
+                <label for="modalLidFolga">Folga Fixa:</label>
+                <select id="modalLidFolga">
+                    <option value="segunda">Segunda</option>
+                    <option value="terça">Terça</option>
+                    <option value="quarta">Quarta</option>
+                    <option value="quinta">Quinta</option>
+                    <option value="sexta">Sexta</option>
+                    <option value="sábado">Sábado</option>
+                    <option value="domingo">Domingo</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="modalLidFolgasExtras">Folgas Extras (separadas por vírgula):</label>
+                <input type="text" id="modalLidFolgasExtras" placeholder="Ex: 7, 14, 21">
+            </div>
+
+            <div class="form-group">
+                <label for="modalLidFolgaDominical">Folga Dominical (separadas por vírgula):</label>
+                <input type="text" id="modalLidFolgaDominical" placeholder="Ex: 1, 8, 15, 22, 29">
+            </div>
+
+            <div class="form-group">
+                <label for="modalLidAniversarioMes">Aniversário - Mês:</label>
+                <select id="modalLidAniversarioMes">
+                    <option value="">-- Selecionar --</option>
+                    <option value="janeiro">Janeiro</option>
+                    <option value="fevereiro">Fevereiro</option>
+                    <option value="marco">Março</option>
+                    <option value="abril">Abril</option>
+                    <option value="maio">Maio</option>
+                    <option value="junho">Junho</option>
+                    <option value="julho">Julho</option>
+                    <option value="agosto">Agosto</option>
+                    <option value="setembro">Setembro</option>
+                    <option value="outubro">Outubro</option>
+                    <option value="novembro">Novembro</option>
+                    <option value="dezembro">Dezembro</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="modalLidAniversarioDia">Aniversário - Dia:</label>
+                <input type="number" id="modalLidAniversarioDia" min="1" max="31" placeholder="Dia">
+            </div>
+
+            <div class="modal-actions">
+                <button class="btn-save" onclick="salvarLideranca()">✓ Salvar</button>
+                <button class="btn-cancel" onclick="fecharModalLideranca()">✕ Cancelar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Firebase SDK -->
+    <script type="module" src="firebase-config.js"></script>
+    <script src="auth-manager.js"></script>
+    <script src="colaboradores.js" defer></script>
+
+    <script>
+        // ========================================
+        // EDITOR - Agora puxa dados do colaboradores.js
+        // Os dados de data (mesConfig, período) vêm de window.dadosEscala
+        // que é preenchido automaticamente pelo colaboradores.js
+        // baseado na loja selecionada e no banco de dados.
+        // ========================================
+
+        let dados = {};
+        let colaboradorEditando = null;
+        let liderancaEditando = null;
+        let adicionandoLideranca = false;
+
+        // Obter dados do colaboradores.js (que já carregou do Firebase da loja)
+        function carregarDadosDoColaboradoresJS() {
+            // Aguardar que o colaboradores.js termine de inicializar
+            // Os dados ficam em window.dadosEscala
+            if (window.dadosEscala && window.dadosEscala.dadosCarregados) {
+                dados = JSON.parse(JSON.stringify(window.dadosEscala));
+                return true;
+            }
+
+            // Se ainda não carregou (variáveis globais compatíveis)
+            if (typeof mesConfig !== 'undefined' && typeof colaboradores !== 'undefined') {
+                dados = {
+                    mesConfig: mesConfig,
+                    periodo: periodo,
+                    intermediarios: intermediarios || [],
+                    jovensAprendizes: jovensAprendizes || [],
+                    colaboradores: JSON.parse(JSON.stringify(colaboradores)),
+                    lideranca: JSON.parse(JSON.stringify(lideranca || []))
+                };
+                return true;
+            }
+
+            return false;
+        }
+
+        // ========================================
+        // FUNÇÕES DO FIREBASE (CRUD)
+        // ========================================
+
+        // Salvar dados no Firestore da loja atual
+        async function salvarNoFirebase() {
+            try {
+                if (!window.firebaseDb) {
+                    localStorage.setItem('escalasData', JSON.stringify(dados));
+                    mostrarMensagem('Firebase indisponível. Salvo localmente.', 'success');
+                    return;
+                }
+
+                const idLoja = window.authManager && window.authManager.obterIdLoja ? window.authManager.obterIdLoja() : null;
+                const dataAtual = new Date();
+                const nomeMes = obterNomeMesAtual();
+                const docId = `${nomeMes}_${dataAtual.getFullYear()}`;
+                const colecao = idLoja ? `escalas_loja_${idLoja}` : 'escalas_geral';
+
+                const { doc, setDoc, getFirestore, Timestamp } = await import('https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore.js');
+                const firestore = getFirestore();
+
+                const dataParaSalvar = {
+                   // mesConfig: dados.mesConfig,
+                  //  periodo: dados.periodo,
+                    intermediarios: dados.intermediarios,
+                    jovensAprendizes: dados.jovensAprendizes,
+                    colaboradores: dados.colaboradores,
+                    lideranca: dados.lideranca,
+                    ultimaAtualizacao: Timestamp.fromDate(dataAtual),
+                   // lojaId: idLoja || 'geral'
+                };
+
+                await setDoc(doc(firestore, colecao, docId), dataParaSalvar);
+                mostrarMensagem('Dados salvos no Firebase com sucesso!', 'success');
+            } catch (erro) {
+                console.error('Erro ao salvar no Firebase:', erro);
+                localStorage.setItem('escalasData', JSON.stringify(dados));
+                mostrarMensagem('Salvo localmente (Firebase indisponível)', 'success');
+            }
+        }
+
+        // ========================================
+        // FUNÇÕES AUXILIARES
+        // ========================================
+
+        // Obter nome do mês atual
+        function obterNomeMesAtual() {
+            const nomesMeses = [
+                "janeiro", "fevereiro", "março", "abril", "maio", "junho",
+                "julho", "agosto", "setembro", "outubro", "novembro", "dezembro"
+            ];
+            return nomesMeses[new Date().getMonth()];
+        }
+
+        // Obter número de domingos no mês atual
+        function obterDomingosDoMes() {
+            const ping = new Date();
+            ping.setHours(ping.getHours() - 3);
+            const ano = ping.getFullYear();
+            const mes = ping.getMonth();
+            const ultimoDia = new Date(ano, mes + 1, 0);
+            const totalDias = ultimoDia.getDate();
+            
+            const domingos = [];
+            for (let dia = 1; dia <= totalDias; dia++) {
+                const data = new Date(ano, mes, dia);
+                if (data.getDay() === 0) {
+                    domingos.push(dia);
+                }
+            }
+            return domingos;
+        }
+
+        // Renderizar checkboxes de domingos
+        function renderizarDomingosCheckboxes(domingosAtuais) {
+            const container = document.getElementById('domingosMarcacao');
+            container.innerHTML = '';
+            
+            const domingosMes = obterDomingosDoMes();
+            
+            domingosMes.forEach(dia => {
+                const label = document.createElement('label');
+                label.style.cssText = 'display: flex; align-items: center; gap: 4px; cursor: pointer; padding: 4px 10px; border: 1px solid #ddd; border-radius: 5px; font-size: 0.85rem; transition: all 0.2s;';
+                if (domingosAtuais.includes(dia)) {
+                    label.style.backgroundColor = 'var(--bk-orange)';
+                    label.style.color = 'white';
+                    label.style.borderColor = 'var(--bk-orange)';
+                }
+                
+                const checkbox = document.createElement('input');
+                checkbox.type = 'checkbox';
+                checkbox.value = dia;
+                checkbox.checked = domingosAtuais.includes(dia);
+                checkbox.style.cssText = 'width: 16px; height: 16px; cursor: pointer;';
+                
+                const text = document.createElement('span');
+                text.textContent = dia;
+                
+                label.appendChild(checkbox);
+                label.appendChild(text);
+                
+                checkbox.addEventListener('change', function() {
+                    if (this.checked) {
+                        label.style.backgroundColor = 'var(--bk-orange)';
+                        label.style.color = 'white';
+                        label.style.borderColor = 'var(--bk-orange)';
+                    } else {
+                        label.style.backgroundColor = '';
+                        label.style.color = '';
+                        label.style.borderColor = '#ddd';
+                    }
+                });
+                
+                container.appendChild(label);
+            });
+        }
+
+        // Auxiliar: mês para exibição
+        function mesParaExibicao(mes) {
+            const mapaMeses = {
+                'janeiro': 'Janeiro', 'fevereiro': 'Fevereiro', 'marco': 'Março',
+                'abril': 'Abril', 'maio': 'Maio', 'junho': 'Junho',
+                'julho': 'Julho', 'agosto': 'Agosto', 'setembro': 'Setembro',
+                'outubro': 'Outubro', 'novembro': 'Novembro', 'dezembro': 'Dezembro'
+            };
+            return mapaMeses[mes] || mes;
+        }
+
+        // ========================================
+        // CARREGAR DADOS AO INICIAR
+        // ========================================
+        function carregarDados() {
+            // Puxar dados do colaboradores.js (que já tem dados padrão ou do Firebase)
+            if (window.dadosEscala && window.dadosEscala.dadosCarregados) {
+                dados = JSON.parse(JSON.stringify(window.dadosEscala));
+            } else {
+                // Fallback: tentar localStorage
+                const dadosSalvos = localStorage.getItem('escalasData');
+                if (dadosSalvos) {
+                    dados = JSON.parse(dadosSalvos);
+                }
+            }
+
+            // Mostrar status de sincronização
+            const origem = window.dadosEscala ? window.dadosEscala.origemDados : 'local';
+            const nomeLoja = window.authManager && window.authManager.obterNomeLoja ? window.authManager.obterNomeLoja() : 'Geral';
+            mostrarSyncStatus(`Loja: ${nomeLoja} | Dados: ${origem.toUpperCase()} | Mês: ${obterNomeMesAtual()}`, 'info');
+
+            atualizarInterface();
+        }
+
+        // ========================================
+        // ATUALIZAR INTERFACE
+        // ========================================
+        function atualizarInterface() {
+            renderizarColaboradores();
+            renderizarLideranca();
+        }
+
+        // Renderizar colaboradores
+        function renderizarColaboradores() {
+            const lista = document.getElementById('colaboradoresList');
+            lista.innerHTML = '';
+
+            if (!dados.colaboradores || dados.colaboradores.length === 0) {
+                lista.innerHTML = '<p style="color: #666; text-align: center; padding: 20px;">Nenhum colaborador cadastrado. Clique em "Adicionar Novo Colaborador" para começar.</p>';
+                return;
+            }
+
+            dados.colaboradores.forEach((colab, index) => {
+                const card = document.createElement('div');
+                card.className = 'colaborador-card';
+                card.innerHTML = `
+                    <h4>${colab.nome}</h4>
+                    <div class="colaborador-info">
+                        <strong>Turno:</strong> ${colab.turno}<br>
+                        <strong>Folga Fixa:</strong> ${colab.folgaFixa}<br>
+                        <strong>Domingos:</strong> ${colab.domingos.length > 0 ? colab.domingos.join(', ') : 'Nenhum'}<br>
+                        <strong>Descanso Extra:</strong> ${colab.descansoExtra.length > 0 ? colab.descansoExtra.join(', ') : 'Nenhum'}<br>
+                        <strong>Aniversário:</strong> ${colab.aniversario ? `${diaParaExibicao(colab.aniversario.dia)} de ${mesParaExibicao(colab.aniversario.mes)}` : 'Não informado'}<br>
+                        <strong>Tags:</strong> ${[
+                            dados.jovensAprendizes.includes(colab.nome) ? '<span style="color: var(--bk-red); font-weight: bold;">Jovem Aprendiz</span>' : '',
+                            dados.intermediarios.includes(colab.nome) ? '<span style="color: var(--bk-green); font-weight: bold;">Intermediário</span>' : ''
+                        ].filter(t => t).join(', ') || 'Nenhuma'}
+                    </div>
+                    <div class="colaborador-actions">
+                        <button class="btn-edit" onclick="editarColaborador(${index})">✏️ Editar</button>
+                        <button class="btn-delete" onclick="deletarColaborador(${index})">🗑️ Deletar</button>
+                    </div>
+                `;
+                lista.appendChild(card);
+            });
+        }
+
+        // Renderizar liderança
+        function renderizarLideranca() {
+            const lista = document.getElementById('liderancaList');
+            lista.innerHTML = '';
+
+            if (!dados.lideranca || dados.lideranca.length === 0) {
+                lista.innerHTML = '<p style="color: #666; text-align: center; padding: 20px;">Nenhum membro da liderança cadastrado. Clique em "Adicionar" para começar.</p>';
+                return;
+            }
+
+            dados.lideranca.forEach((lid, index) => {
+                const card = document.createElement('div');
+                card.className = 'lideranca-card';
+                card.innerHTML = `
+                    <h4>${lid.nome}</h4>
+                    <div class="lideranca-cargo">${lid.cargo}</div>
+                    <div class="lideranca-info">
+                        <strong>Turno:</strong> ${lid.turno}<br>
+                        <strong>Folga Fixa:</strong> ${lid.folga}<br>
+                        <strong>Folgas Extras:</strong> ${lid.folgasExtras.length > 0 ? lid.folgasExtras.join(', ') : 'Nenhuma'}<br>
+                        <strong>Folga Dominical:</strong> ${lid.folgaDominical.length > 0 ? lid.folgaDominical.join(', ') : 'Nenhuma'}<br>
+                        <strong>Aniversário:</strong> ${lid.aniversario ? `${diaParaExibicao(lid.aniversario.dia)} de ${mesParaExibicao(lid.aniversario.mes)}` : 'Não informado'}
+                    </div>
+                    <div class="lideranca-actions">
+                        <button class="btn-edit" onclick="editarLideranca(${index})">✏️ Editar</button>
+                        <button class="btn-delete" onclick="deletarLideranca(${index})">🗑️ Deletar</button>
+                    </div>
+                `;
+                lista.appendChild(card);
+            });
+        }
+
+        // Auxiliar: dia com exibição
+        function diaParaExibicao(dia) {
+            return dia;
+        }
+
+        // ========================================
+        // MODAL COLABORADOR
+        // ========================================
+        function abrirModalAdicionar() {
+            colaboradorEditando = null;
+            document.getElementById('modalTitle').textContent = 'Adicionar Novo Colaborador';
+            limparFormularioModal();
+            renderizarDomingosCheckboxes([]);
+            document.getElementById('modalColaborador').classList.add('active');
+        }
+
+        function editarColaborador(index) {
+            colaboradorEditando = index;
+            const colab = dados.colaboradores[index];
+            document.getElementById('modalTitle').textContent = 'Editar Colaborador';
+            document.getElementById('modalNome').value = colab.nome;
+            document.getElementById('modalTurno').value = colab.turno;
+            document.getElementById('modalFolgaFixa').value = colab.folgaFixa;
+            document.getElementById('modalDescansoExtra').value = colab.descansoExtra.join(', ');
+            document.getElementById('modalFerias').value = colab.ferias.length > 0 ? colab.ferias.join(', ') : '';
+            
+            document.getElementById('modalJovemAprendiz').checked = dados.jovensAprendizes.includes(colab.nome);
+            document.getElementById('modalIntermediario').checked = dados.intermediarios.includes(colab.nome);
+
+            if (colab.aniversario) {
+                document.getElementById('modalAniversarioMes').value = colab.aniversario.mes;
+                document.getElementById('modalAniversarioDia').value = colab.aniversario.dia;
+            } else {
+                document.getElementById('modalAniversarioMes').value = '';
+                document.getElementById('modalAniversarioDia').value = '';
+            }
+            
+            renderizarDomingosCheckboxes(colab.domingos || []);
+            document.getElementById('modalColaborador').classList.add('active');
+        }
+
+        async function salvarColaborador() {
+            const nome = document.getElementById('modalNome').value.trim();
+            const turno = document.getElementById('modalTurno').value;
+            const folgaFixa = document.getElementById('modalFolgaFixa').value;
+            const descansoExtra = document.getElementById('modalDescansoExtra').value.split(',').map(d => parseInt(d.trim())).filter(d => !isNaN(d));
+            const ferias = document.getElementById('modalFerias').value.split(',').map(d => parseInt(d.trim())).filter(d => !isNaN(d));
+            const jovemAprendiz = document.getElementById('modalJovemAprendiz').checked;
+            const intermediario = document.getElementById('modalIntermediario').checked;
+
+            const checkboxes = document.querySelectorAll('#domingosMarcacao input[type="checkbox"]');
+            const domingos = Array.from(checkboxes)
+                .filter(cb => cb.checked)
+                .map(cb => parseInt(cb.value))
+                .sort((a, b) => a - b);
+
+            const mesAniversario = document.getElementById('modalAniversarioMes').value;
+            const diaAniversario = parseInt(document.getElementById('modalAniversarioDia').value);
+            let aniversario = null;
+            if (mesAniversario && diaAniversario && diaAniversario >= 1 && diaAniversario <= 31) {
+                aniversario = { mes: mesAniversario, dia: diaAniversario };
+            }
+
+            if (!nome) {
+                mostrarMensagem('Por favor, preencha o nome do colaborador', 'error');
+                return;
+            }
+
+            const novoColab = {
+                nome: nome.toUpperCase(),
+                turno,
+                folgaFixa,
+                domingos,
+                descansoExtra,
+                ferias: ferias.length === 2 ? ferias : [],
+                jovemAprendiz,
+                intermediario,
+                ...(aniversario ? { aniversario } : {})
+            };
+
+            if (colaboradorEditando !== null) {
+                const antigoNome = dados.colaboradores[colaboradorEditando].nome;
+                dados.jovensAprendizes = dados.jovensAprendizes.filter(n => n !== antigoNome);
+                dados.intermediarios = dados.intermediarios.filter(n => n !== antigoNome);
+                
+                dados.colaboradores[colaboradorEditando] = novoColab;
+                mostrarMensagem('Colaborador atualizado com sucesso!', 'success');
+            } else {
+                dados.colaboradores.push(novoColab);
+                mostrarMensagem('Colaborador adicionado com sucesso!', 'success');
+            }
+
+            const nomeUpper = novoColab.nome;
+            if (jovemAprendiz && !dados.jovensAprendizes.includes(nomeUpper)) {
+                dados.jovensAprendizes.push(nomeUpper);
+            }
+            if (intermediario && !dados.intermediarios.includes(nomeUpper)) {
+                dados.intermediarios.push(nomeUpper);
+            }
+
+            // Sincronizar com colaboradores.js
+            sincronizarComColaboradoresJS();
+            salvarDados();
+            atualizarInterface();
+            fecharModal();
+            renderizarColaboradores();
+        }
+
+        async function deletarColaborador(index) {
+            if (confirm('Tem certeza que deseja deletar este colaborador?')) {
+                const nomeDeletado = dados.colaboradores[index].nome;
+                dados.colaboradores.splice(index, 1);
+                dados.jovensAprendizes = dados.jovensAprendizes.filter(n => n !== nomeDeletado);
+                dados.intermediarios = dados.intermediarios.filter(n => n !== nomeDeletado);
+                
+                sincronizarComColaboradoresJS();
+                salvarDados();
+                renderizarColaboradores();
+                mostrarMensagem('Colaborador deletado com sucesso!', 'success');
+            }
+        }
+
+        // ========================================
+        // MODAL LIDERANÇA
+        // ========================================
+        function abrirModalAdicionarLideranca() {
+            liderancaEditando = null;
+            adicionandoLideranca = true;
+            document.getElementById('modalLidTitle').textContent = 'Adicionar Novo Colaborador na Liderança';
+            limparFormularioModalLideranca();
+            document.getElementById('modalLidNome').removeAttribute('readonly');
+            document.getElementById('modalLidCargo').removeAttribute('readonly');
+            document.getElementById('modalLideranca').classList.add('active');
+        }
+
+        function editarLideranca(index) {
+            liderancaEditando = index;
+            adicionandoLideranca = false;
+            const lid = dados.lideranca[index];
+            document.getElementById('modalLidTitle').textContent = 'Editar Liderança';
+            document.getElementById('modalLidNome').value = lid.nome;
+            document.getElementById('modalLidNome').setAttribute('readonly', 'readonly');
+            document.getElementById('modalLidCargo').value = lid.cargo;
+            document.getElementById('modalLidTurno').value = lid.turno;
+            document.getElementById('modalLidFolga').value = lid.folga;
+            document.getElementById('modalLidFolgasExtras').value = lid.folgasExtras.join(', ');
+            document.getElementById('modalLidFolgaDominical').value = lid.folgaDominical.join(', ');
+
+            if (lid.aniversario) {
+                document.getElementById('modalLidAniversarioMes').value = lid.aniversario.mes;
+                document.getElementById('modalLidAniversarioDia').value = lid.aniversario.dia;
+            } else {
+                document.getElementById('modalLidAniversarioMes').value = '';
+                document.getElementById('modalLidAniversarioDia').value = '';
+            }
+
+            document.getElementById('modalLideranca').classList.add('active');
+        }
+
+        async function salvarLideranca() {
+            const nome = document.getElementById('modalLidNome').value.trim();
+            const cargo = document.getElementById('modalLidCargo').value.trim();
+            const turno = document.getElementById('modalLidTurno').value.trim();
+            const folga = document.getElementById('modalLidFolga').value;
+            const folgasExtras = document.getElementById('modalLidFolgasExtras').value.split(',').map(d => parseInt(d.trim())).filter(d => !isNaN(d));
+            const folgaDominical = document.getElementById('modalLidFolgaDominical').value.split(',').map(d => parseInt(d.trim())).filter(d => !isNaN(d));
+
+            const mesAniversario = document.getElementById('modalLidAniversarioMes').value;
+            const diaAniversario = parseInt(document.getElementById('modalLidAniversarioDia').value);
+            let aniversario = null;
+            if (mesAniversario && diaAniversario && diaAniversario >= 1 && diaAniversario <= 31) {
+                aniversario = { mes: mesAniversario, dia: diaAniversario };
+            }
+
+            if (!turno) {
+                mostrarMensagem('Por favor, preencha o turno', 'error');
+                return;
+            }
+
+            if (adicionandoLideranca) {
+                if (!nome || !cargo) {
+                    mostrarMensagem('Por favor, preencha o nome e cargo', 'error');
+                    return;
+                }
+
+                const novaLid = {
+                    nome: nome.toUpperCase(),
+                    cargo: cargo.toUpperCase(),
+                    turno,
+                    folga,
+                    folgasExtras,
+                    folgaDominical,
+                    ...(aniversario ? { aniversario } : {})
+                };
+
+                dados.lideranca.push(novaLid);
+                mostrarMensagem('Colaborador de liderança adicionado com sucesso!', 'success');
+            } else {
+                const novaLid = {
+                    nome: dados.lideranca[liderancaEditando].nome,
+                    cargo: dados.lideranca[liderancaEditando].cargo,
+                    turno,
+                    folga,
+                    folgasExtras,
+                    folgaDominical,
+                    ...(aniversario ? { aniversario } : {})
+                };
+
+                dados.lideranca[liderancaEditando] = novaLid;
+                mostrarMensagem('Liderança atualizada com sucesso!', 'success');
+            }
+
+            sincronizarComColaboradoresJS();
+            salvarDados();
+            fecharModalLideranca();
+            renderizarLideranca();
+        }
+
+        async function deletarLideranca(index) {
+            if (confirm('Tem certeza que deseja deletar este membro da liderança?')) {
+                dados.lideranca.splice(index, 1);
+                sincronizarComColaboradoresJS();
+                salvarDados();
+                renderizarLideranca();
+                mostrarMensagem('Membro da liderança deletado com sucesso!', 'success');
+            }
+        }
+
+        // ========================================
+        // SINCRONIZAÇÃO COM COLABORADORES.JS
+        // ========================================
+        function sincronizarComColaboradoresJS() {
+            // Atualizar window.dadosEscala para que colaboradores.js e outros scripts reflitam as mudanças
+            if (window.dadosEscala) {
+                window.dadosEscala.mesConfig = dados.mesConfig;
+                window.dadosEscala.periodo = dados.periodo;
+                window.dadosEscala.intermediarios = dados.intermediarios;
+                window.dadosEscala.jovensAprendizes = dados.jovensAprendizes;
+                window.dadosEscala.colaboradores = dados.colaboradores;
+                window.dadosEscala.lideranca = dados.lideranca;
+            }
+
+            // Também atualizar as variáveis globais para compatibilidade
+            window.mesConfig = dados.mesConfig;
+            window.periodo = dados.periodo;
+            window.intermediarios = dados.intermediarios;
+            window.jovensAprendizes = dados.jovensAprendizes;
+            window.colaboradores = dados.colaboradores;
+            window.lideranca = dados.lideranca;
+        }
+
+        // ========================================
+        // SALVAR DADOS
+        // ========================================
+        async function salvarDados() {
+            localStorage.setItem('escalasData', JSON.stringify(dados));
+            await salvarNoFirebase();
+        }
+
+        // ========================================
+        // UTILITÁRIOS DE MODAL
+        // ========================================
+        function fecharModal() {
+            document.getElementById('modalColaborador').classList.remove('active');
+            limparFormularioModal();
+        }
+
+        function fecharModalLideranca() {
+            document.getElementById('modalLideranca').classList.remove('active');
+            limparFormularioModalLideranca();
+        }
+
+        function limparFormularioModal() {
+            document.getElementById('modalNome').value = '';
+            document.getElementById('modalTurno').value = '08:00';
+            document.getElementById('modalFolgaFixa').value = 'segunda';
+            document.getElementById('modalDescansoExtra').value = '';
+            document.getElementById('modalFerias').value = '';
+            document.getElementById('modalJovemAprendiz').checked = false;
+            document.getElementById('modalIntermediario').checked = false;
+            document.getElementById('modalAniversarioMes').value = '';
+            document.getElementById('modalAniversarioDia').value = '';
+        }
+
+        function limparFormularioModalLideranca() {
+            document.getElementById('modalLidNome').value = '';
+            document.getElementById('modalLidCargo').value = 'Gerente de Negócios';
+            document.getElementById('modalLidTurno').value = '';
+            document.getElementById('modalLidFolga').value = 'segunda';
+            document.getElementById('modalLidFolgasExtras').value = '';
+            document.getElementById('modalLidFolgaDominical').value = '';
+            document.getElementById('modalLidAniversarioMes').value = '';
+            document.getElementById('modalLidAniversarioDia').value = '';
+        }
+
+        // Mudar tab
+        function switchTab(tab) {
+            document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            document.getElementById(tab).classList.add('active');
+            event.target.classList.add('active');
+        }
+
+        // Mostrar mensagem
+        function mostrarMensagem(texto, tipo) {
+            const msg = document.getElementById('message');
+            msg.textContent = texto;
+            msg.className = `message active ${tipo}`;
+            setTimeout(() => {
+                msg.classList.remove('active');
+            }, 3000);
+        }
+
+        // Mostrar status de sincronização
+        function mostrarSyncStatus(texto, tipo) {
+            const status = document.getElementById('syncStatus');
+            status.textContent = texto;
+            status.style.display = 'block';
+            if (tipo === 'success') {
+                status.style.backgroundColor = '#d4edda';
+                status.style.color = '#155724';
+                status.style.border = '1px solid #c3e6cb';
+            } else if (tipo === 'info') {
+                status.style.backgroundColor = '#d1ecf1';
+                status.style.color = '#0c5460';
+                status.style.border = '1px solid #bee5eb';
+            } else if (tipo === 'error') {
+                status.style.backgroundColor = '#f8d7da';
+                status.style.color = '#721c24';
+                status.style.border = '1px solid #f5c6cb';
+            }
+        }
+
+        // Fechar modal ao clicar fora
+        document.getElementById('modalColaborador').addEventListener('click', function(event) {
+            if (event.target === this) {
+                fecharModal();
+            }
+        });
+
+        document.getElementById('modalLideranca').addEventListener('click', function(event) {
+            if (event.target === this) {
+                fecharModalLideranca();
+            }
+        });
+
+        // ========================================
+        // INICIALIZAR
+        // ========================================
+        // Aguardar o evento 'dadosEscalaProntos' disparado pelo colaboradores.js
+        // Isso garante que o Firebase já foi tentado e os dados estão prontos
+        window.addEventListener('load', () => {
+            // O colaboradores.js preenche window.dadosEscala imediatamente com dados padrão
+            // e depois tenta Firebase. Vamos aguardar o evento ou usar os dados já disponíveis.
+            carregarDados();
+        });
+
+        // Também ouvir o evento de dados prontos (caso o Firebase termine depois do load)
+        window.addEventListener('dadosEscalaProntos', () => {
+            carregarDados();
+        });
+    </script>
+
+</body>
+</html>

@@ -1,0 +1,669 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Painel Administrativo - Burger King</title>
+    <link rel="icon" href="assets/images/LOGO BK.png" type="image/png">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700;900&display=swap');
+
+        :root {
+            --bk-beige: #F5EBDC;
+            --bk-brown: #502314;
+            --bk-orange: #FF8732;
+            --bk-red: #D62300;
+            --bk-yellow: #FFD700;
+            --bk-green: #007A33;
+            --bk-teal: #00A3A1;
+            --bk-dark-brown: #32140A;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: var(--bk-beige);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .admin-container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .admin-header {
+            background: linear-gradient(135deg, var(--bk-red) 0%, var(--bk-orange) 100%);
+            color: white;
+            padding: 30px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .admin-header h1 {
+            font-size: 32px;
+            font-weight: 900;
+            text-transform: uppercase;
+        }
+
+        .admin-header-info {
+            display: flex;
+            gap: 30px;
+            flex-wrap: wrap;
+        }
+
+        .admin-header-info div {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .admin-header-info label {
+            font-size: 12px;
+            opacity: 0.9;
+            text-transform: uppercase;
+            font-weight: 700;
+        }
+
+        .admin-header-info span {
+            font-size: 16px;
+            font-weight: 700;
+        }
+
+        .btn-logout {
+            background: white;
+            color: var(--bk-red);
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            font-size: 12px;
+        }
+
+        .btn-logout:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .controls-bar {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .controls-bar select,
+        .controls-bar button {
+            padding: 10px 16px;
+            border: 2px solid var(--bk-orange);
+            border-radius: 8px;
+            font-family: 'Roboto', sans-serif;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .controls-bar select {
+            background: white;
+            color: var(--bk-brown);
+        }
+
+        .controls-bar select:focus {
+            outline: none;
+            border-color: var(--bk-red);
+            box-shadow: 0 0 10px rgba(214, 35, 0, 0.2);
+        }
+
+        .controls-bar button {
+            background: var(--bk-orange);
+            color: white;
+        }
+
+        .controls-bar button:hover {
+            background: var(--bk-red);
+            transform: translateY(-2px);
+        }
+
+        .data-section {
+            background: white;
+            border-radius: 10px;
+            padding: 25px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .section-title {
+            font-size: 22px;
+            font-weight: 900;
+            color: var(--bk-brown);
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 3px solid var(--bk-orange);
+            text-transform: uppercase;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .section-title::before {
+            content: '';
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            background: var(--bk-orange);
+            border-radius: 50%;
+        }
+
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+            font-size: 13px;
+        }
+
+        .data-table thead {
+            background: linear-gradient(135deg, var(--bk-red) 0%, var(--bk-orange) 100%);
+            color: white;
+        }
+
+        .data-table th {
+            padding: 12px;
+            text-align: left;
+            font-weight: 700;
+            text-transform: uppercase;
+            border: none;
+        }
+
+        .data-table td {
+            padding: 12px;
+            border-bottom: 1px solid #EEDDC5;
+            color: var(--bk-brown);
+        }
+
+        .data-table tbody tr:hover {
+            background: #f9f9f9;
+        }
+
+        .data-table tbody tr:nth-child(even) {
+            background: #fafafa;
+        }
+
+        .empty-message {
+            text-align: center;
+            padding: 40px 20px;
+            color: #999;
+            font-size: 14px;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 40px 20px;
+            color: var(--bk-orange);
+            font-size: 16px;
+            font-weight: 700;
+        }
+
+        .error-message {
+            background: #ffebee;
+            color: var(--bk-red);
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            border-left: 4px solid var(--bk-red);
+        }
+
+        .success-message {
+            background: #e8f5e9;
+            color: var(--bk-green);
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            border-left: 4px solid var(--bk-green);
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, var(--bk-orange) 0%, var(--bk-red) 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .stat-card h4 {
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            opacity: 0.9;
+            margin-bottom: 10px;
+        }
+
+        .stat-card .value {
+            font-size: 32px;
+            font-weight: 900;
+        }
+
+        .json-viewer {
+            background: #f5f5f5;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 15px;
+            margin-top: 15px;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            max-height: 300px;
+            overflow-y: auto;
+            color: #333;
+            line-height: 1.5;
+        }
+
+        @media (max-width: 768px) {
+            .admin-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .admin-header-info {
+                width: 100%;
+            }
+
+            .controls-bar {
+                flex-direction: column;
+            }
+
+            .controls-bar select,
+            .controls-bar button {
+                width: 100%;
+            }
+
+            .data-table {
+                font-size: 12px;
+            }
+
+            .data-table th,
+            .data-table td {
+                padding: 8px;
+            }
+
+            .section-title {
+                font-size: 18px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="admin-container">
+        <!-- Header -->
+        <div class="admin-header">
+            <div>
+                <h1>🔐 Painel Administrativo</h1>
+                <p style="font-size: 13px; opacity: 0.9; margin-top: 5px;">Visualização completa de todos os dados do sistema</p>
+            </div>
+            <div class="admin-header-info">
+                <div>
+                    <label>Usuário:</label>
+                    <span id="adminUser">Carregando...</span>
+                </div>
+                <div>
+                    <label>Data/Hora:</label>
+                    <span id="currentDateTime">--:--</span>
+                </div>
+            </div>
+            <button class="btn-logout" onclick="fazerLogout()">Sair</button>
+        </div>
+
+        <!-- Controles -->
+        <div class="controls-bar">
+            <select id="lojaFilter" onchange="filtrarPorLoja()">
+                <option value="">Todas as Lojas</option>
+            </select>
+            <button onclick="recarregarDados()">🔄 Recarregar Dados</button>
+            <button onclick="exportarJSON()">📥 Exportar JSON</button>
+        </div>
+
+        <!-- Mensagens -->
+        <div id="messageContainer"></div>
+
+        <!-- Estatísticas -->
+        <div class="stats-grid" id="statsGrid"></div>
+
+        <!-- Dados -->
+        <div id="dataContainer"></div>
+    </div>
+
+    <!-- Scripts -->
+    <script type="module" src="firebase-config.js"></script>
+    <script src="auth-manager.js"></script>
+    <script type="module">
+        import { collection, getDocs } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore.js";
+
+        let allData = {};
+        let currentFilter = '';
+
+        // Verificar autenticação
+        window.addEventListener('load', function() {
+            if (!window.authManager.estaAutenticado()) {
+                window.location.href = 'index.html';
+                return;
+            }
+
+            const lojaAtual = window.authManager.obterLojaAtual();
+            if (!lojaAtual || !lojaAtual.isAdmin) {
+                window.location.href = 'index.html';
+                return;
+            }
+
+            document.getElementById('adminUser').textContent = lojaAtual.nome;
+            atualizarHora();
+            setInterval(atualizarHora, 1000);
+            
+            carregarTodosDados();
+        });
+
+        function atualizarHora() {
+            const agora = new Date();
+            const horas = String(agora.getHours()).padStart(2, '0');
+            const minutos = String(agora.getMinutes()).padStart(2, '0');
+            const segundos = String(agora.getSeconds()).padStart(2, '0');
+            document.getElementById('currentDateTime').textContent = `${horas}:${minutos}:${segundos}`;
+        }
+
+        async function carregarTodosDados() {
+            mostrarCarregando();
+            
+            try {
+                const db = window.firebaseDb;
+                const lojas = window.lojas;
+                allData = {};
+
+                // Carregar dados de todas as lojas
+                for (const loja of lojas) {
+                    const colecaoNome = `escalas_loja_${loja.id}`;
+                    
+                    try {
+                        const colecao = collection(db, colecaoNome);
+                        const snapshot = await getDocs(colecao);
+                        const dadosLoja = [];
+                        
+                        snapshot.forEach(doc => {
+                            dadosLoja.push({
+                                id: doc.id,
+                                ...doc.data()
+                            });
+                        });
+
+                        allData[loja.id] = {
+                            loja: loja,
+                            dados: dadosLoja
+                        };
+                    } catch (erro) {
+                        console.error(`Erro ao carregar dados da loja ${loja.nome}:`, erro);
+                    }
+                }
+
+                // Carregar dados gerais
+                try {
+                    const colecaoGeral = collection(db, 'escalas_geral');
+                    const snapshot = await getDocs(colecaoGeral);
+                    const dadosGerais = [];
+                    
+                    snapshot.forEach(doc => {
+                        dadosGerais.push({
+                            id: doc.id,
+                            ...doc.data()
+                        });
+                    });
+
+                    allData['geral'] = {
+                        loja: { id: 'geral', nome: 'Dados Gerais', cidade: 'Sistema' },
+                        dados: dadosGerais
+                    };
+                } catch (erro) {
+                    console.error('Erro ao carregar dados gerais:', erro);
+                }
+
+                renderizarDados();
+                preencherFiltroLojas();
+            } catch (erro) {
+                mostrarErro('Erro ao carregar dados: ' + erro.message);
+                console.error(erro);
+            }
+        }
+
+        function renderizarDados() {
+            const container = document.getElementById('dataContainer');
+            container.innerHTML = '';
+
+            // Calcular estatísticas
+            let totalLojas = 0;
+            let totalRegistros = 0;
+            let totalColaboradores = 0;
+
+            Object.values(allData).forEach(item => {
+                if (item.loja.id !== 'geral') totalLojas++;
+                totalRegistros += item.dados.length;
+                
+                item.dados.forEach(doc => {
+                    if (doc.colaboradores && Array.isArray(doc.colaboradores)) {
+                        totalColaboradores += doc.colaboradores.length;
+                    }
+                });
+            });
+
+            // Renderizar estatísticas
+            document.getElementById('statsGrid').innerHTML = `
+                <div class="stat-card">
+                    <h4>Total de Lojas</h4>
+                    <div class="value">${totalLojas}</div>
+                </div>
+                <div class="stat-card">
+                    <h4>Total de Registros</h4>
+                    <div class="value">${totalRegistros}</div>
+                </div>
+                <div class="stat-card">
+                    <h4>Total de Colaboradores</h4>
+                    <div class="value">${totalColaboradores}</div>
+                </div>
+            `;
+
+            // Renderizar dados por loja
+            Object.entries(allData).forEach(([key, item]) => {
+                if (currentFilter && currentFilter !== key) return;
+
+                const lojaCard = document.createElement('div');
+                lojaCard.className = 'data-section';
+
+                let conteudo = `
+                    <div class="section-title">
+                        ${item.loja.nome}
+                        <span style="font-size: 12px; margin-left: auto; font-weight: 400; text-transform: none;">
+                            (${item.dados.length} registro${item.dados.length !== 1 ? 's' : ''})
+                        </span>
+                    </div>
+                `;
+
+                if (item.dados.length === 0) {
+                    conteudo += '<div class="empty-message">Nenhum dado encontrado para esta loja</div>';
+                } else {
+                    item.dados.forEach(doc => {
+                        conteudo += renderizarDocumento(doc);
+                    });
+                }
+
+                lojaCard.innerHTML = conteudo;
+                container.appendChild(lojaCard);
+            });
+        }
+
+        function renderizarDocumento(doc) {
+            let html = '<div style="margin-bottom: 25px; padding: 15px; background: #f9f9f9; border-radius: 8px; border-left: 4px solid var(--bk-orange);">';
+            
+            html += `<h4 style="color: var(--bk-brown); font-weight: 700; margin-bottom: 10px;">📄 ${doc.id}</h4>`;
+            
+            // Informações básicas
+            if (doc.mesConfig) {
+                html += `<p><strong>Mês/Ano:</strong> ${doc.mesConfig}</p>`;
+            }
+            if (doc.periodo) {
+                html += `<p><strong>Período:</strong> ${doc.periodo}</p>`;
+            }
+            if (doc.ultimaAtualizacao) {
+                html += `<p><strong>Última Atualização:</strong> ${new Date(doc.ultimaAtualizacao).toLocaleString('pt-BR')}</p>`;
+            }
+
+            // Colaboradores
+            if (doc.colaboradores && Array.isArray(doc.colaboradores) && doc.colaboradores.length > 0) {
+                html += `
+                    <div style="margin-top: 15px;">
+                        <h5 style="color: var(--bk-orange); font-weight: 700; margin-bottom: 10px;">👥 Colaboradores (${doc.colaboradores.length})</h5>
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Nome</th>
+                                    <th>Cargo</th>
+                                    <th>Telefone</th>
+                                    <th>Turno</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                `;
+                
+                doc.colaboradores.forEach(colab => {
+                    html += `
+                        <tr>
+                            <td>${colab.nome || '-'}</td>
+                            <td>${colab.cargo || '-'}</td>
+                            <td>${colab.telefone || '-'}</td>
+                            <td>${colab.turno || '-'}</td>
+                        </tr>
+                    `;
+                });
+                
+                html += `</tbody></table></div>`;
+            }
+
+            // Liderança
+            if (doc.lideranca && Array.isArray(doc.lideranca) && doc.lideranca.length > 0) {
+                html += `
+                    <div style="margin-top: 15px;">
+                        <h5 style="color: var(--bk-orange); font-weight: 700; margin-bottom: 10px;">👔 Liderança (${doc.lideranca.length})</h5>
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Nome</th>
+                                    <th>Cargo</th>
+                                    <th>Telefone</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                `;
+                
+                doc.lideranca.forEach(lider => {
+                    html += `
+                        <tr>
+                            <td>${lider.nome || '-'}</td>
+                            <td>${lider.cargo || '-'}</td>
+                            <td>${lider.telefone || '-'}</td>
+                        </tr>
+                    `;
+                });
+                
+                html += `</tbody></table></div>`;
+            }
+
+            // JSON completo
+            html += `
+                <details style="margin-top: 15px;">
+                    <summary style="cursor: pointer; color: var(--bk-orange); font-weight: 700; user-select: none;">
+                        📋 Ver JSON Completo
+                    </summary>
+                    <pre class="json-viewer">${JSON.stringify(doc, null, 2)}</pre>
+                </details>
+            `;
+
+            html += '</div>';
+            return html;
+        }
+
+        function preencherFiltroLojas() {
+            const select = document.getElementById('lojaFilter');
+            
+            Object.entries(allData).forEach(([key, item]) => {
+                const option = document.createElement('option');
+                option.value = key;
+                option.textContent = `${item.loja.nome} (${item.dados.length})`;
+                select.appendChild(option);
+            });
+        }
+
+        function filtrarPorLoja() {
+            currentFilter = document.getElementById('lojaFilter').value;
+            renderizarDados();
+        }
+
+        function recarregarDados() {
+            document.getElementById('lojaFilter').value = '';
+            currentFilter = '';
+            carregarTodosDados();
+        }
+
+        function exportarJSON() {
+            const dataStr = JSON.stringify(allData, null, 2);
+            const dataBlob = new Blob([dataStr], { type: 'application/json' });
+            const url = URL.createObjectURL(dataBlob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = `admin_export_${new Date().toISOString().split('T')[0]}.json`;
+            link.click();
+            URL.revokeObjectURL(url);
+        }
+
+        function fazerLogout() {
+            if (confirm('Tem certeza que deseja sair?')) {
+                window.authManager.logout();
+                window.location.href = 'index.html';
+            }
+        }
+
+        function mostrarCarregando() {
+            document.getElementById('dataContainer').innerHTML = '<div class="loading">⏳ Carregando dados do banco de dados...</div>';
+        }
+
+        function mostrarErro(mensagem) {
+            const container = document.getElementById('messageContainer');
+            container.innerHTML = `<div class="error-message">❌ ${mensagem}</div>`;
+        }
+
+        // Expor funções globalmente
+        window.fazerLogout = fazerLogout;
+        window.recarregarDados = recarregarDados;
+        window.exportarJSON = exportarJSON;
+        window.filtrarPorLoja = filtrarPorLoja;
+    </script>
+</body>
+</html>

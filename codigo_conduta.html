@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Código de Conduta - ZAMP</title>
+    <link rel="icon" href="assets/images/LOGO BK.png" type="image/png">
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;700&family=Luckiest+Guy&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bk-red: #D62300;
+            --bk-beige: #F5EBDC;
+            --bk-orange: #FF8732;
+            --bk-brown: #502314;
+            --bk-yellow: #FFAA00;
+            --bk-white: #FFFFFF;
+            --bk-blue-dark: #002D72;
+            --zamp-blue: #002D72;
+            --zamp-orange: #FF8732;
+            --zamp-green: #5DBF14;
+        }
+
+        * {
+            box-sizing: border-box;
+            transition: all 0.3s ease;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Open Sans', sans-serif;
+            background-color: var(--bk-beige);
+            color: var(--bk-brown);
+            overflow-x: hidden;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 40px auto;
+            background-color: var(--bk-white);
+            border-radius: 25px;
+            padding: 40px;
+            box-shadow: 0 10px 30px rgba(80, 35, 20, 0.08);
+            border: 4px solid var(--zamp-blue);
+            position: relative;
+        }
+
+        .header-conduta {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .header-conduta h1 {
+            font-family: 'Luckiest Guy', cursive;
+            font-size: 3.5rem;
+            color: var(--zamp-blue);
+            margin: 0;
+            line-height: 1;
+            text-transform: uppercase;
+        }
+
+        .header-conduta h2 {
+            font-family: 'Open Sans', sans-serif;
+            font-size: 1.5rem;
+            color: var(--bk-brown);
+            opacity: 0.8;
+            margin-top: 10px;
+        }
+
+        .section-conduta {
+            margin-bottom: 30px;
+            padding: 20px;
+            background-color: #f0f4f8;
+            border-left: 5px solid var(--zamp-orange);
+            border-radius: 10px;
+        }
+
+        .section-conduta h3 {
+            font-family: 'Luckiest Guy', cursive;
+            font-size: 1.8rem;
+            color: var(--zamp-blue);
+            margin-top: 0;
+            margin-bottom: 15px;
+        }
+
+        .section-conduta p {
+            margin-bottom: 10px;
+        }
+
+        .section-conduta ul {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        .section-conduta ul li {
+            background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="%23002D72"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>') no-repeat left center;
+            background-size: 18px;
+            padding-left: 25px;
+            margin-bottom: 8px;
+        }
+
+        .btn-voltar-portal {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            background-color: var(--bk-brown);
+            color: var(--bk-beige);
+            padding: 10px 20px;
+            border-radius: 30px;
+            text-decoration: none;
+            font-weight: 700;
+            font-size: 1rem;
+            z-index: 10000;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            border: 2px solid var(--zamp-orange);
+            font-family: 'Open Sans', sans-serif;
+            opacity: 0.9;
+        }
+
+        .btn-voltar-portal:hover {
+            opacity: 1;
+            background-color: var(--zamp-blue);
+            transform: scale(1.02);
+        }
+
+        .btn-voltar-portal img {
+            width: 24px;
+            height: 24px;
+        }
+
+        .info-box {
+            background-color: #e8f4fd;
+            border: 2px solid var(--zamp-blue);
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 15px;
+        }
+
+        .info-box strong {
+            color: var(--zamp-blue);
+        }
+
+        .values-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .value-card {
+            background-color: white;
+            padding: 15px;
+            border-radius: 15px;
+            border: 2px solid var(--zamp-green);
+            text-align: center;
+            font-weight: bold;
+            color: var(--zamp-blue);
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 40px;
+            padding: 20px;
+            color: var(--bk-brown);
+            font-size: 0.9rem;
+            opacity: 0.7;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                margin: 20px auto;
+                padding: 20px;
+                border-radius: 15px;
+            }
+            .header-conduta h1 {
+                font-size: 2.5rem;
+            }
+            .header-conduta h2 {
+                font-size: 1.2rem;
+            }
+            .section-conduta h3 {
+                font-size: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <a href="gestao_escala.html" class="btn-voltar-portal">
+        <img src="assets/images/LOGO BK.png" alt="BK">
+        <span>PORTAL</span>
+    </a>
+
+    <div class="container">
+        <div class="header-conduta">
+            <h1>Código de Conduta</h1>
+            <h2>ZAMP - Burger King & Popeyes</h2>
+        </div>
+
+        <div class="section-conduta">
+            <h3>Nossa Cultura e Sonho</h3>
+            <p>Nosso sonho é ser a melhor operadora de marcas de restaurante do mundo, transformando positivamente a vida das pessoas.</p>
+            <div class="values-grid">
+                <div class="value-card">Você faz, você merece</div>
+                <div class="value-card">Esse negócio é nosso</div>
+                <div class="value-card">Coragem para inovar</div>
+                <div class="value-card">Vibrar ao longo da jornada</div>
+                <div class="value-card">Fazer o certo, sem atalhos</div>
+                <div class="value-card">Pessoas no centro de tudo</div>
+                <div class="value-card">Humildade, sempre</div>
+            </div>
+        </div>
+
+        <div class="section-conduta" style="border-left-color: var(--zamp-green);">
+            <h3>O que o Código exige de nós?</h3>
+            <p>O Código de Conduta orienta nossas atitudes diárias e relacionamentos. É responsabilidade de todos:</p>
+            <ul>
+                <li>Entender e cumprir todas as regras e políticas da Companhia.</li>
+                <li>Garantir que nosso desempenho satisfaça os elevados padrões exigidos.</li>
+                <li>Reportar violações ao Código das quais tenhamos notícia ou vivenciado.</li>
+                <li>Participar dos treinamentos anuais obrigatórios.</li>
+            </ul>
+        </div>
+
+        <div class="section-conduta" style="border-left-color: var(--bk-red);">
+            <h3>Condutas Aprovadas</h3>
+            <p>Agir de acordo com nossos valores significa:</p>
+            <ul>
+                <li>Praticar e estimular o cumprimento das leis e regras internas.</li>
+                <li>Tratar todos com respeito, educação, profissionalismo e cordialidade.</li>
+                <li>Agir com honestidade e criar um ambiente de alta colaboração.</li>
+                <li>Evitar situações de potencial conflito de interesses.</li>
+                <li>Respeitar o sigilo e a propriedade das informações da Empresa e clientes.</li>
+            </ul>
+        </div>
+
+        <div class="section-conduta">
+            <h3>Canal de Denúncias</h3>
+            <p>Caso saiba ou vivencie situações que violem este Código, reporte imediatamente pelo canal independente:</p>
+            <div class="info-box">
+                <strong>Site:</strong> <a href="https://www.contatoseguro.com.br/canalconfidencialzamp" target="_blank">www.contatoseguro.com.br/canalconfidencialzamp</a><br>
+                <strong>Telefone:</strong> 0800 881 3504 (24h por dia, 7 dias por semana)<br>
+                <strong>Garantia:</strong> A ZAMP não aceita retaliações contra denunciantes. O canal é seguro e confidencial.
+            </div>
+        </div>
+
+    </div>
+
+    <footer>
+        <p>Este conteúdo é um resumo informativo baseado no Código de Conduta ZAMP 2025.</p>
+        <p>&copy; 2026 ZAMP S.A. Todos os direitos reservados.</p>
+    </footer>
+
+</body>
+</html>

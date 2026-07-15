@@ -1,0 +1,721 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mapa da Câmara - Gestão BK</title>
+    <link rel="icon" href="assets/images/LOGO BK.png" type="image/png">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Flame:wght@400;700&family=Luckiest+Guy&family=Open+Sans:wght@400;700&display=swap');
+
+        :root {
+            --bk-red: #D62300;
+            --bk-beige: #F5EBDC;
+            --bk-orange: #FF8732;
+            --bk-brown: #502314;
+            --bk-yellow: #FFAA00;
+            --bk-white: #FFFFFF;
+        }
+
+        body {
+            margin: 0;
+            padding: 20px;
+            font-family: 'Open Sans', sans-serif;
+            background-color: var(--bk-beige);
+            color: var(--bk-brown);
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        h1 {
+            font-family: 'Luckiest Guy', cursive;
+            font-size: 3rem;
+            color: var(--bk-red);
+            margin: 0;
+        }
+
+        .main-layout {
+            display: flex;
+            gap: 30px;
+            flex-wrap: wrap;
+        }
+
+        /* Área do Mapa */
+        .map-area {
+            flex: 1;
+            min-width: 600px;
+            background: linear-gradient(135deg, #f5f5f5 0%, #ffffff 100%);
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+            position: relative;
+            border: 3px dashed var(--bk-brown);
+        }
+
+        .map-title {
+            font-family: 'Luckiest Guy', cursive;
+            font-size: 1.3rem;
+            color: var(--bk-brown);
+            margin-top: 0;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+
+        #map-canvas {
+            width: 100%;
+            aspect-ratio: 1 / 1;
+            border: 4px solid var(--bk-brown);
+            position: relative;
+            background: linear-gradient(45deg, rgba(255,255,255,0.8) 25%, transparent 25%, transparent 75%, rgba(255,255,255,0.8) 75%, rgba(255,255,255,0.8)),
+                        linear-gradient(45deg, rgba(255,255,255,0.8) 25%, transparent 25%, transparent 75%, rgba(255,255,255,0.8) 75%, rgba(255,255,255,0.8));
+            background-size: 60px 60px;
+            background-position: 0 0, 30px 30px;
+            background-color: #f9f9f9;
+            overflow: hidden;
+            border-radius: 10px;
+        }
+
+        /* Sidebar de Itens */
+        .sidebar {
+            width: 320px;
+            background: white;
+            padding: 25px;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            border-left: 5px solid var(--bk-red);
+        }
+
+        .sidebar h2 {
+            font-family: 'Luckiest Guy', cursive;
+            font-size: 1.4rem;
+            margin-top: 0;
+            color: var(--bk-red);
+        }
+
+        .item-list {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+
+        .item-box {
+            border: 3px solid var(--bk-brown);
+            border-radius: 15px;
+            padding: 12px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: var(--bk-beige);
+            position: relative;
+            overflow: hidden;
+            box-shadow: 3px 3px 0px rgba(80, 35, 20, 0.2);
+        }
+
+        .item-box::before {
+            content: '';
+            position: absolute;
+            top: -2px;
+            left: -2px;
+            right: -2px;
+            bottom: -2px;
+            border: 2px dashed var(--bk-orange);
+            border-radius: 15px;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .item-box:hover {
+            border-color: var(--bk-orange);
+            transform: translateY(-3px);
+            box-shadow: 5px 5px 0px rgba(80, 35, 20, 0.3);
+            background: #fff5e6;
+        }
+
+        .item-box:hover::before {
+            opacity: 1;
+        }
+
+        .item-box img {
+            width: 100%;
+            height: 70px;
+            object-fit: cover;
+            border-radius: 8px;
+            border: 2px solid var(--bk-brown);
+        }
+
+        .item-box span {
+            display: block;
+            font-size: 0.75rem;
+            font-weight: 700;
+            margin-top: 6px;
+            color: var(--bk-brown);
+        }
+
+        /* Itens no Mapa - Estilo Desenho */
+        .placed-item {
+            position: absolute;
+            cursor: move;
+            user-select: none;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #f5e6d3 0%, #e8d4bf 100%);
+            border: 3px solid var(--bk-brown);
+            border-radius: 12px;
+            box-shadow: 5px 5px 0px rgba(80, 35, 20, 0.3), inset 0 0 0 2px rgba(255,255,255,0.5);
+            transition: all 0.15s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        }
+
+        .placed-item:hover {
+            box-shadow: 6px 6px 0px rgba(80, 35, 20, 0.4), inset 0 0 0 2px rgba(255,255,255,0.5);
+            transform: scale(1.02);
+        }
+
+        .placed-item.dragging {
+            opacity: 0.9;
+            z-index: 1000;
+            transition: none;
+        }
+
+        .placed-item img {
+            width: 85%;
+            height: 85%;
+            object-fit: cover;
+            border: 2px solid var(--bk-brown);
+            border-radius: 8px;
+        }
+
+        .placed-item .qty-badge {
+            position: absolute;
+            top: -12px;
+            right: -12px;
+            background: var(--bk-red);
+            color: white;
+            border-radius: 50%;
+            width: 32px;
+            height: 32px;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            border: 3px solid white;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+
+        .placed-item .item-label {
+            position: absolute;
+            bottom: -22px;
+            background: var(--bk-brown);
+            color: white;
+            padding: 4px 8px;
+            border-radius: 6px;
+            font-size: 0.7rem;
+            font-weight: bold;
+            white-space: nowrap;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+
+        /* Seção de Pães e Carne */
+        .inventory-section {
+            margin-top: 40px;
+            background: white;
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            border-top: 5px solid var(--bk-orange);
+        }
+
+        .inventory-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+        }
+
+        .inventory-item {
+            background: linear-gradient(135deg, var(--bk-beige) 0%, #f5e6d3 100%);
+            padding: 20px;
+            border-radius: 15px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            border: 2px solid var(--bk-brown);
+            box-shadow: 3px 3px 0px rgba(80, 35, 20, 0.2);
+        }
+
+        .inventory-item label {
+            font-weight: 700;
+            color: var(--bk-brown);
+            font-size: 0.95rem;
+        }
+
+        .inventory-item input {
+            padding: 12px;
+            border-radius: 10px;
+            border: 2px solid var(--bk-orange);
+            font-size: 1.1rem;
+            font-weight: bold;
+            text-align: center;
+            background: white;
+            transition: all 0.3s ease;
+        }
+
+        .inventory-item input:focus {
+            outline: none;
+            border-color: var(--bk-red);
+            box-shadow: 0 0 0 3px rgba(214, 35, 0, 0.1);
+        }
+
+        .actions {
+            margin-top: 30px;
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 15px 40px;
+            border-radius: 50px;
+            font-weight: 700;
+            text-transform: uppercase;
+            cursor: pointer;
+            border: none;
+            transition: all 0.3s ease;
+            font-size: 1rem;
+            box-shadow: 3px 3px 0px rgba(0,0,0,0.2);
+            position: relative;
+        }
+
+        .btn:active {
+            transform: translate(2px, 2px);
+            box-shadow: 1px 1px 0px rgba(0,0,0,0.2);
+        }
+
+        .btn-print { 
+            background: var(--bk-red); 
+            color: white; 
+        }
+
+        .btn-clear { 
+            background: var(--bk-brown); 
+            color: white; 
+        }
+
+        .btn:hover { 
+            transform: translateY(-2px);
+            box-shadow: 5px 5px 0px rgba(0,0,0,0.2);
+        }
+
+        .info-text {
+            font-size: 0.85rem;
+            margin-top: 15px;
+            color: #666;
+            padding: 10px;
+            background: #f9f9f9;
+            border-left: 4px solid var(--bk-orange);
+            border-radius: 5px;
+        }
+
+        @media print {
+            .sidebar, .actions, .btn-voltar, .info-text { display: none !important; }
+            body { background: white; padding: 0; }
+            .container { max-width: 100%; }
+            .map-area { box-shadow: none; border: 2px solid black; }
+            #map-canvas { border: 2px solid black; }
+        }
+
+        .btn-voltar {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            background: var(--bk-brown);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 30px;
+            text-decoration: none;
+            font-weight: bold;
+            z-index: 100;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+            transition: all 0.3s ease;
+        }
+
+        .btn-voltar:hover {
+            background: var(--bk-red);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(0,0,0,0.3);
+        }
+
+        .counter-info {
+            text-align: center;
+            margin-top: 10px;
+            font-size: 0.9rem;
+            color: var(--bk-brown);
+            font-weight: bold;
+        }
+
+        .scale-control {
+            background: white;
+            padding: 15px;
+            border-radius: 15px;
+            margin-top: 20px;
+            border: 2px solid var(--bk-orange);
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            box-shadow: 3px 3px 0px rgba(80, 35, 20, 0.1);
+        }
+
+        .scale-control label {
+            font-weight: bold;
+            color: var(--bk-brown);
+            font-size: 0.9rem;
+            white-space: nowrap;
+        }
+
+        .scale-control input[type="range"] {
+            flex: 1;
+            cursor: pointer;
+            accent-color: var(--bk-red);
+        }
+
+        .scale-value {
+            font-family: 'Luckiest Guy', cursive;
+            color: var(--bk-red);
+            min-width: 45px;
+            text-align: center;
+        }
+    
+    /* Responsividade para Dispositivos Móveis */
+    @media screen and (max-width: 768px) {
+        body { padding: 5px; }
+        .container { padding: 10px; width: 100%; max-width: 100%; border-radius: 0; }
+        .header h1 { font-size: 22px; }
+        .main-layout { flex-direction: column; }
+        .map-area { min-width: unset; width: 100%; padding: 15px; }
+        .sidebar { width: 100%; margin-top: 20px; }
+        .scale-control { flex-direction: column; align-items: stretch; gap: 10px; }
+        #map-canvas { aspect-ratio: 1/1; }
+        .btn-voltar { top: 10px; left: 10px; padding: 5px 15px; font-size: 12px; }
+    }
+    
+    </style>
+</head>
+<body>
+
+    <a href="gestao_escala.html" class="btn-voltar">← PORTAL</a>
+
+    <div class="container">
+        <header>
+            <h1>🗺️ MAPA DA CÂMARA</h1>
+            <p>Organize visualmente o estoque da câmara fria - Adicione múltiplos itens!</p>
+        </header>
+
+        <div class="main-layout">
+            <div class="map-area">
+                <h3 class="map-title">CÂMARA CONGELADOS</h3>
+                <div id="map-canvas">
+                    <!-- Itens serão adicionados aqui -->
+                </div>
+                <div class="counter-info">
+                    Itens no mapa: <span id="item-counter">0</span>
+                </div>
+
+                <div class="scale-control">
+                    <label>📏 TAMANHO DAS CAIXAS:</label>
+                    <input type="range" id="scale-slider" min="40" max="200" value="80" oninput="updateItemScale(this.value)">
+                    <span class="scale-value" id="scale-display">80px</span>
+                </div>
+
+                <div class="info-text">
+                    <strong>💡 Como usar:</strong><br>
+                    • Clique nos itens ao lado para adicionar à câmara<br>
+                    • Arraste para reposicionar<br>
+                    • Clique no item para aumentar quantidade<br>
+                    • Clique com botão direito para remover
+                </div>
+            </div>
+
+            <div class="sidebar">
+                <h2>📦 CAIXAS</h2>
+                <div class="item-list">
+                    <div class="item-box" onclick="addItem('batata', 'Batata')">
+                        <img src="assets/camara/camara/batata.jpg" alt="Batata">
+                        <span>Batata</span>
+                    </div>
+                    <div class="item-box" onclick="addItem('onions', 'Onion Rings')">
+                        <img src="assets/camara/camara/onions_rings.jpg" alt="Onions">
+                        <span>Onion Rings</span>
+                    </div>
+                    <div class="item-box" onclick="addItem('chicken', 'BK Chicken')">
+                        <img src="assets/camara/camara/bk_chicken.jpg" alt="Chicken">
+                        <span>BK Chicken</span>
+                    </div>
+                    <div class="item-box" onclick="addItem('junior', 'Carne Jr')">
+                        <img src="assets/camara/camara/junior.jpg" alt="Carne Jr">
+                        <span>Carne Jr</span>
+                    </div>
+                    <div class="item-box" onclick="addItem('whopper', 'Carne Whopper')">
+                        <img src="assets/camara/camara/carne_whopper.jpg" alt="Whopper">
+                        <span>Carne Whopper</span>
+                    </div>
+                    <div class="item-box" onclick="addItem('hb', 'Carne HB')">
+                        <img src="assets/camara/camara/carne_hb.jpg" alt="Carne HB">
+                        <span>Carne HB</span>
+                    </div>
+                    <div class="item-box" onclick="addItem('vegetariana', 'Carne Veg')">
+                        <img src="assets/camara/camara/carne_vegetariana.jpg" alt="Veg">
+                        <span>Carne Veg</span>
+                    </div>
+                    <div class="item-box" onclick="addItem('paes', 'Caixa Pães')">
+                        <img src="assets/camara/camara/paes.jpg" alt="Pães">
+                        <span>Caixa Pães</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="inventory-section">
+            <h2 style="font-family: 'Luckiest Guy', cursive; margin-top: 0; color: var(--bk-red);">📊 CONTROLE DE UNIDADES</h2>
+            <div class="inventory-grid">
+                <div class="inventory-item">
+                    <label>Pão HB</label>
+                    <input type="number" placeholder="0" min="0">
+                </div>
+                <div class="inventory-item">
+                    <label>Pão Whopper</label>
+                    <input type="number" placeholder="0" min="0">
+                </div>
+                <div class="inventory-item">
+                    <label>Pão Big King</label>
+                    <input type="number" placeholder="0" min="0">
+                </div>
+                <div class="inventory-item">
+                    <label>Pão Brioche</label>
+                    <input type="number" placeholder="0" min="0">
+                </div>
+                <div class="inventory-item">
+                    <label>Carne Vegetariana</label>
+                    <input type="number" placeholder="0" min="0">
+                </div>
+            </div>
+        </div>
+
+        <div class="actions">
+            <button class="btn btn-clear" onclick="clearMap()">🗑️ LIMPAR MAPA</button>
+            <button class="btn btn-print" onclick="window.print()">🖨️ IMPRIMIR MAPA</button>
+        </div>
+    </div>
+
+    <script>
+        const canvas = document.getElementById('map-canvas');
+        const itemCounter = document.getElementById('item-counter');
+        const scaleSlider = document.getElementById('scale-slider');
+        const scaleDisplay = document.getElementById('scale-display');
+        let itemCount = 0;
+        let placedItemsCount = 0;
+        let currentScale = 80;
+
+        const itemImages = {
+            batata: 'assets/camara/camara/batata.jpg',
+            onions: 'assets/camara/camara/onions_rings.jpg',
+            chicken: 'assets/camara/camara/bk_chicken.jpg',
+            junior: 'assets/camara/camara/junior.jpg',
+            whopper: 'assets/camara/camara/carne_whopper.jpg',
+            hb: 'assets/camara/camara/carne_hb.jpg',
+            vegetariana: 'assets/camara/camara/carne_vegetariana.jpg',
+            paes: 'assets/camara/camara/paes.jpg'
+        };
+
+        const itemNames = {
+            batata: 'Batata',
+            onions: 'Onion Rings',
+            chicken: 'BK Chicken',
+            junior: 'Carne Jr',
+            whopper: 'Whopper',
+            hb: 'Carne HB',
+            vegetariana: 'Carne Veg',
+            paes: 'Pães'
+        };
+
+        function addItem(type, name) {
+            const item = document.createElement('div');
+            item.className = 'placed-item';
+            item.id = 'item-' + itemCount++;
+            item.dataset.qty = 1;
+            item.dataset.type = type;
+            
+            // Tamanho baseado na escala atual
+            const size = currentScale;
+            item.style.width = size + 'px';
+            item.style.height = size + 'px';
+            
+            // Posição aleatória dentro do canvas
+            const maxX = canvas.offsetWidth - size;
+            const maxY = canvas.offsetHeight - size;
+            const randomX = Math.random() * maxX;
+            const randomY = Math.random() * maxY;
+            
+            item.style.left = randomX + 'px';
+            item.style.top = randomY + 'px';
+
+            const img = document.createElement('img');
+            img.src = itemImages[type];
+            img.title = name;
+            
+            const badge = document.createElement('div');
+            badge.className = 'qty-badge';
+            badge.textContent = '1';
+
+            const label = document.createElement('div');
+            label.className = 'item-label';
+            label.textContent = itemNames[type];
+
+            item.appendChild(img);
+            item.appendChild(badge);
+            item.appendChild(label);
+            canvas.appendChild(item);
+
+            placedItemsCount++;
+            updateCounter();
+
+            makeDraggable(item, badge);
+
+            // Clique para aumentar quantidade
+            item.addEventListener('click', (e) => {
+                if (e.button === 0 && !e.target.classList.contains('dragging')) {
+                    let qty = parseInt(item.dataset.qty);
+                    qty++;
+                    item.dataset.qty = qty;
+                    badge.textContent = qty;
+                }
+            });
+
+            // Botão direito para remover
+            item.addEventListener('contextmenu', (e) => {
+                e.preventDefault();
+                item.remove();
+                placedItemsCount--;
+                updateCounter();
+            });
+        }
+
+        function updateCounter() {
+            itemCounter.textContent = placedItemsCount;
+        }
+
+        function makeDraggable(el, badge) {
+            let pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
+            let isDragging = false;
+            let pendingX = 0, pendingY = 0;
+            let rafId = null;
+            
+            el.onmousedown = dragMouseDown;
+
+            function dragMouseDown(e) {
+                e = e || window.event;
+                if (e.button !== 0) return; // Só botão esquerdo
+                e.preventDefault();
+                isDragging = true;
+                el.classList.add('dragging');
+                pos3 = e.clientX;
+                pos4 = e.clientY;
+                document.onmouseup = closeDragElement;
+                document.onmousemove = elementDrag;
+            }
+
+            function elementDrag(e) {
+                e = e || window.event;
+                e.preventDefault();
+                pos1 = pos3 - e.clientX;
+                pos2 = pos4 - e.clientY;
+                pos3 = e.clientX;
+                pos4 = e.clientY;
+
+                pendingX = pos1;
+                pendingY = pos2;
+                
+                if (!rafId) {
+                    rafId = requestAnimationFrame(updatePosition);
+                }
+            }
+            
+            function updatePosition() {
+                let newTop = el.offsetTop - pendingY;
+                let newLeft = el.offsetLeft - pendingX;
+
+                // Limites do canvas
+                const maxTop = canvas.offsetHeight - el.offsetHeight;
+                const maxLeft = canvas.offsetWidth - el.offsetWidth;
+
+                if (newTop >= 0 && newTop <= maxTop) el.style.top = newTop + "px";
+                if (newLeft >= 0 && newLeft <= maxLeft) el.style.left = newLeft + "px";
+                
+                rafId = null;
+            }
+
+            function closeDragElement() {
+                isDragging = false;
+                el.classList.remove('dragging');
+                if (rafId) {
+                    cancelAnimationFrame(rafId);
+                    rafId = null;
+                }
+                document.onmouseup = null;
+                document.onmousemove = null;
+            }
+        }
+
+
+        function clearMap() {
+            if (confirm('Deseja realmente limpar todo o mapa?')) {
+                canvas.innerHTML = '';
+                placedItemsCount = 0;
+                updateCounter();
+            }
+        }
+
+        function updateItemScale(value) {
+            currentScale = parseInt(value);
+            scaleDisplay.textContent = value + 'px';
+            
+            const items = document.querySelectorAll('.placed-item');
+            items.forEach(item => {
+                const oldWidth = item.offsetWidth;
+                const oldHeight = item.offsetHeight;
+                
+                item.style.width = currentScale + 'px';
+                item.style.height = currentScale + 'px';
+                
+                // Ajustar posição para manter o centro (opcional, mas evita que saiam do mapa)
+                let newTop = item.offsetTop - (currentScale - oldHeight) / 2;
+                let newLeft = item.offsetLeft - (currentScale - oldWidth) / 2;
+                
+                // Garantir que não saia das bordas
+                const maxTop = canvas.offsetHeight - currentScale;
+                const maxLeft = canvas.offsetWidth - currentScale;
+                
+                if (newTop < 0) newTop = 0;
+                if (newTop > maxTop) newTop = maxTop;
+                if (newLeft < 0) newLeft = 0;
+                if (newLeft > maxLeft) newLeft = maxLeft;
+                
+                item.style.top = newTop + "px";
+                item.style.left = newLeft + "px";
+            });
+        }
+
+        // Inicializar contador
+        updateCounter();
+    </script>
+</body>
+</html>
