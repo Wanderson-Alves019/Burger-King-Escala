@@ -38,8 +38,8 @@ const configMes = obterConfiguracoesMesAtual();
 const mesConfig = configMes.mesConfig;
 const periodo = configMes.periodo;
 
-const intermediariosPadrao = ["BEATRIZ GONÇALVES", "WANDERSON ALVES", "GRACIENE SILVA", "WEBERSON HENRIQUE"];
-const jovensAprendizesPadrao = ["PEDRO THAYRO", "VICTOR DEIVID"];
+const intermediariosPadrao = [];
+const jovensAprendizesPadrao = [];
 let colaboradoresPadrao = [
   { nome: 'AISLA HOLLANA CRUZ', turno: '08:00', folgaFixa: 'quinta', domingos: [], descansoExtra: [], ferias: [], aniversario: { mes: 'marco', dia: 25 } },
   { nome: 'ALEFE CHAGAS SILVA', turno: '15:00', folgaFixa: 'quinta', domingos: [], descansoExtra: [], ferias: [], aniversario: { mes: 'abril', dia: 10 } },
