@@ -402,12 +402,12 @@ function renderMetas() {
 }
 
 window.addEventListener('load', () => {
-    renderMetas();
+   return renderMetas();
 });
 
 // Também ouvir o evento de dados prontos (caso o Firebase termine depois do load)
 window.addEventListener('dadosEscalaProntos', () => {
-    renderMetas();
+   return renderMetas();
 });
 </script>
 </body>
