@@ -543,7 +543,7 @@
         </div>
     </div>
 
-    <!-- Modais (Colaborador e Liderança mantidos como no original) -->
+    <!-- Modais -->
     <!-- Modal Colaborador -->
     <div id="modalColaborador" class="modal">
         <div class="modal-content">
@@ -701,16 +701,16 @@
                 const card = document.createElement('div');
                 card.className = 'colaborador-card';
                 card.innerHTML = `
-                    <h4>${colab.nome}</h4>
-		                    <div class="colaborador-info">
-		                        <strong>Turno:</strong> ${colab.turno} | <strong>Folga:</strong> ${colab.folgaFixa}<br>
-	                        <strong>Domingos:</strong> ${colab.domingos.join(', ') || 'Nenhum'}<br>
-	                        <strong>Férias:</strong> ${colab.ferias && colab.ferias.length > 0 ? colab.ferias.join(' a ') : 'Não'}
+                    <h4>${colab.nome} ${colab.jovemAprendiz ? '👶' : ''} ${colab.intermediario ? '🔸' : ''}</h4>
+			                    <div class="colaborador-info">
+			                        <strong>Turno:</strong> ${colab.turno} | <strong>Folga:</strong> ${colab.folgaFixa}<br>
+		                        <strong>Domingos:</strong> ${colab.domingos.join(', ') || 'Nenhum'}<br>
+		                        <strong>Férias:</strong> ${colab.ferias && colab.ferias.length > 0 ? colab.ferias.join(' a ') : 'Não'}
+		                    </div>
+	                    <div class="colaborador-actions">
+	                        <button class="btn-edit" onclick="editarColaborador(${index})">✏️ Editar</button>
+	                        <button class="btn-delete" onclick="deletarColaborador(${index})">🗑️ Deletar</button>
 	                    </div>
-                    <div class="colaborador-actions">
-                        <button class="btn-edit" onclick="editarColaborador(${index})">✏️ Editar</button>
-                        <button class="btn-delete" onclick="deletarColaborador(${index})">🗑️ Deletar</button>
-                    </div>
                 `;
                 lista.appendChild(card);
             });
@@ -722,17 +722,17 @@
             (dados.lideranca || []).forEach((lid, index) => {
                 const card = document.createElement('div');
                 card.className = 'colaborador-card';
-	                card.innerHTML = `
-	                    <h4>${lid.nome}</h4>
-	                    <div class="colaborador-info">
-	                        <strong>Cargo:</strong> ${lid.cargo}<br>
-	                        <strong>Turno:</strong> ${lid.turno} | <strong>Folga:</strong> ${lid.folga || lid.folgaFixa}<br>
-	                        <strong>Férias:</strong> ${lid.ferias && lid.ferias.length > 0 ? lid.ferias.join(' a ') : 'Não'}
+		                card.innerHTML = `
+		                    <h4>${lid.nome}</h4>
+		                    <div class="colaborador-info">
+		                        <strong>Cargo:</strong> ${lid.cargo}<br>
+		                        <strong>Turno:</strong> ${lid.turno} | <strong>Folga:</strong> ${lid.folga || lid.folgaFixa}<br>
+		                        <strong>Férias:</strong> ${lid.ferias && lid.ferias.length > 0 ? lid.ferias.join(' a ') : 'Não'}
+		                    </div>
+		                    <div class="colaborador-actions">
+	                        <button class="btn-edit" onclick="editarLideranca(${index})">✏️ Editar</button>
+	                        <button class="btn-delete" onclick="deletarLideranca(${index})">🗑️ Deletar</button>
 	                    </div>
-	                    <div class="colaborador-actions">
-                        <button class="btn-edit" onclick="editarLideranca(${index})">✏️ Editar</button>
-                        <button class="btn-delete" onclick="deletarLideranca(${index})">🗑️ Deletar</button>
-                    </div>
                 `;
                 lista.appendChild(card);
             });
@@ -746,7 +746,7 @@
                 const tr = document.createElement('tr');
                 tr.innerHTML = `<td><strong>${turno.label}</strong></td>`;
                 diasSemana.forEach(dia => {
-                    const val = dados[turno.key][dia] || 0;
+                    const val = (dados[turno.key] && dados[turno.key][dia]) || 0;
                     tr.innerHTML += `<td><input type="number" data-turno="${turno.key}" data-dia="${dia}" value="${val}" min="0" max="100" placeholder="0-100"></td>`;
                 });
                 tbody.appendChild(tr);
@@ -757,7 +757,7 @@
             const tbody = document.getElementById('historicoTableBody');
             tbody.innerHTML = '';
             mesesNomes.forEach(mes => {
-                const historico = dados.historicoFuncionariosMes[mes] || { nome: '', motivo: '' };
+                const historico = (dados.historicoFuncionariosMes && dados.historicoFuncionariosMes[mes]) || { nome: '', motivo: '' };
                 const tr = document.createElement('tr');
                 tr.innerHTML = `
                     <td><strong style="text-transform: capitalize;">${mes}</strong></td>
@@ -782,6 +782,7 @@
                 } else {
                     input.style.borderColor = '#ddd';
                     input.style.backgroundColor = 'white';
+                    if (!dados[turno]) dados[turno] = {};
                     dados[turno][dia] = valor;
                 }
             });
@@ -796,6 +797,7 @@
         }
 
         async function salvarHistoricoFuncionario() {
+            if (!dados.historicoFuncionariosMes) dados.historicoFuncionariosMes = {};
             document.querySelectorAll('#funcionario input').forEach(input => {
                 const { mes, field } = input.dataset;
                 if (!dados.historicoFuncionariosMes[mes]) dados.historicoFuncionariosMes[mes] = { nome: '', motivo: '' };
@@ -833,7 +835,6 @@
             } catch (e) { console.error(e); }
         }
 
-        // Funções de Modal e Auxiliares (Simplificadas para brevidade, mantendo lógica original)
         function switchTab(tab) {
             document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
             document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
@@ -853,7 +854,6 @@
             status.style.backgroundColor = tipo === 'success' ? '#d4edda' : '#d1ecf1';
         }
         
-        // Funcao de validacao em tempo real para campos de data
         function validarCampoData(input) {
             const valor = input.value.trim();
             if (!valor) {
@@ -883,10 +883,13 @@
             document.getElementById('modalTitle').textContent = "Adicionar Colaborador";
             document.getElementById('modalNome').value = "";
             document.getElementById('modalTurno').value = "08:00";
+            document.getElementById('modalFolgaFixa').value = "segunda";
             document.getElementById('modalDescansoExtra').value = "";
             document.getElementById('modalFerias').value = "";
             document.getElementById('modalAniversarioMes').value = "";
             document.getElementById('modalAniversarioDia').value = "";
+            document.getElementById('modalJovemAprendiz').checked = false;
+            document.getElementById('modalIntermediario').checked = false;
             atualizarLimiteDia('modalAniversarioMes', 'modalAniversarioDia');
             document.getElementById('modalColaborador').classList.add('active'); 
             renderizarDomingosCheckboxes('domingosMarcacao', []); 
@@ -897,7 +900,9 @@
             adicionandoLideranca = true;
             document.getElementById('modalLidTitle').textContent = "Adicionar Liderança";
             document.getElementById('modalLidNome').value = "";
-            document.getElementById('modalLidTurno').value = "";
+            document.getElementById('modalLidCargo').value = "Gerente de Negócios";
+            document.getElementById('modalLidTurno').value = "08:00";
+            document.getElementById('modalLidFolga').value = "segunda";
             document.getElementById('modalLidFolgasExtras').value = "";
             document.getElementById('modalLidFerias').value = "";
             document.getElementById('modalLidAniversarioMes').value = "";
@@ -936,80 +941,72 @@
         }
 
         async function salvarColaborador() {
-    const mesAniversario = document.getElementById('modalAniversarioMes').value;
-    const diaAniversario = parseInt(document.getElementById('modalAniversarioDia').value);
+            const nome = document.getElementById('modalNome').value.trim();
+            if (!nome) {
+                mostrarMensagem('Erro: Nome é obrigatório!', 'error');
+                return;
+            }
 
-    let aniversario = null;
+            const mesAniversario = document.getElementById('modalAniversarioMes').value;
+            const diaAniversario = parseInt(document.getElementById('modalAniversarioDia').value);
 
-    const ultimoDiaValido = obterUltimoDiaMes(mesAniversario);
-    if (
-        mesAniversario &&
-        !isNaN(diaAniversario) &&
-        diaAniversario >= 1 &&
-        diaAniversario <= ultimoDiaValido
-    ) {
-        aniversario = {
-            mes: mesAniversario,
-            dia: diaAniversario
-        };
-    } else if (mesAniversario && diaAniversario > ultimoDiaValido) {
-        mostrarMensagem(`Erro: O mês de ${mesAniversario} só possui ${ultimoDiaValido} dias!`, 'error');
-        return;
-    }
+            let aniversario = null;
+            const ultimoDiaValido = obterUltimoDiaMes(mesAniversario);
+            if (mesAniversario && !isNaN(diaAniversario) && diaAniversario >= 1 && diaAniversario <= ultimoDiaValido) {
+                aniversario = { mes: mesAniversario, dia: diaAniversario };
+            } else if (mesAniversario && diaAniversario > ultimoDiaValido) {
+                mostrarMensagem(`Erro: O mês de ${mesAniversario} só possui ${ultimoDiaValido} dias!`, 'error');
+                return;
+            }
 
-    // Validar campos de data
-    const descansoExtraArray = document.getElementById('modalDescansoExtra').value
-        .split(',')
-        .map(s => parseInt(s.trim()))
-        .filter(n => !isNaN(n));
-    
-    const feriasArray = document.getElementById('modalFerias').value
-        .split(',')
-        .map(s => parseInt(s.trim()))
-        .filter(n => !isNaN(n));
-    
-    // Validar se todos os valores estão entre 1 e 31
-    const todosValores = [...descansoExtraArray, ...feriasArray];
-    const valoresInvalidos = todosValores.some(v => v < 1 || v > 31);
-    
-    if (valoresInvalidos) {
-        mostrarMensagem('Erro: Dias devem estar entre 1 e 31!', 'error');
-        return;
-    }
-    
-    const colab = {
-        nome: document.getElementById('modalNome').value,
-        turno: document.getElementById('modalTurno').value,
-        folgaFixa: document.getElementById('modalFolgaFixa').value,
-        domingos: Array.from(
-            document.querySelectorAll('#domingosMarcacao input:checked')
-        ).map(i => parseInt(i.value)),
-        descansoExtra: descansoExtraArray,
-        ferias: feriasArray,
+            const descansoExtraArray = document.getElementById('modalDescansoExtra').value.split(',').map(s => parseInt(s.trim())).filter(n => !isNaN(n));
+            const feriasArray = document.getElementById('modalFerias').value.split(',').map(s => parseInt(s.trim())).filter(n => !isNaN(n));
+            
+            const todosValores = [...descansoExtraArray, ...feriasArray];
+            const valoresInvalidos = todosValores.some(v => v < 1 || v > 31);
+            
+            if (valoresInvalidos) {
+                mostrarMensagem('Erro: Dias devem estar entre 1 e 31!', 'error');
+                return;
+            }
+            
+            const colab = {
+                nome: nome,
+                turno: document.getElementById('modalTurno').value,
+                folgaFixa: document.getElementById('modalFolgaFixa').value,
+                domingos: Array.from(document.querySelectorAll('#domingosMarcacao input:checked')).map(i => parseInt(i.value)),
+                descansoExtra: descansoExtraArray,
+                ferias: feriasArray,
+                jovemAprendiz: document.getElementById('modalJovemAprendiz').checked,
+                intermediario: document.getElementById('modalIntermediario').checked,
+                ...(aniversario ? { aniversario } : {})
+            };
 
-        ...(aniversario ? { aniversario } : {})
-    };
+            if (!dados.colaboradores) dados.colaboradores = [];
 
-    if (colaboradorEditando !== null) {
-        dados.colaboradores[colaboradorEditando] = colab;
-    } else {
-        dados.colaboradores.push(colab);
-    }
+            if (colaboradorEditando !== null) {
+                dados.colaboradores[colaboradorEditando] = colab;
+            } else {
+                dados.colaboradores.push(colab);
+            }
 
-    await salvarDados();
-    fecharModal();
-    atualizarInterface();
-}
+            await salvarDados();
+            fecharModal();
+            atualizarInterface();
+            mostrarMensagem('Colaborador salvo com sucesso!', 'success');
+        }
 
         function editarColaborador(index) {
             colaboradorEditando = index;
             const c = dados.colaboradores[index];
             document.getElementById('modalTitle').textContent = "Editar Colaborador";
-            document.getElementById('modalNome').value = c.nome;
-            document.getElementById('modalTurno').value = c.turno;
-            document.getElementById('modalFolgaFixa').value = c.folgaFixa;
+            document.getElementById('modalNome').value = c.nome || "";
+            document.getElementById('modalTurno').value = c.turno || "08:00";
+            document.getElementById('modalFolgaFixa').value = c.folgaFixa || "segunda";
             document.getElementById('modalDescansoExtra').value = (c.descansoExtra || []).join(',');
             document.getElementById('modalFerias').value = (c.ferias || []).join(',');
+            document.getElementById('modalJovemAprendiz').checked = !!c.jovemAprendiz;
+            document.getElementById('modalIntermediario').checked = !!c.intermediario;
             renderizarDomingosCheckboxes('domingosMarcacao', c.domingos || []);
             if (c.aniversario) {
                 document.getElementById('modalAniversarioMes').value = c.aniversario.mes || '';
@@ -1027,9 +1024,9 @@
             adicionandoLideranca = false;
             const c = dados.lideranca[index];
             document.getElementById('modalLidTitle').textContent = "Editar Liderança";
-            document.getElementById('modalLidNome').value = c.nome;
-            document.getElementById('modalLidCargo').value = c.cargo;
-            document.getElementById('modalLidTurno').value = c.turno;
+            document.getElementById('modalLidNome').value = c.nome || "";
+            document.getElementById('modalLidCargo').value = c.cargo || "Gerente de Negócios";
+            document.getElementById('modalLidTurno').value = c.turno || "08:00";
             document.getElementById('modalLidFolga').value = c.folga || c.folgaFixa || 'segunda';
             document.getElementById('modalLidFolgasExtras').value = (c.folgasExtras || []).join(',');
             document.getElementById('modalLidFerias').value = (c.ferias || []).join(',');
@@ -1053,7 +1050,6 @@
             const folgasExtras = document.getElementById('modalLidFolgasExtras').value.split(',').map(d => parseInt(d.trim())).filter(d => !isNaN(d));
             const ferias = document.getElementById('modalLidFerias').value.split(',').map(d => parseInt(d.trim())).filter(d => !isNaN(d));
             
-            // Validar se todos os valores estão entre 1 e 31
             const todosValoresLid = [...folgasExtras, ...ferias];
             const valoresInvalidosLid = todosValoresLid.some(v => v < 1 || v > 31);
             
@@ -1082,13 +1078,15 @@
             const novaLid = {
                 nome: nome.toUpperCase(),
                 cargo: cargo,
-                turno,
-                folga,
-                folgasExtras,
-                folgaDominical,
-                ferias,
-                aniversario: aniversario // Salvar no mesmo local que colaboradores
+                turno: turno,
+                folga: folga,
+                folgasExtras: folgasExtras,
+                folgaDominical: folgaDominical,
+                ferias: ferias,
+                aniversario: aniversario
             };
+
+            if (!dados.lideranca) dados.lideranca = [];
 
             if (adicionandoLideranca) {
                 dados.lideranca.push(novaLid);
@@ -1115,6 +1113,7 @@
 
         window.addEventListener('load', carregarDados);
         window.addEventListener('dadosEscalaProntos', carregarDados);
+
     </script>
 </body>
 </html>
