@@ -68,7 +68,7 @@ let liderancaPadrao = [
   { nome: 'RAYRA', cargo: 'Coordenadora', turno: '15:00-23:20', folga: 'quinta', folgasExtras: [], folgaDominical: [], ferias: [], aniversario: { mes: 'novembro', dia: 5 } }
 ];
 
-var metasLunchPadrao = { 'segunda': 100, 'terça': 5, 'quarta': 5, 'quinta': 6, 'sexta': 7, 'sábado': 7, 'domingo': 5 };
+var metasLunchPadrao = { 'segunda': 5, 'terça': 5, 'quarta': 5, 'quinta': 6, 'sexta': 7, 'sábado': 7, 'domingo': 5 };
 var metasDinnerPadrao = { 'segunda': 11, 'terça': 12, 'quarta': 12, 'quinta': 12, 'sexta': 13, 'sábado': 15, 'domingo': 11 };
 const historicoFuncionariosMesPadrao = {
     'janeiro': { nome: 'WANDERSON ALVES P.', motivo: 'Liderança exemplar e dedicação ao treinamento' },
