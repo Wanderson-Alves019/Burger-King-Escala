@@ -69,7 +69,7 @@ const lojas = [
     {
         id: 5,
         nome: "JK Shopping",
-        senha: "5",
+        senha: "BKB@19670",
         icone: "assets/lojas/jkshopping.png",
         cidade: "Brasília - DF"
     },
