@@ -6,10 +6,10 @@
     <title>Painel Administrativo - Burger King</title>
     <link rel="icon" href="assets/images/LOGO BK.png" type="image/png">
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700;900&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Flame:wght@400;700&family=Roboto:wght@400;500;700;900&display=swap');
 
         :root {
-            --bk-beige: #F5EBDC;
+            --bk-beige: #ffffff;
             --bk-brown: #502314;
             --bk-orange: #FF8732;
             --bk-red: #D62300;
@@ -29,167 +29,294 @@
             font-family: 'Roboto', sans-serif;
             background-color: var(--bk-beige);
             min-height: 100vh;
-            padding: 20px;
+            padding: 10px;
+            color: var(--bk-brown);
+            display: flex;
+            flex-direction: column;
         }
 
         .admin-container {
+            background-color: white;
+            border-radius: 15px;
+            padding: 20px;
+            width: 100%;
             max-width: 1400px;
             margin: 0 auto;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.05);
         }
 
+        .admin-container::before {
+            content: '';
+            position: absolute;
+            top: 0; right: 0; bottom: 0; left: 0;
+            background-image: url('https://imgur.com/qFy20zg.png');
+            opacity: 0.03;
+            pointer-events: none;
+        }
+
+        /* Estilo do Header igual ao da Escala */
         .admin-header {
-            background: linear-gradient(135deg, var(--bk-red) 0%, var(--bk-orange) 100%);
-            color: white;
-            padding: 30px;
-            border-radius: 15px;
-            margin-bottom: 30px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
             display: flex;
             justify-content: space-between;
             align-items: center;
-            flex-wrap: wrap;
-            gap: 20px;
+            margin-bottom: 20px;
+            flex-shrink: 0;
+            z-index: 1;
         }
 
-        .admin-header h1 {
-            font-size: 32px;
-            font-weight: 900;
-            text-transform: uppercase;
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .bk-logo { width: 120px; height: 120px; }
+
+        .title-group h1 { 
+            font-size: 32px; 
+            font-weight: 900; 
+            color: var(--bk-brown); 
+            text-transform: uppercase; 
+            line-height: 1; 
+        }
+        .title-group h2 { 
+            font-size: 24px; 
+            font-weight: 900; 
+            color: var(--bk-orange); 
+            text-transform: uppercase; 
+            margin-top: 2px; 
         }
 
         .admin-header-info {
             display: flex;
-            gap: 30px;
-            flex-wrap: wrap;
+            gap: 20px;
         }
 
-        .admin-header-info div {
+        .info-box { 
+            display: flex; 
+            align-items: center; 
+            gap: 8px; 
+            background: #f9f9f9;
+            padding: 10px 15px;
+            border-radius: 10px;
+            border: 1px solid #eee;
+        }
+        .info-icon { 
+            width: 35px; 
+            height: 35px; 
+            background: white; 
+            border-radius: 8px; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            font-size: 18px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+        .info-text .label { 
+            font-size: 10px; 
+            font-weight: 700; 
+            text-transform: uppercase; 
+            color: var(--bk-brown); 
+        }
+        .info-text .value { 
+            font-size: 12px; 
+            font-weight: 700; 
+        }
+
+        /* Botão Voltar ao Portal */
+        .btn-voltar-portal {
+            position: fixed;
+            top: 10px;
+            left: 10px;
+            background-color: #502314;
+            color: #F5EBDC;
+            padding: 5px 12px;
+            border-radius: 30px;
+            text-decoration: none;
+            font-weight: 700;
+            font-size: 11px;
+            z-index: 10000;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.15);
             display: flex;
-            flex-direction: column;
-            gap: 5px;
+            align-items: center;
+            gap: 6px;
+            border: 1.5px solid #FF8732;
+            font-family: 'Open Sans', sans-serif;
+            opacity: 0.8;
+            transition: all 0.2s;
         }
 
-        .admin-header-info label {
-            font-size: 12px;
-            opacity: 0.9;
-            text-transform: uppercase;
-            font-weight: 700;
+        .btn-voltar-portal:hover {
+            opacity: 1;
+            background-color: #D62300;
+            transform: scale(1.02);
         }
 
-        .admin-header-info span {
-            font-size: 16px;
-            font-weight: 700;
+        .btn-voltar-portal img {
+            width: 18px;
+            height: 18px;
         }
 
         .btn-logout {
-            background: white;
-            color: var(--bk-red);
+            background: var(--bk-red);
+            color: white;
             border: none;
-            padding: 12px 24px;
-            border-radius: 8px;
+            padding: 10px 20px;
+            border-radius: 50px;
             font-weight: 700;
             cursor: pointer;
             transition: all 0.3s ease;
             text-transform: uppercase;
             font-size: 12px;
+            box-shadow: 0 4px 10px rgba(214, 35, 0, 0.2);
         }
 
         .btn-logout:hover {
             transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            background: var(--bk-dark-brown);
         }
 
+        /* Controles */
         .controls-bar {
-            background: white;
-            padding: 20px;
-            border-radius: 10px;
-            margin-bottom: 30px;
+            background: #f9f9f9;
+            padding: 15px;
+            border-radius: 12px;
+            margin-bottom: 25px;
             display: flex;
             gap: 15px;
             flex-wrap: wrap;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            align-items: center;
+            border: 1px solid #eee;
+            z-index: 1;
         }
 
-        .controls-bar select,
-        .controls-bar button {
-            padding: 10px 16px;
+        .controls-bar select {
+            padding: 10px 15px;
             border: 2px solid var(--bk-orange);
             border-radius: 8px;
             font-family: 'Roboto', sans-serif;
             font-weight: 600;
             cursor: pointer;
-            transition: all 0.3s ease;
-        }
-
-        .controls-bar select {
-            background: white;
-            color: var(--bk-brown);
-        }
-
-        .controls-bar select:focus {
             outline: none;
-            border-color: var(--bk-red);
-            box-shadow: 0 0 10px rgba(214, 35, 0, 0.2);
+            color: var(--bk-brown);
+            min-width: 250px;
         }
 
-        .controls-bar button {
+        .btn-action {
             background: var(--bk-orange);
             color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 50px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            font-size: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
         }
 
-        .controls-bar button:hover {
+        .btn-action:hover {
             background: var(--bk-red);
             transform: translateY(-2px);
         }
 
+        .btn-export { background: var(--bk-green); }
+
+        /* Estatísticas */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 25px;
+            z-index: 1;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            text-align: center;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            border: 1px solid #eee;
+            border-bottom: 4px solid var(--bk-orange);
+        }
+
+        .stat-card h4 {
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            color: #666;
+            margin-bottom: 10px;
+        }
+
+        .stat-card .value {
+            font-size: 32px;
+            font-weight: 900;
+            color: var(--bk-brown);
+        }
+
+        /* Seções de Dados */
         .data-section {
             background: white;
-            border-radius: 10px;
-            padding: 25px;
-            margin-bottom: 30px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 25px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+            border: 1px solid #EEDDC5;
+            z-index: 1;
         }
 
         .section-title {
-            font-size: 22px;
+            font-size: 20px;
             font-weight: 900;
             color: var(--bk-brown);
             margin-bottom: 20px;
             padding-bottom: 15px;
-            border-bottom: 3px solid var(--bk-orange);
+            border-bottom: 2px solid #F5EBDC;
             text-transform: uppercase;
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 15px;
         }
 
-        .section-title::before {
-            content: '';
-            display: inline-block;
-            width: 8px;
-            height: 8px;
-            background: var(--bk-orange);
-            border-radius: 50%;
+        .loja-icone-section {
+            width: 50px;
+            height: 50px;
+            object-fit: contain;
+            border-radius: 8px;
+            background: #f9f9f9;
+            padding: 5px;
+            border: 1px solid #eee;
+        }
+
+        /* Tabelas */
+        .table-wrapper { 
+            margin-top: 15px; 
+            border: 1px solid #EEDDC5; 
+            border-radius: 10px; 
+            overflow: hidden; 
         }
 
         .data-table {
             width: 100%;
             border-collapse: collapse;
-            margin-top: 15px;
             font-size: 13px;
         }
 
-        .data-table thead {
-            background: linear-gradient(135deg, var(--bk-red) 0%, var(--bk-orange) 100%);
+        .data-table thead th {
+            background-color: var(--bk-brown);
             color: white;
-        }
-
-        .data-table th {
             padding: 12px;
             text-align: left;
             font-weight: 700;
             text-transform: uppercase;
-            border: none;
+            font-size: 11px;
         }
 
         .data-table td {
@@ -198,79 +325,18 @@
             color: var(--bk-brown);
         }
 
-        .data-table tbody tr:hover {
-            background: #f9f9f9;
-        }
-
         .data-table tbody tr:nth-child(even) {
-            background: #fafafa;
+            background: #FDF9F3;
         }
 
-        .empty-message {
-            text-align: center;
-            padding: 40px 20px;
-            color: #999;
-            font-size: 14px;
+        .data-table tbody tr:hover {
+            background: #F5EBDC;
         }
 
-        .loading {
-            text-align: center;
-            padding: 40px 20px;
-            color: var(--bk-orange);
-            font-size: 16px;
-            font-weight: 700;
-        }
-
-        .error-message {
-            background: #ffebee;
-            color: var(--bk-red);
-            padding: 15px;
-            border-radius: 8px;
-            margin-bottom: 20px;
-            border-left: 4px solid var(--bk-red);
-        }
-
-        .success-message {
-            background: #e8f5e9;
-            color: var(--bk-green);
-            padding: 15px;
-            border-radius: 8px;
-            margin-bottom: 20px;
-            border-left: 4px solid var(--bk-green);
-        }
-
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 15px;
-            margin-bottom: 30px;
-        }
-
-        .stat-card {
-            background: linear-gradient(135deg, var(--bk-orange) 0%, var(--bk-red) 100%);
-            color: white;
-            padding: 20px;
-            border-radius: 10px;
-            text-align: center;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-        }
-
-        .stat-card h4 {
-            font-size: 12px;
-            font-weight: 700;
-            text-transform: uppercase;
-            opacity: 0.9;
-            margin-bottom: 10px;
-        }
-
-        .stat-card .value {
-            font-size: 32px;
-            font-weight: 900;
-        }
-
+        /* JSON Viewer */
         .json-viewer {
-            background: #f5f5f5;
-            border: 1px solid #ddd;
+            background: #32140A;
+            color: #FF8732;
             border-radius: 8px;
             padding: 15px;
             margin-top: 15px;
@@ -278,63 +344,113 @@
             font-size: 12px;
             max-height: 300px;
             overflow-y: auto;
-            color: #333;
             line-height: 1.5;
         }
 
+        .btn-print-doc {
+            background: var(--bk-green);
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 50px;
+            font-weight: 700;
+            cursor: pointer;
+            font-size: 12px;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+        }
+
+        .btn-print-doc:hover {
+            background: #005a26;
+            transform: translateY(-2px);
+        }
+
+        .doc-header-actions {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+
+        @media print {
+            .btn-print-doc, .admin-header, .controls-bar, .stats-grid, .btn-voltar-portal {
+                display: none !important;
+            }
+            body {
+                background: white;
+                padding: 0;
+            }
+            .admin-container {
+                box-shadow: none;
+                border-radius: 0;
+                padding: 0;
+                max-width: 100%;
+            }
+        }
+
+        .empty-message {
+            text-align: center;
+            padding: 40px;
+            color: #999;
+            font-style: italic;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 50px;
+            color: var(--bk-orange);
+            font-weight: 700;
+            font-size: 18px;
+        }
+
         @media (max-width: 768px) {
-            .admin-header {
-                flex-direction: column;
-                align-items: flex-start;
-            }
-
-            .admin-header-info {
-                width: 100%;
-            }
-
-            .controls-bar {
-                flex-direction: column;
-            }
-
-            .controls-bar select,
-            .controls-bar button {
-                width: 100%;
-            }
-
-            .data-table {
-                font-size: 12px;
-            }
-
-            .data-table th,
-            .data-table td {
-                padding: 8px;
-            }
-
-            .section-title {
-                font-size: 18px;
-            }
+            .admin-header { flex-direction: column; gap: 20px; text-align: center; }
+            .header-left { flex-direction: column; }
+            .admin-header-info { flex-direction: column; width: 100%; }
+            .info-box { width: 100%; justify-content: center; }
+            .controls-bar { flex-direction: column; }
+            .controls-bar select, .btn-action { width: 100%; justify-content: center; }
         }
     </style>
 </head>
 <body>
+    <!-- Botão Voltar ao Portal -->
+    <a href="gestao_escala.html" class="btn-voltar-portal">
+        <img src="assets/images/LOGO BK.png" alt="BK">
+        <span>PORTAL</span>
+    </a>
+
     <div class="admin-container">
-        <!-- Header -->
+        <!-- Header Estilo Escala -->
         <div class="admin-header">
-            <div>
-                <h1>🔐 Painel Administrativo</h1>
-                <p style="font-size: 13px; opacity: 0.9; margin-top: 5px;">Visualização completa de todos os dados do sistema</p>
+            <div class="header-left">
+                <img src="assets/images/LOGO BK.png" class="bk-logo" alt="BK">
+                <div class="title-group">
+                    <h1>PAINEL ADMIN</h1>
+                    <h2>BURGER KING</h2>
+                </div>
             </div>
+            
             <div class="admin-header-info">
-                <div>
-                    <label>Usuário:</label>
-                    <span id="adminUser">Carregando...</span>
+                <div class="info-box">
+                    <div class="info-icon">👤</div>
+                    <div class="info-text">
+                        <div class="label">Usuário</div>
+                        <div id="adminUser" class="value">Carregando...</div>
+                    </div>
                 </div>
-                <div>
-                    <label>Data/Hora:</label>
-                    <span id="currentDateTime">--:--</span>
+                <div class="info-box">
+                    <div class="info-icon">🕒</div>
+                    <div class="info-text">
+                        <div class="label">Sessão</div>
+                        <div id="currentDateTime" class="value">--:--</div>
+                    </div>
                 </div>
+                <button class="btn-logout" onclick="fazerLogout()">Sair</button>
             </div>
-            <button class="btn-logout" onclick="fazerLogout()">Sair</button>
         </div>
 
         <!-- Controles -->
@@ -342,8 +458,8 @@
             <select id="lojaFilter" onchange="filtrarPorLoja()">
                 <option value="">Todas as Lojas</option>
             </select>
-            <button onclick="recarregarDados()">🔄 Recarregar Dados</button>
-            <button onclick="exportarJSON()">📥 Exportar JSON</button>
+            <button class="btn-action" onclick="recarregarDados()">🔄 Atualizar</button>
+            <button class="btn-action btn-export" onclick="exportarJSON()">📥 Exportar Dados</button>
         </div>
 
         <!-- Mensagens -->
@@ -365,7 +481,6 @@
         let allData = {};
         let currentFilter = '';
 
-        // Verificar autenticação
         window.addEventListener('load', function() {
             if (!window.authManager.estaAutenticado()) {
                 window.location.href = 'index.html';
@@ -379,18 +494,15 @@
             }
 
             document.getElementById('adminUser').textContent = lojaAtual.nome;
+            
             atualizarHora();
             setInterval(atualizarHora, 1000);
-            
             carregarTodosDados();
         });
 
         function atualizarHora() {
             const agora = new Date();
-            const horas = String(agora.getHours()).padStart(2, '0');
-            const minutos = String(agora.getMinutes()).padStart(2, '0');
-            const segundos = String(agora.getSeconds()).padStart(2, '0');
-            document.getElementById('currentDateTime').textContent = `${horas}:${minutos}:${segundos}`;
+            document.getElementById('currentDateTime').textContent = agora.toLocaleTimeString('pt-BR');
         }
 
         async function carregarTodosDados() {
@@ -401,57 +513,25 @@
                 const lojas = window.lojas;
                 allData = {};
 
-                // Carregar dados de todas as lojas
                 for (const loja of lojas) {
                     const colecaoNome = `escalas_loja_${loja.id}`;
-                    
                     try {
                         const colecao = collection(db, colecaoNome);
                         const snapshot = await getDocs(colecao);
                         const dadosLoja = [];
-                        
                         snapshot.forEach(doc => {
-                            dadosLoja.push({
-                                id: doc.id,
-                                ...doc.data()
-                            });
+                            dadosLoja.push({ id: doc.id, ...doc.data() });
                         });
-
-                        allData[loja.id] = {
-                            loja: loja,
-                            dados: dadosLoja
-                        };
+                        allData[loja.id] = { loja: loja, dados: dadosLoja };
                     } catch (erro) {
-                        console.error(`Erro ao carregar dados da loja ${loja.nome}:`, erro);
+                        console.error(`Erro ao carregar loja ${loja.nome}:`, erro);
                     }
-                }
-
-                // Carregar dados gerais
-                try {
-                    const colecaoGeral = collection(db, 'escalas_geral');
-                    const snapshot = await getDocs(colecaoGeral);
-                    const dadosGerais = [];
-                    
-                    snapshot.forEach(doc => {
-                        dadosGerais.push({
-                            id: doc.id,
-                            ...doc.data()
-                        });
-                    });
-
-                    allData['geral'] = {
-                        loja: { id: 'geral', nome: 'Dados Gerais', cidade: 'Sistema' },
-                        dados: dadosGerais
-                    };
-                } catch (erro) {
-                    console.error('Erro ao carregar dados gerais:', erro);
                 }
 
                 renderizarDados();
                 preencherFiltroLojas();
             } catch (erro) {
                 mostrarErro('Erro ao carregar dados: ' + erro.message);
-                console.error(erro);
             }
         }
 
@@ -459,39 +539,24 @@
             const container = document.getElementById('dataContainer');
             container.innerHTML = '';
 
-            // Calcular estatísticas
             let totalLojas = 0;
             let totalRegistros = 0;
             let totalColaboradores = 0;
 
             Object.values(allData).forEach(item => {
-                if (item.loja.id !== 'geral') totalLojas++;
+                totalLojas++;
                 totalRegistros += item.dados.length;
-                
                 item.dados.forEach(doc => {
-                    if (doc.colaboradores && Array.isArray(doc.colaboradores)) {
-                        totalColaboradores += doc.colaboradores.length;
-                    }
+                    if (doc.colaboradores) totalColaboradores += doc.colaboradores.length;
                 });
             });
 
-            // Renderizar estatísticas
             document.getElementById('statsGrid').innerHTML = `
-                <div class="stat-card">
-                    <h4>Total de Lojas</h4>
-                    <div class="value">${totalLojas}</div>
-                </div>
-                <div class="stat-card">
-                    <h4>Total de Registros</h4>
-                    <div class="value">${totalRegistros}</div>
-                </div>
-                <div class="stat-card">
-                    <h4>Total de Colaboradores</h4>
-                    <div class="value">${totalColaboradores}</div>
-                </div>
+                <div class="stat-card"><h4>Lojas Ativas</h4><div class="value">${totalLojas}</div></div>
+                <div class="stat-card"><h4>Documentos</h4><div class="value">${totalRegistros}</div></div>
+                <div class="stat-card"><h4>Total Equipe</h4><div class="value">${totalColaboradores}</div></div>
             `;
 
-            // Renderizar dados por loja
             Object.entries(allData).forEach(([key, item]) => {
                 if (currentFilter && currentFilter !== key) return;
 
@@ -500,18 +565,22 @@
 
                 let conteudo = `
                     <div class="section-title">
-                        ${item.loja.nome}
-                        <span style="font-size: 12px; margin-left: auto; font-weight: 400; text-transform: none;">
-                            (${item.dados.length} registro${item.dados.length !== 1 ? 's' : ''})
+                        <img src="${item.loja.icone}" class="loja-icone-section" alt="${item.loja.nome}" onerror="this.src='assets/images/LOGO BK.png'">
+                        <div>
+                            <div>${item.loja.nome}</div>
+                            <div style="font-size: 11px; color: #666; font-weight: 400; text-transform: none;">${item.loja.cidade}</div>
+                        </div>
+                        <span style="font-size: 12px; margin-left: auto; font-weight: 400; text-transform: none; background: #f5f5f5; padding: 5px 10px; border-radius: 20px;">
+                            ${item.dados.length} doc(s)
                         </span>
                     </div>
                 `;
 
                 if (item.dados.length === 0) {
-                    conteudo += '<div class="empty-message">Nenhum dado encontrado para esta loja</div>';
+                    conteudo += '<div class="empty-message">Nenhum dado registrado para esta unidade.</div>';
                 } else {
                     item.dados.forEach(doc => {
-                        conteudo += renderizarDocumento(doc);
+                        conteudo += renderizarDocumento(doc, item.loja);
                     });
                 }
 
@@ -520,88 +589,36 @@
             });
         }
 
-        function renderizarDocumento(doc) {
-            let html = '<div style="margin-bottom: 25px; padding: 15px; background: #f9f9f9; border-radius: 8px; border-left: 4px solid var(--bk-orange);">';
+        function renderizarDocumento(doc, lojaInfo) {
+            let html = '<div style="margin-bottom: 25px; padding: 15px; background: #fcfcfc; border-radius: 12px; border: 1px solid #eee; position: relative; overflow: hidden;">';
+            html += `<div style="position: absolute; top: 0; left: 0; width: 4px; height: 100%; background: var(--bk-orange);"></div>`;
+            html += `<div class="doc-header-actions"><h4 style="color: var(--bk-brown); font-weight: 900; display: flex; align-items: center; gap: 8px;">📄 ${doc.id}</h4><button class="btn-print-doc" onclick="imprimirDocumento('${doc.id}', '${lojaInfo ? lojaInfo.id : ''}')">🖨️ Imprimir</button></div>`;
             
-            html += `<h4 style="color: var(--bk-brown); font-weight: 700; margin-bottom: 10px;">📄 ${doc.id}</h4>`;
-            
-            // Informações básicas
-            if (doc.mesConfig) {
-                html += `<p><strong>Mês/Ano:</strong> ${doc.mesConfig}</p>`;
-            }
-            if (doc.periodo) {
-                html += `<p><strong>Período:</strong> ${doc.periodo}</p>`;
-            }
-            if (doc.ultimaAtualizacao) {
-                html += `<p><strong>Última Atualização:</strong> ${new Date(doc.ultimaAtualizacao).toLocaleString('pt-BR')}</p>`;
-            }
+            html += `<div style="display: flex; gap: 20px; flex-wrap: wrap; font-size: 12px; margin-bottom: 15px; background: white; padding: 10px; border-radius: 8px; border: 1px solid #f0f0f0;">`;
+            if (doc.mesConfig) html += `<span><strong>Mês:</strong> ${doc.mesConfig}</span>`;
+            if (doc.periodo) html += `<span><strong>Período:</strong> ${doc.periodo}</span>`;
+            if (doc.ultimaAtualizacao) html += `<span><strong>Atualizado em:</strong> ${new Date(doc.ultimaAtualizacao).toLocaleString('pt-BR')}</span>`;
+            html += `</div>`;
 
-            // Colaboradores
-            if (doc.colaboradores && Array.isArray(doc.colaboradores) && doc.colaboradores.length > 0) {
+            if (doc.colaboradores && doc.colaboradores.length > 0) {
                 html += `
                     <div style="margin-top: 15px;">
-                        <h5 style="color: var(--bk-orange); font-weight: 700; margin-bottom: 10px;">👥 Colaboradores (${doc.colaboradores.length})</h5>
-                        <table class="data-table">
-                            <thead>
-                                <tr>
-                                    <th>Nome</th>
-                                    <th>Cargo</th>
-                                    <th>Telefone</th>
-                                    <th>Turno</th>
-                                </tr>
-                            </thead>
-                            <tbody>
+                        <h5 style="color: var(--bk-brown); font-weight: 700; margin-bottom: 8px; font-size: 12px; text-transform: uppercase;">👥 Equipe (${doc.colaboradores.length})</h5>
+                        <div class="table-wrapper">
+                            <table class="data-table">
+                                <thead><tr><th>Nome</th><th>Turno</th></tr></thead>
+                                <tbody>
+                                    ${doc.colaboradores.map(c => `<tr><td>${c.nome || '-'}</td><td>${c.turno || '-'}</td></tr>`).join('')}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
                 `;
-                
-                doc.colaboradores.forEach(colab => {
-                    html += `
-                        <tr>
-                            <td>${colab.nome || '-'}</td>
-                            <td>${colab.cargo || '-'}</td>
-                            <td>${colab.telefone || '-'}</td>
-                            <td>${colab.turno || '-'}</td>
-                        </tr>
-                    `;
-                });
-                
-                html += `</tbody></table></div>`;
             }
 
-            // Liderança
-            if (doc.lideranca && Array.isArray(doc.lideranca) && doc.lideranca.length > 0) {
-                html += `
-                    <div style="margin-top: 15px;">
-                        <h5 style="color: var(--bk-orange); font-weight: 700; margin-bottom: 10px;">👔 Liderança (${doc.lideranca.length})</h5>
-                        <table class="data-table">
-                            <thead>
-                                <tr>
-                                    <th>Nome</th>
-                                    <th>Cargo</th>
-                                    <th>Telefone</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                `;
-                
-                doc.lideranca.forEach(lider => {
-                    html += `
-                        <tr>
-                            <td>${lider.nome || '-'}</td>
-                            <td>${lider.cargo || '-'}</td>
-                            <td>${lider.telefone || '-'}</td>
-                        </tr>
-                    `;
-                });
-                
-                html += `</tbody></table></div>`;
-            }
-
-            // JSON completo
             html += `
                 <details style="margin-top: 15px;">
-                    <summary style="cursor: pointer; color: var(--bk-orange); font-weight: 700; user-select: none;">
-                        📋 Ver JSON Completo
-                    </summary>
+                    <summary style="cursor: pointer; color: var(--bk-orange); font-weight: 700; font-size: 12px; user-select: none;">⚙️ Ver Dados Técnicos (JSON)</summary>
                     <pre class="json-viewer">${JSON.stringify(doc, null, 2)}</pre>
                 </details>
             `;
@@ -612,7 +629,7 @@
 
         function preencherFiltroLojas() {
             const select = document.getElementById('lojaFilter');
-            
+            select.innerHTML = '<option value="">Todas as Lojas</option>';
             Object.entries(allData).forEach(([key, item]) => {
                 const option = document.createElement('option');
                 option.value = key;
@@ -627,8 +644,6 @@
         }
 
         function recarregarDados() {
-            document.getElementById('lojaFilter').value = '';
-            currentFilter = '';
             carregarTodosDados();
         }
 
@@ -638,32 +653,112 @@
             const url = URL.createObjectURL(dataBlob);
             const link = document.createElement('a');
             link.href = url;
-            link.download = `admin_export_${new Date().toISOString().split('T')[0]}.json`;
+            link.download = `bk_admin_backup_${new Date().toISOString().split('T')[0]}.json`;
             link.click();
             URL.revokeObjectURL(url);
         }
 
         function fazerLogout() {
-            if (confirm('Tem certeza que deseja sair?')) {
+            if (confirm('Deseja realmente encerrar a sessão administrativa?')) {
                 window.authManager.logout();
                 window.location.href = 'index.html';
             }
         }
 
         function mostrarCarregando() {
-            document.getElementById('dataContainer').innerHTML = '<div class="loading">⏳ Carregando dados do banco de dados...</div>';
+            document.getElementById('dataContainer').innerHTML = '<div class="loading">⏳ Sincronizando com o banco de dados...</div>';
         }
 
         function mostrarErro(mensagem) {
-            const container = document.getElementById('messageContainer');
-            container.innerHTML = `<div class="error-message">❌ ${mensagem}</div>`;
+            document.getElementById('messageContainer').innerHTML = `<div style="background: #fee; color: #c00; padding: 15px; border-radius: 8px; margin-bottom: 20px; border-left: 4px solid #c00;">❌ ${mensagem}</div>`;
         }
 
-        // Expor funções globalmente
+        function imprimirDocumento(docId, lojaId) {
+            const printWindow = window.open('', '', 'width=800,height=600');
+            const itemLoja = allData[lojaId];
+            const docData = itemLoja ? itemLoja.dados.find(d => d.id === docId) : null;
+            
+            if (!docData) {
+                alert('Documento não encontrado!');
+                return;
+            }
+
+            const lojaInfo = itemLoja.loja;
+
+            let printContent = `
+                <!DOCTYPE html>
+                <html lang="pt-BR">
+                <head>
+                    <meta charset="UTF-8">
+                    <title>Impressão - ${docId}</title>
+                    <style>
+                        body { font-family: 'Roboto', Arial, sans-serif; margin: 20px; background: white; }
+                        .print-header { 
+                            display: flex; 
+                            align-items: center; 
+                            justify-content: center; 
+                            gap: 20px; 
+                            margin-bottom: 30px; 
+                            border-bottom: 2px solid #502314; 
+                            padding-bottom: 15px; 
+                        }
+                        .print-logo { width: 80px; height: 80px; object-fit: contain; }
+                        .print-header-text { text-align: left; }
+                        .print-header h1 { color: #502314; font-size: 24px; margin: 0; }
+                        .print-header p { color: #666; font-size: 12px; margin: 5px 0; }
+                        .info-section { margin-bottom: 20px; background: #f9f9f9; padding: 12px; border-radius: 8px; border-left: 4px solid #FF8732; }
+                        .info-section strong { color: #502314; }
+                        table { width: 100%; border-collapse: collapse; margin-top: 15px; }
+                        thead { background: #502314; color: white; }
+                        th { padding: 10px; text-align: left; font-weight: 700; font-size: 12px; }
+                        td { padding: 10px; border-bottom: 1px solid #ddd; font-size: 12px; }
+                        tbody tr:nth-child(even) { background: #f9f9f9; }
+                        .section-title { color: #502314; font-weight: 700; font-size: 14px; margin-top: 20px; margin-bottom: 10px; text-transform: uppercase; }
+                        @media print { body { margin: 0; } }
+                    </style>
+                </head>
+                <body>
+                    <div class="print-header">
+                        <img src="${lojaInfo.icone}" class="print-logo" alt="Logo Loja" onerror="this.src='assets/images/LOGO BK.png'">
+                        <div class="print-header-text">
+                            <h1>BURGER KING - ESCALA DE TRABALHO</h1>
+                            <p><strong>Unidade:</strong> ${lojaInfo.nome} - ${lojaInfo.cidade}</p>
+                            <p>Documento: ${docId}</p>
+                        </div>
+                    </div>
+            `;
+
+            if (docData.mesConfig) printContent += `<div class="info-section"><strong>Mês/Ano:</strong> ${docData.mesConfig}</div>`;
+            if (docData.periodo) printContent += `<div class="info-section"><strong>Período:</strong> ${docData.periodo}</div>`;
+            if (docData.ultimaAtualizacao) printContent += `<div class="info-section"><strong>Última Atualização:</strong> ${new Date(docData.ultimaAtualizacao).toLocaleString('pt-BR')}</div>`;
+
+            if (docData.colaboradores && docData.colaboradores.length > 0) {
+                printContent += `<div class="section-title">👥 Equipe (${docData.colaboradores.length})</div>`;
+                printContent += `<table><thead><tr><th>Nome</th><th>Turno</th></tr></thead><tbody>`;
+                docData.colaboradores.forEach(c => {
+                    printContent += `<tr><td>${c.nome || '-'}</td><td>${c.turno || '-'}</td></tr>`;
+                });
+                printContent += `</tbody></table>`;
+            }
+
+            printContent += `
+                </body>
+                </html>
+            `;
+
+            printWindow.document.write(printContent);
+            printWindow.document.close();
+            setTimeout(() => {
+                printWindow.print();
+                printWindow.close();
+            }, 250);
+        }
+
         window.fazerLogout = fazerLogout;
         window.recarregarDados = recarregarDados;
         window.exportarJSON = exportarJSON;
         window.filtrarPorLoja = filtrarPorLoja;
+        window.imprimirDocumento = imprimirDocumento;
     </script>
 </body>
 </html>
