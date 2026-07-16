@@ -430,7 +430,7 @@ function initEscalaLideranca() {
       if (dia.diaSemana === folga) {
         return 'FO';
       }
-      if (colabLideranca.ferias && diaNum >= colabLideranca.ferias[0] && diaNum <= colabLideranca.ferias[1]) status = 'FE';
+      if (colabLideranca.ferias && Numdias >= colabLideranca.ferias[0] && diaNum <= colabLideranca.ferias[1]) status = 'FE';
       // Caso contrário, retorna o turno padrão
       return turno;
     }
