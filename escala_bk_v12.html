@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -114,21 +115,41 @@
   .badge-fe { background-color: var(--bk-teal); }
   .badge-de { background-color: #84BD00; }
   .badge-f { background-color: #F5EBDC; color: var(--bk-brown); }
-  .badge-n { background-color: #32140A; }
   .badge-ja { background-color: #9C27B0; }
 
   .total-row { background-color: var(--bk-brown) !important; color: white; font-weight: 900; text-transform: uppercase; position: sticky; bottom: 0; z-index: 10; }
   .total-row td { border-color: #633221; padding: 10px 4px; }
   .total-row td.name-cell { background-color: var(--bk-brown); color: white; }
 
-  .actions { position: fixed; bottom: 20px; right: 20px; z-index: 1000; display: flex; gap: 10px; flex-wrap: wrap; justify-content: flex-end; }
+  .actions { position: fixed; bottom: 20px; right: 20px; z-index: 1000; display: flex; gap: 10px; flex-wrap: wrap; justify-content: flex-end; align-items: center; }
+  
+  .sort-controls {
+    background: white;
+    padding: 10px 20px;
+    border-radius: 50px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    border: 2px solid var(--bk-orange);
+  }
+  
+  .sort-label { font-weight: 700; font-size: 12px; color: var(--bk-brown); text-transform: uppercase; }
+  
+  .sort-select {
+    padding: 5px 10px;
+    border-radius: 5px;
+    border: 1px solid #ddd;
+    font-family: 'Roboto', sans-serif;
+    font-size: 13px;
+    color: var(--bk-brown);
+    outline: none;
+    cursor: pointer;
+  }
+
   .btn-save { background-color: var(--bk-orange); color: white; border: none; padding: 12px 24px; border-radius: 50px; font-weight: 700; cursor: pointer; box-shadow: 0 4px 15px rgba(0,0,0,0.2); display: flex; align-items: center; gap: 8px; transition: transform 0.2s, background-color 0.2s; font-family: 'Roboto', sans-serif; text-transform: uppercase; font-size: 14px; }
   .btn-save:hover { transform: scale(1.05); }
   .btn-save:disabled { opacity: 0.6; cursor: not-allowed; }
-  .btn-png { background-color: var(--bk-orange); }
-  .btn-png:hover { background-color: #ff7000; }
-  .btn-pdf { background-color: var(--bk-red); }
-  .btn-pdf:hover { background-color: #a01a00; }
   .btn-print { background-color: var(--bk-green); }
   .btn-print:hover { background-color: #005a26; }
 
@@ -150,7 +171,7 @@
       background: white !important;
       display: block !important;
     }
-    .actions, .btn-voltar-portal { display: none !important; }
+    .actions, .btn-voltar-portal, .sort-controls { display: none !important; }
     .container { 
       width: 100% !important;
       height: auto !important;
@@ -201,8 +222,6 @@
     .total-row td { font-size: 8pt !important; padding: 5px !important; }
   }
 
-    
-
     /* Estilo do Botão Voltar ao Portal Atualizado */
     .btn-voltar-portal {
         position: fixed;
@@ -236,13 +255,6 @@
         height: 18px;
     }
 
-    @media print {
-        .btn-voltar-portal {
-            display: none !important;
-        }
-    }
-
-
     /* Responsividade para Dispositivos Móveis */
     @media screen and (max-width: 768px) {
         body { padding: 5px; }
@@ -258,7 +270,8 @@
         .legenda-item { min-width: 120px; }
         .table-wrapper { margin-top: 15px; }
         thead th.name-col, tbody td.name-cell { min-width: 150px; font-size: 11px; padding: 5px; }
-        .actions { position: relative; bottom: 0; right: 0; margin-top: 20px; justify-content: center; width: 100%; }
+        .actions { position: relative; bottom: 0; right: 0; margin-top: 20px; justify-content: center; width: 100%; flex-direction: column; }
+        .sort-controls { width: 100%; justify-content: center; border-radius: 10px; }
         .btn-save { width: 100%; justify-content: center; }
     }
     
@@ -275,6 +288,17 @@
 <div id="error-message">⚠️ ERRO: Arquivo "colaboradores.js" não encontrado.</div>
 
 <div class="actions">
+  <div class="sort-controls">
+    <span class="sort-label">Organizar por:</span>
+    <select id="sort-select" class="sort-select" onchange="reordenarEscala()">
+      <option value="padrao">Padrão</option>
+      <option value="alfabetica">Ordem Alfabética (A-Z)</option>
+      <option value="turno_mitn">Turnos (Manhã > Interm. > Tarde > Noite)</option>
+      <option value="turno_nmit">Turnos (Noite Primeiro)</option>
+      <option value="ja_primeiro">Jovens Aprendizes Primeiro</option>
+      <option value="folga_domingo">Quem Folga aos Domingos</option>
+    </select>
+  </div>
   <button class="btn-save btn-print" onclick="window.print()"><span>🖨️</span> IMPRIMIR ESCALA</button>
 </div>
 
@@ -316,168 +340,206 @@
 <script type="module" src="colaboradores.js" defer></script>
 
 <script>
-// ========================================
-// CARREGAMENTO UNIFICADO COM FALLBACK
-// ========================================
 let dados = {};
+let originalColaboradores = [];
 
 function carregarDadosEscala() {
-    // Tentar carregar do window.dadosEscala (preenchido pelo colaboradores.js)
     if (window.dadosEscala && window.dadosEscala.dadosCarregados) {
         dados = JSON.parse(JSON.stringify(window.dadosEscala));
-        console.log('[Escala BK] Dados carregados de window.dadosEscala:', dados.origemDados);
+        originalColaboradores = [...dados.colaboradores];
         return true;
     }
     
-    // Fallback: tentar localStorage
     const dadosSalvos = localStorage.getItem('escalasData');
     if (dadosSalvos) {
         try {
             dados = JSON.parse(dadosSalvos);
-            dados.origemDados = 'localStorage';
-            console.log('[Escala BK] Dados carregados de localStorage');
+            originalColaboradores = [...dados.colaboradores];
             return true;
-        } catch (e) {
-            console.error('[Escala BK] Erro ao parsear localStorage:', e);
-        }
+        } catch (e) { console.error(e); }
     }
     
-    // Fallback final: usar globais do colaboradores.js
     if (typeof mesConfig !== 'undefined' && typeof colaboradores !== 'undefined') {
         dados = {
             mesConfig: mesConfig,
             periodo: periodo,
             intermediarios: typeof intermediarios !== 'undefined' ? intermediarios : [],
             jovensAprendizes: typeof jovensAprendizes !== 'undefined' ? jovensAprendizes : [],
-            colaboradores: colaboradores,
-            origemDados: 'padrao'
+            colaboradores: colaboradores
         };
-        console.log('[Escala BK] Usando dados padrão do colaboradores.js');
+        originalColaboradores = [...dados.colaboradores];
         return true;
     }
-    
-    console.error('[Escala BK] Nenhuma fonte de dados disponível');
     return false;
 }
 
+function isIntermediario(name) {
+    const n = name.toUpperCase();
+    return dados.intermediarios && dados.intermediarios.some(i => n.includes(i.toUpperCase()));
+}
+
+function isJA(name) {
+    const n = name.toUpperCase();
+    return dados.jovensAprendizes && dados.jovensAprendizes.some(ja => n.includes(ja.toUpperCase()));
+}
+
+// Ordem: Manhã (1), Intermediário (2), Tarde (3), Noite (4)
+function getTurnoRankMITN(colab) {
+    if (isIntermediario(colab.nome)) return 2;
+    const s = colab.turno.toUpperCase().trim();
+    if (s === 'N' || s === "22:00") return 4;
+    const hour = parseInt(s.split(':')[0]);
+    if (hour <= 12) return 1; // Manhã
+    return 3; // Tarde
+}
+
+// Ordem: Noite (1), Manhã (2), Intermediário (3), Tarde (4)
+function getTurnoRankNMIT(colab) {
+    const s = colab.turno.toUpperCase().trim();
+ if (isIntermediario(colab.nome)) return 3;
+    if (s === 'N' || s === "22:00") return 1;
+   
+    const hour = parseInt(s.split(':')[0]);
+    if (hour <= 12) return 2;
+    return 4;
+}
+
+function reordenarEscala() {
+    const sortType = document.getElementById('sort-select').value;
+    
+    if (sortType === 'padrao') {
+        dados.colaboradores = [...originalColaboradores];
+    } else if (sortType === 'alfabetica') {
+        dados.colaboradores.sort((a, b) => a.nome.localeCompare(b.nome));
+    } else if (sortType === 'turno_mitn') {
+        dados.colaboradores.sort((a, b) => {
+            const rankA = getTurnoRankMITN(a);
+            const rankB = getTurnoRankMITN(b);
+            if (rankA !== rankB) return rankA - rankB;
+            return a.nome.localeCompare(b.nome);
+        });
+    } else if (sortType === 'turno_nmit') {
+        dados.colaboradores.sort((a, b) => {
+            const rankA = getTurnoRankNMIT(a);
+            const rankB = getTurnoRankNMIT(b);
+            if (rankA !== rankB) return rankA - rankB;
+            return a.nome.localeCompare(b.nome);
+        });
+    } else if (sortType === 'ja_primeiro') {
+        dados.colaboradores.sort((a, b) => {
+            const isA_JA = isJA(a.nome);
+            const isB_JA = isJA(b.nome);
+            if (isA_JA && !isB_JA) return -1;
+            if (!isA_JA && isB_JA) return 1;
+            return a.nome.localeCompare(b.nome);
+        });
+    } else if (sortType === 'folga_domingo') {
+        dados.colaboradores.sort((a, b) => {
+            const folgasA = (a.domingos || []).length;
+            const folgasB = (b.domingos || []).length;
+            if (folgasA !== folgasB) return folgasB - folgasA;
+            return a.nome.localeCompare(b.nome);
+        });
+    }
+    
+    renderTable();
+}
+
+function getBadge(sched, empName) {
+    if (!sched) return '';
+    const s = sched.toUpperCase().trim();
+    if (s === 'FE') return '<div class="shift-badge badge-fe">FER</div>';
+    if (s === 'DE') return '<div class="shift-badge badge-de">DE</div>';
+    if (s === 'JA') return '<div class="shift-badge badge-ja">J.A.</div>';
+    if (s === 'N') return '<div class="shift-badge badge-n">N</div>';
+    if (s === 'FO' || s === 'F') return '<div class="shift-badge badge-f">F</div>';
+    if (isIntermediario(empName)) return '<div class="shift-badge badge-i">I</div>';
+    const hour = parseInt(s.split(':')[0]);
+    if (hour <= 12) return '<div class="shift-badge badge-m">M</div>';
+    if (hour >= 22 || hour < 6) return '<div class="shift-badge badge-n">N</div>';
+    return '<div class="shift-badge badge-t">T</div>';
+}
+
+function renderTable() {
+    const configMes = dados.mesConfig || [1, "sexta", 31];
+    const diasSemana = ["domingo", "segunda", "terça", "quarta", "quinta", "sexta", "sábado"];
+    const diasSemanaAbbr = ["DOM", "SEG", "TER", "QUA", "QUI", "SEX", "SÁB"];
+    
+    const [primeiroDia, diaSemanaInicial, ultimoDia] = configMes;
+    const startIndex = diasSemana.indexOf(diaSemanaInicial.toLowerCase());
+    const listaDias = [];
+    for (let i = 1; i <= ultimoDia; i++) {
+        const currentDayIndex = (startIndex + (i - 1)) % 7;
+        listaDias.push({ numero: i, numeroStr: i.toString().padStart(2, '0'), abbr: diasSemanaAbbr[currentDayIndex], isDomingo: currentDayIndex === 0 });
+    }
+
+    // Header
+    const headerRow = document.getElementById('header-days-row');
+    headerRow.innerHTML = '<th class="name-col">EQUIPE</th>';
+    listaDias.forEach(dia => {
+        const th = document.createElement('th');
+        th.className = 'day-col';
+        th.innerHTML = `${dia.numeroStr}<br>${dia.abbr}`;
+        headerRow.appendChild(th);
+    });
+
+    // Body
+    const tbody = document.getElementById('table-body');
+    tbody.innerHTML = '';
+    const dailyTotals = new Array(listaDias.length).fill(0);
+
+    dados.colaboradores.forEach(colab => {
+        const tr = document.createElement('tr');
+        const nameTd = document.createElement('td');
+        nameTd.className = 'name-cell';
+        nameTd.innerHTML = colab.nome + (isJA(colab.nome) ? '<span class="ja-icon">J.A.</span>' : '');
+        tr.appendChild(nameTd);
+
+        listaDias.forEach((dia, index) => {
+            const td = document.createElement('td');
+            let status = colab.turno;
+            const diaNum = dia.numero;
+            const diaSemanaNome = dia.abbr.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+            
+            if (colab.ferias && diaNum >= colab.ferias[0] && diaNum <= colab.ferias[1]) status = 'FE';
+            else if (colab.descansoExtra && colab.descansoExtra.includes(diaNum)) status = 'DE';
+            else if (dia.isDomingo && colab.domingos && colab.domingos.includes(diaNum)) status = 'FO';
+            else if (colab.folgaFixa && diaSemanaNome === colab.folgaFixa.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").substring(0, 3)) status = 'FO';
+            
+            if (status !== 'FO' && status !== 'FE' && status !== 'DE') dailyTotals[index]++;
+            td.innerHTML = getBadge(status, colab.nome);
+            tr.appendChild(td);
+        });
+        tbody.appendChild(tr);
+    });
+
+    // Footer
+    const totalRow = document.getElementById('total-row');
+    totalRow.innerHTML = '<td class="name-cell">Total de Colaboradores</td>';
+    dailyTotals.forEach(total => {
+        const td = document.createElement('td');
+        td.textContent = total;
+        totalRow.appendChild(td);
+    });
+
+    // Periodo
+    if (dados.periodo) {
+        document.getElementById('periodo-display').textContent = dados.periodo;
+    } else {
+        document.getElementById('periodo-display').textContent = `${primeiroDia.toString().padStart(2, '0')}/05/2026 a ${ultimoDia.toString().padStart(2, '0')}/05/2026`;
+    }
+}
+
 function initEscala() {
-    // Carregar dados com fallback
     if (!carregarDadosEscala()) {
         document.getElementById('error-message').style.display = 'block';
         return;
     }
-
-    // Usar configMes do colaboradores.js, com fallback para valor padrão
-    const configMes = dados.mesConfig || [1, "sexta", 31];
-    const periodoDados = dados.periodo || null;
-    const diasSemana = ["domingo", "segunda", "terça", "quarta", "quinta", "sexta", "sábado"];
-    const diasSemanaAbbr = ["DOM", "SEG", "TER", "QUA", "QUI", "SEX", "SÁB"];
-//console.log(configMes)
-    function getDiasDoMes(config) {
-      const [primeiroDia, diaSemanaInicial, ultimoDia] = config;
-      const startIndex = diasSemana.indexOf(diaSemanaInicial.toLowerCase());
-      const dias = [];
-      for (let i = 1; i <= ultimoDia; i++) {
-        const currentDayIndex = (startIndex + (i - 1)) % 7;
-        dias.push({ numero: i, numeroStr: i.toString().padStart(2, '0'), abbr: diasSemanaAbbr[currentDayIndex], isDomingo: currentDayIndex === 0 });
-      }
-      return dias;
-    }
-
-    const listaDias = getDiasDoMes(configMes);
-    const numDias = listaDias.length;
-    const headerRow = document.getElementById('header-days-row');
-    listaDias.forEach(dia => {
-      const th = document.createElement('th');
-      th.className = 'day-col';
-      th.innerHTML = `${dia.numeroStr}<br>${dia.abbr}`;
-      headerRow.appendChild(th);
-    });
-
-    // Atualizar o período: usar dados do colaboradores.js ou gerar automaticamente
-    if (periodoDados) {
-      document.getElementById('periodo-display').textContent = periodoDados;
-    } else {
-      const [primeiroDia, , ultimoDia] = configMes;
-      document.getElementById('periodo-display').textContent = `${primeiroDia.toString().padStart(2, '0')}/05/2026 a ${ultimoDia.toString().padStart(2, '0')}/05/2026`;
-    }
-
-    function isIntermediario(name) {
-      const n = name.toUpperCase();
-      return dados.intermediarios && dados.intermediarios.some(i => n.includes(i.toUpperCase()));
-    }
-
-    function isJA(name) {
-      const n = name.toUpperCase();
-      return dados.jovensAprendizes && dados.jovensAprendizes.some(ja => n.includes(ja.toUpperCase()));
-    }
-
-    function getBadge(sched, empName) {
-      if (!sched) return '';
-      const s = sched.toUpperCase().trim();
-      if (s === 'FE') return '<div class="shift-badge badge-fe">FER</div>';
-      if (s === 'DE') return '<div class="shift-badge badge-de">DE</div>';
-      if (s === 'JA') return '<div class="shift-badge badge-ja">J.A.</div>';
-      if (s === 'N') return '<div class="shift-badge badge-n">N</div>';
-      if (s === 'FO' || s === 'F') return '<div class="shift-badge badge-f">F</div>';
-      if (isIntermediario(empName)) return '<div class="shift-badge badge-i">I</div>';
-      const hour = parseInt(s.split(':')[0]);
-      if (hour <= 12) return '<div class="shift-badge badge-m">M</div>';
-      if (hour >= 22 || hour < 6) return '<div class="shift-badge badge-n">N</div>';
-      return '<div class="shift-badge badge-t">T</div>';
-    }
-
-    const tbody = document.getElementById('table-body');
-    const totalRow = document.getElementById('total-row');
-    const dailyTotals = new Array(numDias).fill(0);
-
-    dados.colaboradores.forEach(colab => {
-      const tr = document.createElement('tr');
-      const nameTd = document.createElement('td');
-      nameTd.className = 'name-cell';
-      nameTd.innerHTML = colab.nome + (isJA(colab.nome) ? '<span class="ja-icon">J.A.</span>' : '');
-      tr.appendChild(nameTd);
-
-      listaDias.forEach((dia, index) => {
-        const td = document.createElement('td');
-        let status = colab.turno;
-        const diaNum = dia.numero;
-        const diaSemanaNome = dia.abbr.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
-        
-        if (colab.ferias && diaNum >= colab.ferias[0] && diaNum <= colab.ferias[1]) status = 'FE';
-        else if (colab.descansoExtra && colab.descansoExtra.includes(diaNum)) status = 'DE';
-        else if (dia.isDomingo && colab.domingos && colab.domingos.includes(diaNum)) status = 'FO';
-        else if (colab.folgaFixa && diaSemanaNome === colab.folgaFixa.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").substring(0, 3)) status = 'FO';
-        
-        if (status !== 'FO' && status !== 'FE' && status !== 'DE') dailyTotals[index]++;
-        td.innerHTML = getBadge(status, colab.nome);
-        tr.appendChild(td);
-      });
-      tbody.appendChild(tr);
-    });
-
-    dailyTotals.forEach(total => {
-      const td = document.createElement('td');
-      td.textContent = total;
-      totalRow.appendChild(td);
-    });
+    renderTable();
 }
 
-// ========================================
-// INICIALIZAR
-// ========================================
-window.addEventListener('load', () => {
-    return initEscala();
-});
-
-// Também ouvir o evento de dados prontos (caso o Firebase termine depois do load)
-window.addEventListener('dadosEscalaProntos', () => {
-    // Limpar e recarregar
-    document.getElementById('table-body').innerHTML = '';
-    document.getElementById('total-row').innerHTML = '<td class="name-cell">Total de Colaboradores</td>';
-    document.getElementById('header-days-row').innerHTML = '<th class="name-col">EQUIPE</th>';
-  return initEscala();
-});
+window.addEventListener('load', initEscala);
+window.addEventListener('dadosEscalaProntos', initEscala);
 </script>
 </body>
 </html>
