@@ -211,7 +211,6 @@
         }
     
     
-
     /* Estilo do Botão Voltar ao Portal Atualizado */
     .btn-voltar-portal {
         position: fixed;
@@ -250,7 +249,6 @@
             display: none !important;
         }
     }
-
 
     /* Responsividade para Dispositivos Móveis */
     @media screen and (max-width: 768px) {
@@ -380,14 +378,13 @@
             }
 
             dados.colaboradores.forEach(colab => {
-                const isJovem = dados.jovensAprendizes && dados.jovensAprendizes.some(j => colab.nome.includes(j));
-                if (isJovem) {
+                // Nova lógica solicitada: ler as flags diretamente de cada objeto colaborador
+                if (colab.jovemAprendiz === true) {
                     counts.jovem++;
                     return;
                 }
 
-                const isIntermediario = dados.intermediarios && dados.intermediarios.some(inter => colab.nome.includes(inter));
-                if (isIntermediario) {
+                if (colab.intermediario === true) {
                     counts.intermediario++;
                     return;
                 }
@@ -430,7 +427,6 @@
 
             document.getElementById('periodo-display').innerText = periodo;
             
-            // Renderizar Cards
             document.getElementById('stats-panel').innerHTML = `
                 <div class="stat-card tarde"><span class="stat-name">Tarde (15:00)</span><span class="stat-num">${counts.tarde}</span></div>
                 <div class="stat-card manha"><span class="stat-name">Manhã (08:00)</span><span class="stat-num">${counts.manha}</span></div>
