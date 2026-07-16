@@ -702,15 +702,15 @@
                 card.className = 'colaborador-card';
                 card.innerHTML = `
                     <h4>${colab.nome} ${colab.jovemAprendiz ? '👶' : ''} ${colab.intermediario ? '🔸' : ''}</h4>
-			                    <div class="colaborador-info">
-			                        <strong>Turno:</strong> ${colab.turno} | <strong>Folga:</strong> ${colab.folgaFixa}<br>
-		                        <strong>Domingos:</strong> ${colab.domingos.join(', ') || 'Nenhum'}<br>
-		                        <strong>Férias:</strong> ${colab.ferias && colab.ferias.length > 0 ? colab.ferias.join(' a ') : 'Não'}
-		                    </div>
-	                    <div class="colaborador-actions">
-	                        <button class="btn-edit" onclick="editarColaborador(${index})">✏️ Editar</button>
-	                        <button class="btn-delete" onclick="deletarColaborador(${index})">🗑️ Deletar</button>
-	                    </div>
+                    <div class="colaborador-info">
+                        <strong>Turno:</strong> ${colab.turno} | <strong>Folga:</strong> ${colab.folgaFixa}<br>
+                        <strong>Domingos:</strong> ${colab.domingos.join(', ') || 'Nenhum'}<br>
+                        <strong>Férias:</strong> ${colab.ferias && colab.ferias.length > 0 ? colab.ferias.join(' a ') : 'Não'}
+                    </div>
+                    <div class="colaborador-actions">
+                        <button class="btn-edit" onclick="editarColaborador(${index})">✏️ Editar</button>
+                        <button class="btn-delete" onclick="deletarColaborador(${index})">🗑️ Deletar</button>
+                    </div>
                 `;
                 lista.appendChild(card);
             });
@@ -722,17 +722,17 @@
             (dados.lideranca || []).forEach((lid, index) => {
                 const card = document.createElement('div');
                 card.className = 'colaborador-card';
-		                card.innerHTML = `
-		                    <h4>${lid.nome}</h4>
-		                    <div class="colaborador-info">
-		                        <strong>Cargo:</strong> ${lid.cargo}<br>
-		                        <strong>Turno:</strong> ${lid.turno} | <strong>Folga:</strong> ${lid.folga || lid.folgaFixa}<br>
-		                        <strong>Férias:</strong> ${lid.ferias && lid.ferias.length > 0 ? lid.ferias.join(' a ') : 'Não'}
-		                    </div>
-		                    <div class="colaborador-actions">
-	                        <button class="btn-edit" onclick="editarLideranca(${index})">✏️ Editar</button>
-	                        <button class="btn-delete" onclick="deletarLideranca(${index})">🗑️ Deletar</button>
-	                    </div>
+                card.innerHTML = `
+                    <h4>${lid.nome}</h4>
+                    <div class="colaborador-info">
+                        <strong>Cargo:</strong> ${lid.cargo}<br>
+                        <strong>Turno:</strong> ${lid.turno} | <strong>Folga:</strong> ${lid.folga || lid.folgaFixa}<br>
+                        <strong>Férias:</strong> ${lid.ferias && lid.ferias.length > 0 ? lid.ferias.join(' a ') : 'Não'}
+                    </div>
+                    <div class="colaborador-actions">
+                        <button class="btn-edit" onclick="editarLideranca(${index})">✏️ Editar</button>
+                        <button class="btn-delete" onclick="deletarLideranca(${index})">🗑️ Deletar</button>
+                    </div>
                 `;
                 lista.appendChild(card);
             });
@@ -762,7 +762,7 @@
                 tr.innerHTML = `
                     <td><strong style="text-transform: capitalize;">${mes}</strong></td>
                     <td><input type="text" data-mes="${mes}" data-field="nome" value="${historico.nome}" placeholder="Nome do funcionário"></td>
-                    <td><input type="text" data-mes="${mes}" data-field="motivo" value="${historico.motivo}" placeholder="Motivo do destaque"></td>
+                    <td><input type="text" data-mes="${mes}" data-field="motivo" value="${historico.motivo}" placeholder="Motivo / Destaque"></td>
                 `;
                 tbody.appendChild(tr);
             });
@@ -808,6 +808,17 @@
         }
 
         async function salvarDados() {
+            // Nova lógica: Atualizar os arrays jovensAprendizes e intermediarios antes de salvar
+            if (dados.colaboradores) {
+                dados.jovensAprendizes = dados.colaboradores
+                    .filter(c => c.jovemAprendiz === true)
+                    .map(c => c.nome);
+                
+                dados.intermediarios = dados.colaboradores
+                    .filter(c => c.intermediario === true)
+                    .map(c => c.nome);
+            }
+
             localStorage.setItem('escalasData', JSON.stringify(dados));
             await salvarNoFirebase();
             sincronizarComColaboradoresJS();
@@ -819,6 +830,9 @@
                 window.metasLunch = dados.metasLunch;
                 window.metasDinner = dados.metasDinner;
                 window.historicoFuncionariosMes = dados.historicoFuncionariosMes;
+                // Sincronizar também os arrays globais
+                window.jovensAprendizes = dados.jovensAprendizes;
+                window.intermediarios = dados.intermediarios;
             }
         }
 
@@ -1057,6 +1071,7 @@
                 mostrarMensagem('Erro: Dias devem estar entre 1 e 31!', 'error');
                 return;
             }
+            
             const folgaDominical = Array.from(document.querySelectorAll('#domingosLidMarcacao input:checked')).map(i => parseInt(i.value));
 
             const mesAniversario = document.getElementById('modalLidAniversarioMes').value;
