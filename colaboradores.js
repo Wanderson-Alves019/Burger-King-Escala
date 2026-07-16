@@ -1,6 +1,6 @@
 // ========================================
 // CONFIGURAÇÃO BASE (PADRÕES)
-// =// ========================================
+// ========================================
 
 function obterConfiguracoesMesAtual() {
     const ping = new Date();
@@ -200,12 +200,25 @@ async function inicializarDadosEscala() {
     const periodoGerado = gerarPeriodoAutomatico(mesConfig);
 
     if (resultado && resultado.origem === 'firebase') {
+        // Se os dados vêm do Firebase, vamos extrair os jovens e intermediários dos colaboradores
+        const colaboradores = resultado.colaboradores ?? JSON.parse(JSON.stringify(colaboradoresPadrao));
+        
+        // Nova lógica solicitada: ler as propriedades jovemAprendiz e intermediario de cada colaborador
+        const novosJovens = colaboradores
+            .filter(c => c.jovemAprendiz === true)
+            .map(c => c.nome);
+            
+        const novosIntermediarios = colaboradores
+            .filter(c => c.intermediario === true)
+            .map(c => c.nome);
+
         window.dadosEscala = {
             mesConfig: resultado.mesConfig ?? mesConfig,
             periodo: resultado.periodo ?? periodoGerado,
-            intermediarios: resultado.intermediarios ?? [...intermediariosPadrao],
-            jovensAprendizes: resultado.jovensAprendizes ?? [...jovensAprendizesPadrao],
-            colaboradores: resultado.colaboradores ?? JSON.parse(JSON.stringify(colaboradoresPadrao)),
+            // Prioriza os arrays calculados a partir das flags dos colaboradores
+            intermediarios: novosIntermediarios.length > 0 ? novosIntermediarios : (resultado.intermediarios ?? [...intermediariosPadrao]),
+            jovensAprendizes: novosJovens.length > 0 ? novosJovens : (resultado.jovensAprendizes ?? [...jovensAprendizesPadrao]),
+            colaboradores: colaboradores,
             lideranca: resultado.lideranca ?? JSON.parse(JSON.stringify(liderancaPadrao)),
             metasLunch: resultado.metasLunch ?? { ...metasLunchPadrao },
             metasDinner: resultado.metasDinner ?? { ...metasDinnerPadrao },
@@ -232,10 +245,10 @@ async function inicializarDadosEscala() {
     window.liderancaPadrao = liderancaPadrao;
     window.intermediariosPadrao = intermediariosPadrao;
     window.jovensAprendizesPadrao = jovensAprendizesPadrao;
-    window.metasDinner = resultado.metasDinner
-    window.metasLunch = resultado.metasLunch
+    window.metasDinner = resultado?.metasDinner || metasDinnerPadrao;
+    window.metasLunch = resultado?.metasLunch || metasLunchPadrao;
+    
     console.log('[Colaboradores.js] Inicialização concluída.');
-  //  console.log(resultado.metasDinner)
     window.dispatchEvent(new CustomEvent('dadosEscalaProntos'));
 }
 
@@ -248,18 +261,23 @@ function processarDados() {
     const dados = window.dadosEscala;
     if (!dados.colaboradores) return { total: 0, counts: { manha: 0, tarde: 0, noite: 0, intermediario: 0, jovem: 0 } };
 
+    // Lógica atualizada para usar as flags diretamente nos objetos de colaborador
     const counts = dados.colaboradores.reduce((acc, colab) => {
-        const isJovem = (dados.jovensAprendizes || []).some(j => colab.nome.includes(j));
-        if (isJovem) { acc.jovem++; return acc; }
+        if (colab.jovemAprendiz === true) { 
+            acc.jovem++; 
+            return acc; 
+        }
 
-        const isInter = (dados.intermediarios || []).some(inter => colab.nome.includes(inter));
-        if (isInter) { acc.intermediario++; return acc; }
+        if (colab.intermediario === true) { 
+            acc.intermediario++; 
+            return acc; 
+        }
 
         acc.manha += colab.turno === '08:00' ? 1 : 0;
         acc.tarde += colab.turno === '15:00' ? 1 : 0;
         acc.noite += colab.turno === '22:00' ? 1 : 0;
         return acc;
-    }, { manha: 0, tarde: 0, intermediario: 0, noite: 0, jovem: (dados.jovensAprendizes || []).length });
+    }, { manha: 0, tarde: 0, intermediario: 0, noite: 0, jovem: 0 });
 
     return {
         periodo: dados.periodo,
