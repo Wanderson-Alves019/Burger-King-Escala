@@ -369,7 +369,7 @@
                 manha: 0,
                 tarde: 0,
                 noite: 0,
-                intermediario: 0,
+                intermediario: dados.intermediarios.length,
                 jovem: 0
             };
 
@@ -384,11 +384,11 @@
                     return;
                 }
 
-                if (colab.intermediario === true) {
-                    counts.intermediario++;
-                    console.log(colab.intermediario)
-                    return;
-                }
+                //if (colab.intermediario === true) {
+                    //counts.intermediario++;
+                    //console.log(colab.intermediario)
+                  //  return;
+               // }
 
                 if (colab.turno === '08:00') counts.manha++;
                 else if (colab.turno === '15:00') counts.tarde++;
