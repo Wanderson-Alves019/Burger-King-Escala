@@ -414,12 +414,17 @@ function initEscalaLideranca() {
     }
 
     function gerarEscalaDia(colaborador, dia) {
-      const { folga, folgasExtras, folgaDominical, turno } = colaborador;
+      const { folga, folgasExtras, folgaDominical, turno, ferias} = colaborador;
       
       // Verificar se é folga dominical (array)
       if (folgaDominical && folgaDominical.includes(dia.numero)) {
         return 'FO';
       }
+
+      if (ferias && dia.numero >= ferias[0] && dia.numero <= ferias[1]
+    ) {
+        return 'FER';
+    }
       
       // Verificar se é folga extra
       if (folgasExtras && folgasExtras.includes(dia.numero)) {
@@ -430,7 +435,7 @@ function initEscalaLideranca() {
       if (dia.diaSemana === folga) {
         return 'FO';
       }
-      if (colabLideranca.ferias && Numdias >= colabLideranca.ferias[0] && diaNum <= colabLideranca.ferias[1]) status = 'FE';
+     
       // Caso contrário, retorna o turno padrão
       return turno;
     }
