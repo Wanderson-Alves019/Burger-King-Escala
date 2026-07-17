@@ -107,16 +107,46 @@
             text-transform: uppercase;
         }
 
-        .mes-btn:hover {
-            background-color: var(--bk-green);
-            color: white;
-        }
+.mes-btn2 {
+    padding: 6px 12px;
+    border: 1px solid #D62300;
+    background-color: #D62300;
+    color: white;
+    border-radius: 15px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: all 0.2s ease;
+    font-size: 10px;
+    text-transform: uppercase;
+}
 
-        .mes-btn.ativo {
-            background-color: var(--bk-red);
-            color: white;
-            border-color: var(--bk-red);
-        }
+/* Setembro a Dezembro - Marrom */
+.mes-btn3 {
+    padding: 6px 12px;
+    border: 1px solid #502314;
+    background-color: #502314;
+    color: white;
+    border-radius: 15px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: all 0.2s ease;
+    font-size: 10px;
+    text-transform: uppercase;
+}
+        
+        .mes-btn:hover,
+.mes-btn2:hover,
+.mes-btn3:hover {
+    opacity: 0.85;
+}
+
+/* Botão ativo */
+.mes-btn.ativo,
+.mes-btn2.ativo,
+.mes-btn3.ativo {
+    box-shadow: 0 0 0 3px rgba(255,255,255,0.4) inset;
+    transform: scale(1.05);
+}
 
         .table-wrapper { margin-top: 10px; border: 1px solid #EEDDC5; border-radius: 10px; overflow: visible; }
         .table-scroll { overflow-x: auto; width: 100%; }
@@ -507,7 +537,7 @@
             mesFiltroAtivo = mes;
 
             // Atualizar botões
-            document.querySelectorAll('.mes-btn').forEach(btn => {
+            document.querySelectorAll('.mes-btn, .mes-btn2, .mes-btn3').forEach(btn => {
                 btn.classList.remove('ativo');
             });
             event.target.classList.add('ativo');
