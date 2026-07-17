@@ -168,6 +168,18 @@
             display: inline-block;
         }
 
+        .badge-verde {
+    background-color: #007A33;
+}
+
+.badge-vermelho {
+    background-color: #D62300;
+}
+
+.badge-marrom {
+    background-color: #502314;
+}
+        
         .badge-data {
             background-color: var(--bk-red);
             color: white;
@@ -479,11 +491,15 @@
                     const mesIndex = mesesNomes.indexOf(mesKey);
                     const mesExibir = mesesExibicao[mesIndex] || mesKey;
                     const icone = mesesIcones[mesIndex] || '📅';
+                    const classeBadge =
+    mesIndex <= 3 ? 'badge-verde' :
+    mesIndex <= 7 ? 'badge-vermelho' :
+                    'badge-marrom';
                     
                     const row = document.createElement('tr');
                     row.setAttribute('data-mes', mesKey);
                     row.innerHTML = `
-                        <td><span class="badge-mes">${icone} ${mesExibir}</span></td>
+                         <td><span class="badge-mes ${classeBadge}">${icone} ${mesExibir}</span></td>
                         <td class="nome">${aniv.nome}</td>
                         <td><span class="badge-data">${aniv.dia} de ${mesExibir}</span></td>
                     `;
