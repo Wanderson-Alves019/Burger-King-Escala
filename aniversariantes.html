@@ -158,15 +158,24 @@
         tbody td { border: 1px solid #EEDDC5; padding: 12px 8px; text-align: left; font-size: 12px; font-weight: 500; }
         tbody td.nome { font-weight: 700; color: var(--bk-brown); }
 
-        .badge-mes { 
-            background-color: var(--bk-green);
-            color: white; 
-            padding: 4px 12px; 
-            border-radius: 20px; 
-            font-weight: 700;
-            font-size: 11px;
-            display: inline-block;
-        }
+        .badge-logo {
+    width: 14px;
+    height: 14px;
+    object-fit: contain;
+    vertical-align: middle;
+    margin-right: 5px;
+}
+
+.badge-mes {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    color: white;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-weight: 700;
+    font-size: 11px;
+}
 
         .badge-verde {
     background-color: #007A33;
@@ -305,7 +314,7 @@
 <body>
 
     <a href="gestao_escala.html" class="btn-voltar-portal">
-        <img src="assets/images/LOGO BK.png" alt="BK">
+        <img src="assets/images/LOGOANVS.png" alt="BK">
         <span>PORTAL</span>
     </a>
 
@@ -442,7 +451,7 @@
                            'julho', 'agosto', 'setembro', 'outubro', 'novembro', 'dezembro'];
         const mesesExibicao = ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho',
                               'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'];
-        const mesesIcones = ['☀️', '💕', '🌸', '🌼', '🌺', '☀️', '🏖️', '🌞', '🍂', '🎃', '🦃', '🎄'];
+       const logoBK = 'assets/images/LOGO BK.png';
 
         let mesFiltroAtivo = 'todos';
 
@@ -490,7 +499,7 @@
                 anivs.forEach(aniv => {
                     const mesIndex = mesesNomes.indexOf(mesKey);
                     const mesExibir = mesesExibicao[mesIndex] || mesKey;
-                    const icone = mesesIcones[mesIndex] || '📅';
+                    const logoBK = 'assets/images/LOGOANVS.png';
                     const classeBadge =
     mesIndex <= 3 ? 'badge-verde' :
     mesIndex <= 7 ? 'badge-vermelho' :
@@ -499,7 +508,8 @@
                     const row = document.createElement('tr');
                     row.setAttribute('data-mes', mesKey);
                     row.innerHTML = `
-                         <td><span class="badge-mes ${classeBadge}">${icone} ${mesExibir}</span></td>
+                <td><span class="badge-mes ${classeBadge}">
+        <img src="${logoBK}" class="badge-logo" alt="BK">${mesExibir}</span></td>
                         <td class="nome">${aniv.nome}</td>
                         <td><span class="badge-data">${aniv.dia} de ${mesExibir}</span></td>
                     `;
