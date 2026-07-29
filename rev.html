@@ -1,0 +1,825 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Auditoria REV - Burger King</title>
+<link rel="icon" href="assets/images/LOGO BK.png" type="image/png">
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Flame:wght@400;700&family=Roboto:wght@400;500;700;900&display=swap');
+
+  :root {
+    --bk-beige: #F5EBDC;
+    --bk-brown: #502314;
+    --bk-orange: #FF8732;
+    --bk-red: #D62300;
+    --bk-yellow: #FFD700;
+    --bk-green: #007A33;
+    --bk-teal: #00A3A1;
+    --bk-dark-brown: #32140A;
+    --bk-white: #ffffff;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Roboto', sans-serif;
+    background-color: var(--bk-beige);
+    color: var(--bk-brown);
+    padding: 20px;
+    min-height: 100vh;
+  }
+
+  .container {
+    background-color: white;
+    border-radius: 15px;
+    padding: 20px;
+    width: 100%;
+    max-width: 1100px;
+    margin: 0 auto;
+    position: relative;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+  }
+
+  /* HEADER */
+  .header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+    flex-shrink: 0;
+  }
+
+  .header-left {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+  }
+
+  .bk-logo { width: 120px; height: 120px; object-fit: contain; }
+
+  .title-group h1 {
+    font-size: 30px;
+    font-weight: 900;
+    color: var(--bk-brown);
+    text-transform: uppercase;
+    line-height: 1;
+  }
+
+  .title-group h2 {
+    font-size: 22px;
+    font-weight: 900;
+    color: var(--bk-orange);
+    text-transform: uppercase;
+    margin-top: 2px;
+  }
+
+  .info-boxes { display: flex; gap: 20px; }
+  .info-box { display: flex; align-items: center; gap: 8px; }
+  .info-icon {
+    width: 36px;
+    height: 36px;
+    background: var(--bk-beige);
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 2px solid #EEDDC5;
+    object-fit: cover;
+  }
+  .info-icon.loja-icon { width: 36px; height: 36px; border-radius: 50%; }
+  .info-text .label { font-size: 10px; font-weight: 700; text-transform: uppercase; color: var(--bk-brown); }
+  .info-text .value { font-size: 12px; font-weight: 500; }
+
+  /* SELECTOR SECTION */
+  .selector-section {
+    background: #f9f9f9;
+    padding: 20px;
+    border-radius: 10px;
+    margin-bottom: 20px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    align-items: center;
+    border: 1px solid #EEDDC5;
+  }
+
+  .selector-group {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+  }
+
+  .selector-group label {
+    font-weight: 700;
+    text-transform: uppercase;
+    font-size: 11px;
+    color: var(--bk-orange);
+    letter-spacing: 0.5px;
+  }
+
+  select {
+    padding: 10px 15px;
+    border-radius: 8px;
+    border: 2px solid #ddd;
+    font-family: 'Roboto', sans-serif;
+    font-weight: 600;
+    color: var(--bk-brown);
+    outline: none;
+    min-width: 220px;
+    font-size: 14px;
+    background: white;
+  }
+
+  select:focus {
+    border-color: var(--bk-orange);
+    box-shadow: 0 0 0 3px rgba(255, 135, 50, 0.1);
+  }
+
+  /* CHECKLIST CARDS */
+  .checklist-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 15px;
+  }
+
+  .checklist-item {
+    background: #FAFAFA;
+    border: 2px solid #EEDDC5;
+    border-radius: 12px;
+    padding: 20px;
+    transition: all 0.3s;
+  }
+
+  .checklist-item:hover {
+    border-color: var(--bk-orange);
+    box-shadow: 0 4px 12px rgba(255, 135, 50, 0.1);
+  }
+
+  .checklist-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+  }
+
+  .checklist-number {
+    background: var(--bk-brown);
+    color: white;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 900;
+    font-size: 13px;
+    flex-shrink: 0;
+    margin-right: 12px;
+  }
+
+  .checklist-title {
+    font-weight: 700;
+    font-size: 14px;
+    color: var(--bk-brown);
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+    flex: 1;
+  }
+
+  .photo-limit {
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--bk-orange);
+    background: rgba(255, 135, 50, 0.1);
+    padding: 4px 10px;
+    border-radius: 20px;
+    white-space: nowrap;
+  }
+
+  .photo-upload-area {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 10px;
+    align-items: flex-start;
+  }
+
+  .photo-preview {
+    width: 140px;
+    height: 140px;
+    border-radius: 10px;
+    border: 2px dashed #EEDDC5;
+    overflow: hidden;
+    position: relative;
+    background: white;
+  }
+
+  .photo-preview img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .photo-preview .remove-photo {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    background: var(--bk-red);
+    color: white;
+    border: none;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    cursor: pointer;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+  }
+
+  .photo-preview .remove-photo:hover {
+    background: #b01d00;
+    transform: scale(1.1);
+  }
+
+  .photo-upload-btn {
+    width: 140px;
+    height: 140px;
+    border-radius: 10px;
+    border: 2px dashed var(--bk-orange);
+    background: white;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+    transition: all 0.3s;
+    color: var(--bk-orange);
+  }
+
+  .photo-upload-btn:hover {
+    background: #fff5f0;
+    border-color: var(--bk-red);
+    color: var(--bk-red);
+    transform: translateY(-2px);
+  }
+
+  .photo-upload-btn .upload-icon {
+    font-size: 32px;
+    line-height: 1;
+  }
+
+  .photo-upload-btn .upload-text {
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  .photo-upload-btn.disabled {
+    border-color: #ddd;
+    color: #ccc;
+    cursor: not-allowed;
+  }
+
+  .photo-upload-btn.disabled:hover {
+    background: white;
+    border-color: #ddd;
+    color: #ccc;
+    transform: none;
+  }
+
+  /* ACTIONS */
+  .actions {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    z-index: 1000;
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    align-items: center;
+  }
+
+  .btn-print {
+    background-color: var(--bk-green);
+    color: white;
+    border: none;
+    padding: 12px 24px;
+    border-radius: 50px;
+    font-weight: 700;
+    cursor: pointer;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: transform 0.2s, background-color 0.2s;
+    font-family: 'Roboto', sans-serif;
+    text-transform: uppercase;
+    font-size: 13px;
+  }
+
+  .btn-print:hover {
+    transform: scale(1.05);
+    background-color: #005a26;
+  }
+
+  .btn-clear {
+    background-color: #999;
+    color: white;
+    border: none;
+    padding: 12px 24px;
+    border-radius: 50px;
+    font-weight: 700;
+    cursor: pointer;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: transform 0.2s, background-color 0.2s;
+    font-family: 'Roboto', sans-serif;
+    text-transform: uppercase;
+    font-size: 13px;
+  }
+
+  .btn-clear:hover {
+    transform: scale(1.05);
+    background-color: #777;
+  }
+
+  /* BUTTON VOLTAR PORTAL */
+  .btn-voltar-portal {
+    position: fixed;
+    top: 10px;
+    left: 10px;
+    background-color: var(--bk-brown);
+    color: var(--bk-beige);
+    padding: 5px 12px;
+    border-radius: 30px;
+    text-decoration: none;
+    font-weight: 700;
+    font-size: 11px;
+    z-index: 10000;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    border: 1.5px solid var(--bk-orange);
+    font-family: 'Roboto', sans-serif;
+    opacity: 0.8;
+    transition: all 0.3s;
+  }
+
+  .btn-voltar-portal:hover {
+    opacity: 1;
+    background-color: var(--bk-red);
+    transform: scale(1.02);
+  }
+
+  .btn-voltar-portal img {
+    width: 18px;
+    height: 18px;
+  }
+
+  /* PRINT STYLES */
+  @media print {
+    @page {
+      size: A4 portrait;
+      margin: 10mm;
+    }
+    * {
+      -webkit-print-color-adjust: exact !important;
+      print-color-adjust: exact !important;
+      color-adjust: exact !important;
+    }
+    body {
+      padding: 0 !important;
+      margin: 0 !important;
+      background: white !important;
+    }
+    .container {
+      width: 100% !important;
+      max-width: none !important;
+      border-radius: 0 !important;
+      box-shadow: none !important;
+      padding: 10px !important;
+    }
+    .actions, .btn-voltar-portal, .selector-section { display: none !important; }
+
+    .header { margin-bottom: 15px !important; }
+    .bk-logo { width: 60px !important; height: 60px !important; }
+    .title-group h1 { font-size: 18pt !important; }
+    .title-group h2 { font-size: 14pt !important; }
+
+    .checklist-item {
+      break-inside: avoid;
+      padding: 12px !important;
+      margin-bottom: 8px !important;
+    }
+
+    .photo-upload-btn { display: none !important; }
+
+    .photo-preview {
+      width: 130px !important;
+      height: 130px !important;
+      border: 2px solid #999 !important;
+      border-style: solid !important;
+    }
+
+    .photo-preview .remove-photo { display: none !important; }
+
+    .checklist-title { font-size: 12px !important; }
+    .photo-limit { font-size: 9px !important; }
+  }
+
+  /* RESPONSIVE */
+  @media (max-width: 768px) {
+    body { padding: 10px; }
+    .container { padding: 15px; }
+    .header { flex-direction: column; gap: 10px; text-align: center; }
+    .header-left { justify-content: center; }
+    .title-group h1 { font-size: 22px; }
+    .title-group h2 { font-size: 16px; }
+    .info-boxes { justify-content: center; }
+    .selector-section { flex-direction: column; align-items: stretch; }
+    .photo-preview, .photo-upload-btn { width: 110px; height: 110px; }
+    .actions { bottom: 10px; right: 10px; }
+    .btn-voltar-portal { top: 5px; left: 5px; padding: 4px 10px; }
+  }
+
+</style>
+</head>
+<body>
+
+  <!-- Botão Voltar ao Portal -->
+  <a href="gestao_escala.html" class="btn-voltar-portal">
+    <img src="assets/images/LOGO BK.png" alt="BK">
+    <span>PORTAL</span>
+  </a>
+
+  <div class="container" id="print-container">
+
+    <!-- HEADER -->
+    <div class="header">
+      <div class="header-left">
+        <img src="assets/images/LOGO BK.png" class="bk-logo" alt="BK">
+        <div class="title-group">
+          <h1>Auditoria REV</h1>
+          <h2>Padrão REV</h2>
+        </div>
+      </div>
+      <div class="info-boxes">
+        <div class="info-box">
+          <img src="" class="info-icon loja-icon" id="lojaIconHeader" alt="Loja">
+          <div class="info-text">
+            <div class="label">Unidade</div>
+            <div class="value" id="lojaNomeHeader">-</div>
+          </div>
+        </div>
+        <div class="info-box">
+          <div class="info-text">
+            <div class="label">Data</div>
+            <div class="value" id="dataAtual">-</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SELECTOR SECTION (visível apenas na tela, oculto na impressão) -->
+    <div class="selector-section" id="selector-section">
+      <div class="selector-group">
+        <label for="colaborador-select">Colaborador Responsável</label>
+        <select id="colaborador-select">
+          <option value="">Selecione o colaborador...</option>
+        </select>
+      </div>
+      <div class="selector-group">
+        <label for="turno-select">Turno</label>
+        <select id="turno-select">
+          <option value="Manhã (08:00)">Manhã (08:00)</option>
+          <option value="Tarde (15:00)">Tarde (15:00)</option>
+          <option value="Noite (22:00)">Noite (22:00)</option>
+        </select>
+      </div>
+      <div class="selector-group">
+        <label for="data-auditoria">Data da Auditoria</label>
+        <input type="date" id="data-auditoria" style="padding:10px 15px;border:2px solid #ddd;border-radius:8px;font-family:'Roboto',sans-serif;font-weight:600;color:#502314;font-size:14px;">
+      </div>
+    </div>
+
+    <!-- CHECKLIST GRID -->
+    <div class="checklist-grid" id="checklist-grid">
+      <!-- Gerado via JavaScript -->
+    </div>
+
+  </div>
+
+  <!-- ACTIONS (visível apenas na tela) -->
+  <div class="actions" id="actions-bar">
+    <button class="btn-print" onclick="window.print()">
+      <span style="font-size:16px;">&#128424;</span> Imprimir
+    </button>
+    <button class="btn-clear" onclick="limparTudo()">
+      <span style="font-size:16px;">&#128465;</span> Limpar
+    </button>
+  </div>
+
+  <script type="module" src="firebase-config.js"></script>
+  <script src="auth-manager.js"></script>
+  <script src="colaboradores.js" defer></script>
+
+  <script>
+    // ========================================
+    // CONFIGURAÇÃO DAS ÁREAS DE AUDITORIA
+    // ========================================
+    const areasAuditoria = [
+      { id: 'sobremesa', titulo: 'Sobremesa sem contaminação e datas corretas', maxFotos: 2 },
+      { id: 'carnes', titulo: 'Carnes padrão', maxFotos: 2 },
+      { id: 'bandejas', titulo: 'Bandejas sem nenhuma rachadura', maxFotos: 1 },
+      { id: 'espacamento', titulo: 'Espaçamento câmara', maxFotos: 1 },
+      { id: 'pallets', titulo: 'Pallets limpos e nenhum quebrado', maxFotos: 2 },
+      { id: 'batata', titulo: '1° e 2° uso da batata', maxFotos: 1 },
+      { id: 'cozinha', titulo: 'Áreas da cozinha limpa', maxFotos: 3 },
+      { id: 'mesa', titulo: 'Mesa sem contaminação', maxFotos: 1 },
+      { id: 'datas-mesa', titulo: 'Datas da mesa corretas e sem datas futuras', maxFotos: 2 },
+      { id: 'estoque', titulo: 'Produtos do estoque seco e resfriados abertos com datas', maxFotos: 2 },
+      { id: 'freezer', titulo: 'Freezer das carnes e especiais padrão', maxFotos: 2 }
+    ];
+
+    // Estado das fotos: { areaId: [dataUrl1, dataUrl2, ...] }
+    let fotosState = {};
+    areasAuditoria.forEach(a => { fotosState[a.id] = []; });
+
+    // ========================================
+    // CARREGAMENTO DE DADOS
+    // ========================================
+    let dados = {};
+
+    function carregarDados() {
+      if (window.dadosEscala && window.dadosEscala.dadosCarregados) {
+        dados = JSON.parse(JSON.stringify(window.dadosEscala));
+        console.log('[Auditoria REV] Dados carregados de window.dadosEscala');
+        return true;
+      }
+      const salvos = localStorage.getItem('escalasData');
+      if (salvos) {
+        try {
+          dados = JSON.parse(salvos);
+          console.log('[Auditoria REV] Dados de localStorage');
+          return true;
+        } catch (e) { /* ignora */ }
+      }
+      if (typeof colaboradores !== 'undefined') {
+        dados = {
+          colaboradores: colaboradores,
+          lideranca: lideranca || [],
+          origemDados: 'padrao'
+        };
+        console.log('[Auditoria REV] Dados padrão');
+        return true;
+      }
+      console.error('[Auditoria REV] Nenhuma fonte de dados disponível');
+      return false;
+    }
+
+    // ========================================
+    // RENDERIZAR CHECKLIST
+    // ========================================
+    function renderizarChecklist() {
+      const grid = document.getElementById('checklist-grid');
+      grid.innerHTML = '';
+
+      areasAuditoria.forEach((area, index) => {
+        const item = document.createElement('div');
+        item.className = 'checklist-item';
+        item.id = `checklist-${area.id}`;
+
+        // Header
+        const header = document.createElement('div');
+        header.className = 'checklist-header';
+
+        const numBadge = document.createElement('div');
+        numBadge.className = 'checklist-number';
+        numBadge.textContent = index + 1;
+
+        const title = document.createElement('div');
+        title.className = 'checklist-title';
+        title.textContent = area.titulo;
+
+        const limit = document.createElement('div');
+        limit.className = 'photo-limit';
+        limit.textContent = `Até ${area.maxFotos} foto${area.maxFotos > 1 ? 's' : ''}`;
+
+        header.appendChild(numBadge);
+        header.appendChild(title);
+        header.appendChild(limit);
+        item.appendChild(header);
+
+        // Upload area
+        const uploadArea = document.createElement('div');
+        uploadArea.className = 'photo-upload-area';
+        uploadArea.id = `upload-area-${area.id}`;
+
+        item.appendChild(uploadArea);
+        grid.appendChild(item);
+
+        renderizarFotosArea(area);
+      });
+    }
+
+    function renderizarFotosArea(area) {
+      const uploadArea = document.getElementById(`upload-area-${area.id}`);
+      uploadArea.innerHTML = '';
+
+      // Renderizar fotos existentes
+      fotosState[area.id].forEach((fotoData, idx) => {
+        const preview = document.createElement('div');
+        preview.className = 'photo-preview';
+
+        const img = document.createElement('img');
+        img.src = fotoData;
+        img.alt = `Foto ${idx + 1}`;
+
+        const removeBtn = document.createElement('button');
+        removeBtn.className = 'remove-photo';
+        removeBtn.textContent = '×';
+        removeBtn.onclick = () => removerFoto(area.id, idx);
+
+        preview.appendChild(img);
+        preview.appendChild(removeBtn);
+        uploadArea.appendChild(preview);
+      });
+
+      // Botão de upload (se não atingiu o limite)
+      if (fotosState[area.id].length < area.maxFotos) {
+        const uploadBtn = document.createElement('div');
+        uploadBtn.className = 'photo-upload-btn';
+        uploadBtn.innerHTML = `
+          <span class="upload-icon">&#43;</span>
+          <span class="upload-text">Adicionar</span>
+        `;
+        uploadBtn.onclick = () => triggerUpload(area.id);
+        uploadArea.appendChild(uploadBtn);
+      }
+    }
+
+    function triggerUpload(areaId) {
+      const input = document.createElement('input');
+      input.type = 'file';
+      input.accept = 'image/*';
+      input.capture = 'environment';
+      input.onchange = (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = (ev) => {
+          // Redimensionar para economizar espaço
+          resizeImage(ev.target.result, 800, (dataUrl) => {
+            fotosState[areaId].push(dataUrl);
+            renderizarFotosArea(areasAuditoria.find(a => a.id === areaId));
+          });
+        };
+        reader.readAsDataURL(file);
+      };
+      input.click();
+    }
+
+    function removerFoto(areaId, idx) {
+      fotosState[areaId].splice(idx, 1);
+      const area = areasAuditoria.find(a => a.id === areaId);
+      renderizarFotosArea(area);
+    }
+
+    function resizeImage(dataUrl, maxSize, callback) {
+      const img = new Image();
+      img.onload = () => {
+        const canvas = document.createElement('canvas');
+        let w = img.width;
+        let h = img.height;
+
+        if (w > maxSize || h > maxSize) {
+          if (w > h) {
+            h = Math.round(h * (maxSize / w));
+            w = maxSize;
+          } else {
+            w = Math.round(w * (maxSize / h));
+            h = maxSize;
+          }
+        }
+
+        canvas.width = w;
+        canvas.height = h;
+        const ctx = canvas.getContext('2d');
+        ctx.drawImage(img, 0, 0, w, h);
+        callback(canvas.toDataURL('image/jpeg', 0.7));
+      };
+      img.src = dataUrl;
+    }
+
+    // ========================================
+    // POPULAR SELECT DE COLABORADORES
+    // ========================================
+    function popularColaboradores() {
+      const select = document.getElementById('colaborador-select');
+      if (!dados.colaboradores) return;
+
+      // Adicionar colaboradores
+      dados.colaboradores.forEach(colab => {
+        const opt = document.createElement('option');
+        opt.value = colab.nome;
+        opt.textContent = colab.nome;
+        select.appendChild(opt);
+      });
+
+      // Adicionar liderança
+      if (dados.lideranca && dados.lideranca.length > 0) {
+        const optGroupLid = document.createElement('optgroup');
+        optGroupLid.label = 'Liderança';
+        dados.lideranca.forEach(l => {
+          const opt = document.createElement('option');
+          opt.value = l.nome;
+          opt.textContent = `${l.nome} (${l.cargo})`;
+          optGroupLid.appendChild(opt);
+        });
+        select.appendChild(optGroupLid);
+      }
+
+      // Auto-selecionar turno baseado no horário atual
+      const hora = new Date().getHours();
+      const turnoSelect = document.getElementById('turno-select');
+      if (hora < 14) {
+        turnoSelect.value = 'Manhã (08:00)';
+      } else if (hora < 21) {
+        turnoSelect.value = 'Tarde (15:00)';
+      } else {
+        turnoSelect.value = 'Noite (22:00)';
+      }
+    }
+
+    // ========================================
+    // INFORMAÇÕES DO HEADER
+    // ========================================
+    function atualizarHeader() {
+      const loja = window.authManager.obterLojaAtual();
+      if (loja) {
+        document.getElementById('lojaIconHeader').src = loja.icone;
+        document.getElementById('lojaNomeHeader').textContent = loja.nome;
+      }
+
+      const hoje = new Date();
+      const dataStr = hoje.toLocaleDateString('pt-BR', {
+        weekday: 'long',
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric'
+      });
+      document.getElementById('dataAtual').textContent = dataStr;
+      document.getElementById('data-auditoria').value = hoje.toISOString().split('T')[0];
+    }
+
+    // ========================================
+    // LIMPAR TUDO
+    // ========================================
+    function limparTudo() {
+      if (!confirm('Tem certeza que deseja limpar todas as fotos e dados?')) return;
+      areasAuditoria.forEach(a => { fotosState[a.id] = []; });
+      renderizarChecklist();
+      document.getElementById('colaborador-select').value = '';
+    }
+
+    // ========================================
+    // INICIALIZAÇÃO
+    // ========================================
+    function iniciar() {
+      atualizarHeader();
+      renderizarChecklist();
+
+      if (carregarDados()) {
+        popularColaboradores();
+      } else {
+        // Tentar novamente após o colaboradores.js carregar
+        window.addEventListener('dadosEscalaProntos', () => {
+          carregarDados();
+          popularColaboradores();
+        });
+      }
+    }
+
+    window.addEventListener('load', iniciar);
+    window.addEventListener('dadosEscalaProntos', () => {
+      if (Object.keys(fotosState).length === 0) return; // já renderizado
+      if (!dados.colaboradores || dados.colaboradores.length === 0) {
+        carregarDados();
+        popularColaboradores();
+      }
+    });
+
+  </script>
+
+</body>
+</html>
