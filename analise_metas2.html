@@ -330,7 +330,6 @@ function renderMetas() {
 
     const listaDias = getDiasDoMes(configMes);
     if (dados.periodo) document.getElementById('periodo-subtitle').innerText = `Almoço vs Janta - ${dados.periodo}`;
-    const tbody = document.getElementById('table-body');
 
     function isIntermediario(name) {
       const n = name.toUpperCase();
