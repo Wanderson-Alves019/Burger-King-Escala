@@ -297,10 +297,15 @@ function carregarDadosAnalise2() {
 }
 
 function renderMetas() {
+
     if (!carregarDadosAnalise2()) {
         document.getElementById('error-message').style.display = 'block';
         return;
     }
+
+    const tbody = document.getElementById('table-body');
+    tbody.innerHTML = ''; // limpa linhas antigas
+
     // Usar metas do objeto dados (carregado via Firebase/Local) ou globais com fallback
     const mAlmocoPadrao = { 'segunda': 5, 'terça': 5, 'quarta': 5, 'quinta': 6, 'sexta': 7, 'sábado': 7, 'domingo': 5 };
     const mJantaPadrao = { 'segunda': 11, 'terça': 12, 'quarta': 12, 'quinta': 12, 'sexta': 13, 'sábado': 15, 'domingo': 11 };
