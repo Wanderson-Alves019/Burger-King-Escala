@@ -429,6 +429,9 @@ function carregarDadosAnalise() {
 }
 
 function initDashboard() {
+  const tbody = document.getElementById('table-body');
+    tbody.innerHTML = ''; // limpa linhas antigas
+
     if (!carregarDadosAnalise()) {
         document.getElementById('error-message').style.display = 'block';
         return;
