@@ -508,7 +508,7 @@
                 allData = {};
 
                 for (const loja of lojas) {
-                    const colecaoNome = `escalas_loja_${loja.id}`;
+                    const colecaoNome = `escala_loja_${loja.id}`;
                     try {
                         const colecao = collection(db, colecaoNome);
                         const snapshot = await getDocs(colecao);
