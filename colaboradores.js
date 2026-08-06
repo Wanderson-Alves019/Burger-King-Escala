@@ -122,12 +122,50 @@ window.dadosEscala = {
 // ========================================
 function obterColecaoLoja() {
     const idLoja = window.authManager?.obterIdLoja?.() ?? null;
-    return idLoja ? `escalas_loja_${idLoja}` : 'escalas_geral';
+    return idLoja ? `escala_loja_${idLoja}` : 'escala_geral';
 }
 
 function obterIdLoja() {
     return window.authManager?.obterIdLoja?.() ?? null;
 }
+
+
+function obterDomingosDoMesAtual(dataReferencia = new Date()) {
+    const ano = dataReferencia.getFullYear();
+    const mes = dataReferencia.getMonth();
+    const ultimoDia = new Date(ano, mes + 1, 0).getDate();
+    const domingos = [];
+
+    for (let dia = 1; dia <= ultimoDia; dia++) {
+        if (new Date(ano, mes, dia).getDay() === 0) domingos.push(dia);
+    }
+    return domingos;
+}
+
+function filtrarDomingosDoMesAtual(domingos) {
+    const domingosValidos = new Set(obterDomingosDoMesAtual());
+    return [...new Set((Array.isArray(domingos) ? domingos : [])
+        .map(Number)
+        .filter(dia => domingosValidos.has(dia)))];
+}
+
+function limparDomingosForaDoMesAtual(dados) {
+    if (Array.isArray(dados?.colaboradores)) {
+        dados.colaboradores.forEach(colaborador => {
+            colaborador.domingos = filtrarDomingosDoMesAtual(colaborador.domingos);
+        });
+    }
+    if (Array.isArray(dados?.lideranca)) {
+        dados.lideranca.forEach(lider => {
+            lider.folgaDominical = filtrarDomingosDoMesAtual(lider.folgaDominical);
+        });
+    }
+    return dados;
+}
+
+window.obterDomingosDoMesAtual = obterDomingosDoMesAtual;
+window.filtrarDomingosDoMesAtual = filtrarDomingosDoMesAtual;
+window.limparDomingosForaDoMesAtual = limparDomingosForaDoMesAtual;
 
 async function carregarDadosFirebase() {
     const nomeMes = obterNomeMesAtual();
@@ -142,7 +180,7 @@ async function carregarDadosFirebase() {
         const docSnap = await getDoc(doc(firestore, colecao, docId));
 
         if (docSnap.exists()) {
-            const data = docSnap.data();
+            const data = limparDomingosForaDoMesAtual(docSnap.data());
             return {
                 mesConfig: data.mesConfig ?? null,
                 periodo: data.periodo ?? null,
@@ -168,6 +206,14 @@ async function criarDadosLojaFirestore() {
     const docId = `${nomeMes}_${new Date().getFullYear()}`;
     const colecao = obterColecaoLoja();
     const periodoGerado = gerarPeriodoAutomatico(mesConfig);
+    const colaboradoresIniciais = colaboradoresPadrao.map(colaborador => ({
+        ...colaborador,
+        domingos: filtrarDomingosDoMesAtual(colaborador.domingos)
+    }));
+    const liderancaInicial = liderancaPadrao.map(lider => ({
+        ...lider,
+        folgaDominical: filtrarDomingosDoMesAtual(lider.folgaDominical)
+    }));
 
     if (!window.firebaseDb) return false;
 
@@ -180,8 +226,8 @@ async function criarDadosLojaFirestore() {
             periodo: periodoGerado,
             intermediarios: intermediariosPadrao,
             jovensAprendizes: jovensAprendizesPadrao,
-            colaboradores: colaboradoresPadrao,
-            lideranca: liderancaPadrao,
+            colaboradores: colaboradoresIniciais,
+            lideranca: liderancaInicial,
             metasLunch: metasLunchPadrao,
             metasDinner: metasDinnerPadrao,
             historicoFuncionariosMes: historicoFuncionariosMesPadrao,
