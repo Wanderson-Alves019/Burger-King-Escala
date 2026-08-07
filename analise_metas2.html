@@ -312,8 +312,40 @@ function renderMetas() {
     
     const metasLunchRef = dados.metasLunch || (typeof metasLunch !== 'undefined' ? metasLunch : mAlmocoPadrao);
     const metasDinnerRef = dados.metasDinner || (typeof metasDinner !== 'undefined' ? metasDinner : mJantaPadrao);
-    
-    const configMes = dados.mesConfig || [1, "sexta", 31];
+
+  function msconfig() {
+    const ping = new Date();
+    ping.setHours(ping.getHours() - 3);
+
+    const diasSemana = [
+        "domingo", "segunda", "terça", "quarta", "quinta", "sexta", "sábado"
+    ];
+
+    const nomesMeses = [
+        "janeiro", "fevereiro", "março", "abril", "maio", "junho",
+        "julho", "agosto", "setembro", "outubro", "novembro", "dezembro"
+    ];
+
+    const ano = ping.getFullYear();
+    const mes = ping.getMonth();
+
+    const primeiroDia = new Date(ano, mes, 1);
+    const ultimoDia = new Date(ano, mes + 1, 0);
+
+    return {
+        ano,
+        numeroMes: mes + 1,
+        nomeMes: nomesMeses[mes],
+        mesConfig: [1, diasSemana[primeiroDia.getDay()], ultimoDia.getDate()],
+        periodo: `${String(1).padStart(2, '0')}/${String(mes + 1).padStart(2, '0')}/${ano} a ${String(ultimoDia.getDate()).padStart(2, '0')}/${String(mes + 1).padStart(2, '0')}/${ano}`,
+        primeiroDiaMes: primeiroDia,
+        ultimoDiaMes: ultimoDia,
+        totalDias: ultimoDia.getDate(),
+        diaSemanaInicial: diasSemana[primeiroDia.getDay()]
+    };
+}
+  
+    const configMes = msconfig().mesConfig;
     const diasSemana = ["domingo", "segunda", "terça", "quarta", "quinta", "sexta", "sábado"];
     const diasSemanaAbbr = ["DOM", "SEG", "TER", "QUA", "QUI", "SEX", "SÁB"];
 
