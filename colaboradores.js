@@ -281,8 +281,8 @@ function processarDados() {
     }, { manha: 0, tarde: 0, intermediario: 0, noite: 0, jovem: 0 });
 
     return {
-        periodo: dados.periodo,
+        periodo: periodo,
         counts,
         total: counts.manha + counts.tarde + counts.intermediario + counts.noite + counts.jovem
     };
-};
+}
