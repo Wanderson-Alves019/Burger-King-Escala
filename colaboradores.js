@@ -145,8 +145,8 @@ async function carregarDadosFirebase() {
         if (docSnap.exists()) {
             const data = docSnap.data();
             return {
-                mesConfig: data.mesConfig ?? null,
-                periodo: data.periodo ?? null,
+                mesConfig: mesConfig,
+                periodo: periodo,
                 intermediarios: data.intermediarios ?? null,
                 jovensAprendizes: data.jovensAprendizes ?? null,
                 colaboradores: data.colaboradores ?? null,
@@ -214,8 +214,8 @@ async function inicializarDadosEscala() {
             .map(c => c.nome);
 
         window.dadosEscala = {
-            mesConfig: resultado.mesConfig ?? mesConfig,
-            periodo: resultado.periodo ?? periodoGerado,
+            mesConfig: mesConfig,
+            periodo: periodoGerado,
             // Prioriza os arrays calculados a partir das flags dos colaboradores
             intermediarios: novosIntermediarios.length > 0 ? novosIntermediarios : (resultado.intermediarios ?? [...intermediariosPadrao]),
             jovensAprendizes: novosJovens.length > 0 ? novosJovens : (resultado.jovensAprendizes ?? [...jovensAprendizesPadrao]),
@@ -285,3 +285,4 @@ function processarDados() {
         counts,
         total: counts.manha + counts.tarde + counts.intermediario + counts.noite + counts.jovem
     };
+};
