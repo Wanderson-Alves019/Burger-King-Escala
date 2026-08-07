@@ -351,17 +351,24 @@ function initEscalaLideranca() {
         return;
     }
 
-    // Usar configMes2 do colaboradores.js, com fallback para valor padrão
-    let configMes2 = dados.mesConfig || [1, "sexta", 31];
+    // Usar os dados do documento escala_loja_{id}/dados.
+    let configMes2 = Array.isArray(dados.mesConfig) ? dados.mesConfig : [1, "sexta", 31];
     const periodoDados = dados.periodo || null;
-    const colabLideranca = dados.lideranca || [];
+    const colabLideranca = Array.isArray(dados.lideranca) ? dados.lideranca : [];
     
     const diasSemana = ["domingo", "segunda", "terça", "quarta", "quinta", "sexta", "sábado"];
+    const normalizarTexto = valor => String(valor || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().trim();
+    const listaDeDias = valor => Array.isArray(valor) ? valor.map(Number).filter(Number.isFinite) : [];
+    const intervaloValido = valor => {
+      const dias = listaDeDias(valor);
+      return dias.length >= 2 ? [Math.min(dias[0], dias[1]), Math.max(dias[0], dias[1])] : null;
+    };
     const diasSemanaAbbr = ["DOM", "SEG", "TER", "QUA", "QUI", "SEX", "SÁB"];
 
     function getDiasDoMes(config) {
       const [primeiroDia, diaSemanaInicial, ultimoDia] = config;
-      const startIndex = diasSemana.indexOf(diaSemanaInicial.toLowerCase());
+      const encontrado = diasSemana.findIndex(dia => normalizarTexto(dia) === normalizarTexto(diaSemanaInicial));
+      const startIndex = encontrado >= 0 ? encontrado : 0;
       
       const dias = [];
       for (let i = 1; i <= ultimoDia; i++) {
@@ -388,8 +395,9 @@ function initEscalaLideranca() {
       document.getElementById('periodo-display').textContent = `${primeiroDia.toString().padStart(2, '0')}/05/2026 a ${ultimoDia.toString().padStart(2, '0')}/05/2026`;
     }
 
-    // Atualizar cabeçalho da tabela
+    // Atualizar cabeçalho da tabela sem duplicar dias quando os dados forem recarregados.
     const headerRow = document.getElementById('header-days-row');
+    headerRow.innerHTML = '<th class="name-col">LIDERANÇA</th>';
     listaDias.forEach(dia => {
       const th = document.createElement('th');
       th.className = 'day-col';
@@ -414,34 +422,22 @@ function initEscalaLideranca() {
     }
 
     function gerarEscalaDia(colaborador, dia) {
-      const { folga, folgasExtras, folgaDominical, turno, ferias} = colaborador;
-      
-      // Verificar se é folga dominical (array)
-      if (folgaDominical && folgaDominical.includes(dia.numero)) {
-        return 'FO';
-      }
+      const folga = colaborador.folga || colaborador.folgaFixa || '';
+      const folgasExtras = listaDeDias(colaborador.folgasExtras || colaborador.descansoExtra);
+      const folgaDominical = listaDeDias(colaborador.folgaDominical || colaborador.domingos);
+      const ferias = intervaloValido(colaborador.ferias);
+      const turno = colaborador.turno || '';
 
-      if (ferias && dia.numero >= ferias[0] && dia.numero <= ferias[1]
-    ) {
-        return 'FER';
-    }
-      
-      // Verificar se é folga extra
-      if (folgasExtras && folgasExtras.includes(dia.numero)) {
-        return 'DE';
-      }
-      
-      // Verificar se é o dia da semana de folga
-      if (dia.diaSemana === folga) {
-        return 'FO';
-      }
-     
-      // Caso contrário, retorna o turno padrão
+      if (folgaDominical.includes(dia.numero)) return 'FO';
+      if (ferias && dia.numero >= ferias[0] && dia.numero <= ferias[1]) return 'FER';
+      if (folgasExtras.includes(dia.numero)) return 'DE';
+      if (normalizarTexto(dia.diaSemana) === normalizarTexto(folga)) return 'FO';
       return turno;
     }
 
     const tbody = document.getElementById('table-body');
-
+    tbody.innerHTML = '';
+    
     colabLideranca.forEach(emp => {
       const tr = document.createElement('tr');
       let html = `<td class="name-cell">
