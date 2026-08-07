@@ -845,8 +845,8 @@
             if (!window.firebaseDb) return;
             try {
                 const idLoja = window.authManager?.obterIdLoja?.();
-                const nomeMes = mesesNomes[new Date().getMonth()];
-                const docId = `${nomeMes}_${new Date().getFullYear()}`;
+                // Os dados ficam diretamente na coleção da loja, sem criar um documento por mes_ano.
+                const docId = 'dados';
                 const colecao = idLoja ? `escala_loja_${idLoja}` : 'escala_geral';
                 const { doc, setDoc, getFirestore, Timestamp } = await import('https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore.js');
                 await setDoc(doc(getFirestore(), colecao, docId), { ...dados, ultimaAtualizacao: Timestamp.now() });
