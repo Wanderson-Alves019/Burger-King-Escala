@@ -344,33 +344,44 @@ let dados = {};
 let originalColaboradores = [];
 
 function carregarDadosEscala() {
+    let fonte = null;
     if (window.dadosEscala && window.dadosEscala.dadosCarregados) {
-        dados = JSON.parse(JSON.stringify(window.dadosEscala));
-        originalColaboradores = [...dados.colaboradores];
-        return true;
+        fonte = window.dadosEscala;
+    } else {
+        const dadosSalvos = localStorage.getItem('escalasData');
+        if (dadosSalvos) {
+            try { fonte = JSON.parse(dadosSalvos); } catch (e) { console.error(e); }
+        }
     }
-    
-    const dadosSalvos = localStorage.getItem('escalasData');
-    if (dadosSalvos) {
-        try {
-            dados = JSON.parse(dadosSalvos);
-            originalColaboradores = [...dados.colaboradores];
-            return true;
-        } catch (e) { console.error(e); }
-    }
-    
-    if (typeof mesConfig !== 'undefined' && typeof colaboradores !== 'undefined') {
-        dados = {
-            mesConfig: mesConfig,
-            periodo: periodo,
+    if (!fonte && typeof mesConfig !== 'undefined' && typeof colaboradores !== 'undefined') {
+        fonte = {
+            mesConfig,
+            periodo: typeof periodo !== 'undefined' ? periodo : null,
             intermediarios: typeof intermediarios !== 'undefined' ? intermediarios : [],
             jovensAprendizes: typeof jovensAprendizes !== 'undefined' ? jovensAprendizes : [],
-            colaboradores: colaboradores
+            colaboradores
         };
-        originalColaboradores = [...dados.colaboradores];
-        return true;
     }
-    return false;
+    if (!fonte) return false;
+    dados = JSON.parse(JSON.stringify(fonte));
+    dados.colaboradores = Array.isArray(dados.colaboradores) ? dados.colaboradores : [];
+    dados.intermediarios = Array.isArray(dados.intermediarios) ? dados.intermediarios : [];
+    dados.jovensAprendizes = Array.isArray(dados.jovensAprendizes) ? dados.jovensAprendizes : [];
+    originalColaboradores = [...dados.colaboradores];
+    return true;
+}
+
+function normalizarTexto(valor) {
+    return String(valor || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().trim();
+}
+
+function listaDeDias(valor) {
+    return Array.isArray(valor) ? valor.map(Number).filter(Number.isFinite) : [];
+}
+
+function intervaloValido(valor) {
+    const dias = listaDeDias(valor);
+    return dias.length >= 2 ? [Math.min(dias[0], dias[1]), Math.max(dias[0], dias[1])] : null;
 }
 
 function isIntermediario(name) {
@@ -466,7 +477,8 @@ function renderTable() {
     const diasSemanaAbbr = ["DOM", "SEG", "TER", "QUA", "QUI", "SEX", "SÁB"];
     
     const [primeiroDia, diaSemanaInicial, ultimoDia] = configMes;
-    const startIndex = diasSemana.indexOf(diaSemanaInicial.toLowerCase());
+    const startIndexEncontrado = diasSemana.findIndex(dia => normalizarTexto(dia) === normalizarTexto(diaSemanaInicial));
+    const startIndex = startIndexEncontrado >= 0 ? startIndexEncontrado : 0;
     const listaDias = [];
     for (let i = 1; i <= ultimoDia; i++) {
         const currentDayIndex = (startIndex + (i - 1)) % 7;
@@ -501,10 +513,14 @@ function renderTable() {
             const diaNum = dia.numero;
             const diaSemanaNome = dia.abbr.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
             
-            if (colab.ferias && diaNum >= colab.ferias[0] && diaNum <= colab.ferias[1]) status = 'FE';
-            else if (colab.descansoExtra && colab.descansoExtra.includes(diaNum)) status = 'DE';
-            else if (dia.isDomingo && colab.domingos && colab.domingos.includes(diaNum)) status = 'FO';
-            else if (colab.folgaFixa && diaSemanaNome === colab.folgaFixa.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").substring(0, 3)) status = 'FO';
+            const ferias = intervaloValido(colab.ferias);
+            const descansoExtra = listaDeDias(colab.descansoExtra);
+            const domingos = listaDeDias(colab.domingos);
+            const folgaFixa = normalizarTexto(colab.folgaFixa || colab.folga).substring(0, 3);
+            if (ferias && diaNum >= ferias[0] && diaNum <= ferias[1]) status = 'FE';
+            else if (descansoExtra.includes(diaNum)) status = 'DE';
+            else if (dia.isDomingo && domingos.includes(diaNum)) status = 'FO';
+            else if (folgaFixa && diaSemanaNome === folgaFixa) status = 'FO';
             
             if (status !== 'FO' && status !== 'FE' && status !== 'DE') dailyTotals[index]++;
             td.innerHTML = getBadge(status, colab.nome);
