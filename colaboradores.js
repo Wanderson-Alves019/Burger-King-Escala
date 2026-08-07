@@ -122,6 +122,7 @@ window.dadosEscala = {
 // ========================================
 function obterColecaoLoja() {
     const idLoja = window.authManager?.obterIdLoja?.() ?? null;
+    // O editor salva em escala_loja_{id}/dados, sem o segmento mes_ano.
     return idLoja ? `escala_loja_${idLoja}` : 'escala_geral';
 }
 
@@ -129,47 +130,9 @@ function obterIdLoja() {
     return window.authManager?.obterIdLoja?.() ?? null;
 }
 
-
-function obterDomingosDoMesAtual(dataReferencia = new Date()) {
-    const ano = dataReferencia.getFullYear();
-    const mes = dataReferencia.getMonth();
-    const ultimoDia = new Date(ano, mes + 1, 0).getDate();
-    const domingos = [];
-
-    for (let dia = 1; dia <= ultimoDia; dia++) {
-        if (new Date(ano, mes, dia).getDay() === 0) domingos.push(dia);
-    }
-    return domingos;
-}
-
-function filtrarDomingosDoMesAtual(domingos) {
-    const domingosValidos = new Set(obterDomingosDoMesAtual());
-    return [...new Set((Array.isArray(domingos) ? domingos : [])
-        .map(Number)
-        .filter(dia => domingosValidos.has(dia)))];
-}
-
-function limparDomingosForaDoMesAtual(dados) {
-    if (Array.isArray(dados?.colaboradores)) {
-        dados.colaboradores.forEach(colaborador => {
-            colaborador.domingos = filtrarDomingosDoMesAtual(colaborador.domingos);
-        });
-    }
-    if (Array.isArray(dados?.lideranca)) {
-        dados.lideranca.forEach(lider => {
-            lider.folgaDominical = filtrarDomingosDoMesAtual(lider.folgaDominical);
-        });
-    }
-    return dados;
-}
-
-window.obterDomingosDoMesAtual = obterDomingosDoMesAtual;
-window.filtrarDomingosDoMesAtual = filtrarDomingosDoMesAtual;
-window.limparDomingosForaDoMesAtual = limparDomingosForaDoMesAtual;
-
 async function carregarDadosFirebase() {
-    const nomeMes = obterNomeMesAtual();
-    const docId = `${nomeMes}_${new Date().getFullYear()}`;
+    // O editor usa um documento fixo por loja: escala_loja_{id}/dados.
+    const docId = 'dados';
     const colecao = obterColecaoLoja();
 
     if (!window.firebaseDb) return null;
@@ -180,7 +143,7 @@ async function carregarDadosFirebase() {
         const docSnap = await getDoc(doc(firestore, colecao, docId));
 
         if (docSnap.exists()) {
-            const data = limparDomingosForaDoMesAtual(docSnap.data());
+            const data = docSnap.data();
             return {
                 mesConfig: data.mesConfig ?? null,
                 periodo: data.periodo ?? null,
@@ -202,18 +165,10 @@ async function carregarDadosFirebase() {
 }
 
 async function criarDadosLojaFirestore() {
-    const nomeMes = obterNomeMesAtual();
-    const docId = `${nomeMes}_${new Date().getFullYear()}`;
+    // Criar no mesmo documento utilizado pelo editor_escalas.html.
+    const docId = 'dados';
     const colecao = obterColecaoLoja();
     const periodoGerado = gerarPeriodoAutomatico(mesConfig);
-    const colaboradoresIniciais = colaboradoresPadrao.map(colaborador => ({
-        ...colaborador,
-        domingos: filtrarDomingosDoMesAtual(colaborador.domingos)
-    }));
-    const liderancaInicial = liderancaPadrao.map(lider => ({
-        ...lider,
-        folgaDominical: filtrarDomingosDoMesAtual(lider.folgaDominical)
-    }));
 
     if (!window.firebaseDb) return false;
 
@@ -226,8 +181,8 @@ async function criarDadosLojaFirestore() {
             periodo: periodoGerado,
             intermediarios: intermediariosPadrao,
             jovensAprendizes: jovensAprendizesPadrao,
-            colaboradores: colaboradoresIniciais,
-            lideranca: liderancaInicial,
+            colaboradores: colaboradoresPadrao,
+            lideranca: liderancaPadrao,
             metasLunch: metasLunchPadrao,
             metasDinner: metasDinnerPadrao,
             historicoFuncionariosMes: historicoFuncionariosMesPadrao,
@@ -330,4 +285,3 @@ function processarDados() {
         counts,
         total: counts.manha + counts.tarde + counts.intermediario + counts.noite + counts.jovem
     };
-}
