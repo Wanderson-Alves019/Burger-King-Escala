@@ -394,6 +394,38 @@ function isJA(name) {
     return dados.jovensAprendizes && dados.jovensAprendizes.some(ja => n.includes(ja.toUpperCase()));
 }
 
+function obterConfiguracoesMesAtual() {
+    const ping = new Date();
+    ping.setHours(ping.getHours() - 3);
+
+    const diasSemana = [
+        "domingo", "segunda", "terça", "quarta", "quinta", "sexta", "sábado"
+    ];
+
+    const nomesMeses = [
+        "janeiro", "fevereiro", "março", "abril", "maio", "junho",
+        "julho", "agosto", "setembro", "outubro", "novembro", "dezembro"
+    ];
+
+    const ano = ping.getFullYear();
+    const mes = ping.getMonth();
+
+    const primeiroDia = new Date(ano, mes, 1);
+    const ultimoDia = new Date(ano, mes + 1, 0);
+
+    return {
+        ano,
+        numeroMes: mes + 1,
+        nomeMes: nomesMeses[mes],
+        mesConfig: [1, diasSemana[primeiroDia.getDay()], ultimoDia.getDate()],
+        periodo: `${String(1).padStart(2, '0')}/${String(mes + 1).padStart(2, '0')}/${ano} a ${String(ultimoDia.getDate()).padStart(2, '0')}/${String(mes + 1).padStart(2, '0')}/${ano}`,
+        primeiroDiaMes: primeiroDia,
+        ultimoDiaMes: ultimoDia,
+        totalDias: ultimoDia.getDate(),
+        diaSemanaInicial: diasSemana[primeiroDia.getDay()]
+    };
+}
+  
 // Ordem: Manhã (1), Intermediário (2), Tarde (3), Noite (4)
 function getTurnoRankMITN(colab) {
     if (isIntermediario(colab.nome)) return 2;
@@ -472,7 +504,7 @@ function getBadge(sched, empName) {
 }
 
 function renderTable() {
-    const configMes = dados.mesConfig || [1, "sábado", 31];
+    const configMes = obterConfiguracoesMesAtual().mesConfig
     const diasSemana = ["domingo", "segunda", "terça", "quarta", "quinta", "sexta", "sábado"];
     const diasSemanaAbbr = ["DOM", "SEG", "TER", "QUA", "QUI", "SEX", "SÁB"];
     
