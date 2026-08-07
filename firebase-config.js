@@ -48,7 +48,7 @@ const lojas = [
     {
         id: 2,
         nome: "Águas Lindas Shopping",
-        senha: "2ahshd",
+        senha: "Bkb@21920",
         icone: "assets/lojas/aguaslindasshopping.png",
         cidade: "Águas Lindas - GO"
     },
